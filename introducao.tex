@@ -36,17 +36,40 @@ As medidas de performance são específicas da tarefa em questão e seu uso deve
 
 As experiências são o conjunto de dados que o algoritmo utiliza para aprender, aqui também chamado de \textit{dataset}. Esse conjunto de dados é dito supervisionado quando possui um indicador da classe que cada amostra pertence ou o valor esperado para aquela amostra, no caso de regressão. Para um conjunto não supervisionado, espera-se aprender mais sobre a distribuição dos dados. Isso permite, por exemplo, detectar amostras anômalas e dividir o conjunto de dados em grupos (\textit{clusters}) que apresentem alguma similaridade estrutural.
 
-Uma experiência, também chamada de exemplo ou amostra, é uma coleção de descrições, obtido através de um descritor de características. Essa descrição é obtida através de um processo que pode mensurar alguma grandeza específica de algum objeto ou evento. Para o campo de imagens são comuns descritores de borda e histograma de cores. Em geral, um descritor busca obter uma representação compacta e discrimantiva entre as amostras. Assim, para um problema de classificação entre bananas e maçãs, por exemplo, um descritor de cor teria maior relevância do que a representação completa dos pixels das imagens. 
+Uma experiência, também chamada de exemplo ou amostra, é uma coleção de descrições, obtida através de um descritor de características. Essa descrição é obtida através de um processo que pode mensurar alguma grandeza específica de algum objeto ou evento. Para o campo de imagens são comuns descritores de borda e histograma de cores. Em geral, um descritor busca obter uma representação compacta e discrimantiva entre as amostras. 
 
 %Adicionar imagem representando descritores 
 
 \section{Métodos clássicos}
-O problema de classificação de imagens é um clássico no campo de visão computacional e aprendizado de máquina. Uma abordagem tradicional consiste nos seguintes passos.
+O problema de classificação de imagens é um clássico no campo de visão computacional e requer aprendizado de máquina. Uma abordagem tradicional consiste nos seguintes passos.
 	\begin{enumerate}
 	\item Identificar uma região de interesse no caso de uma imagem com múltiplos objetos.
 	\item Utilizar um extrator de características para descrição da imagem.
 	\item Introduzir a amostra, proveniente do descritor, em um classificador, obtendo a classe correspondente.
 	\end{enumerate}
+
+A escolha do descritor está diretamente ligada com a qualidade do processo de classificação. Um descritor é criado especificamente para uma aplicação e dificilmente pode ser utilizado em outros campos: um descritor para imagens não consegue entender um sinal de áudio. Assim, sua concepção demanda conhecimento e prática de especialistas da área de aplicação. Para um problema de classificação entre imagens de bananas e maçãs, por exemplo, um descritor relacionado a cor teria maior relevância do que a representação completa dos pixels das imagens.
+
+% SVM
+Após ter uma representação adequada das experiências escolhe-se o tipo do classificador. O modelo de \textit{Support Vector Machines} é bastante utilizado pois possui representação e uso simplificado e demonstrou bons resultados ao tratar amostras de dimensões medianas (ordem de centenas) com um dataset pequeno (ordem de milhares de amostras) sem ajuste fino. Seu modelo consiste em encontrar um hiperplano de separação entre classes ótimo, no sentido de maximizar a distância entre as amostras e o hiperplano. As amostras mais próximas do hiperplano são chamadas vetores suportes.
+
+\begin{figure}[h]
+\caption{Hiperplano ótimo para separação das classes}
+\centering
+\includegraphics[width=0.5\textwidth]{svm/svm-hyperplane}
+\label{fig:svm-hyperplane}
+\end{figure}
+
+Para amostras com distribuição complexa a possibilidade de não existir um hiperplano que consiga separar o conjunto satisfatóriamente é grande. Para resolver esse problema emprega-se uma função que mapeia essas amostras para um espaço de maior dimensionalidade em que as classes sejam linearmente separáveis. Na prática, entretanto, não se calcula as coordenadas da amostra transformada no novo espaço, mas uma técnica chamada \textit{kernel trick} em que o produto interno dessa amostra transformada é obtida diretamente através da amostra original, o que permite que o método seja escale mais facilmente.
+
+\begin{figure}[h]
+\caption{Exemplo de mapeamento para obter um classes linearmente separáveis}
+\centering
+\includegraphics[width=0.8\textwidth]{svm/svm-kernel}
+\label{fig:svm-kernel}
+\end{figure}
+
+Para classificações não-binárias pode-se adotar a estratégia \textit{one-vs-one} em que um classificador binário é utilizado para cada par de classes e o resultado é obtido pela classe que for mais votada entre os classificadores binários.
 
 \section{Aprendizado profundo}
 \section{Caracterização da aplicação}
