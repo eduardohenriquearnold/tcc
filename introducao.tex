@@ -1,31 +1,14 @@
 \chapter{Introdução}
 
-\section{Objetivos}
-Descrever a mudança de paradigma no campo de aprendizado de máquina através do advento das técnicas de aprendizado profundo, chamadas \textit{deep learning}.  Além disso, busca­-se exemplificar o uso dessas técnicas com um problema prático e assim demonstrar resultados do estado da arte para classificação de imagens e localização de objetos.
- 
-\section{Motivação}
-Na década de 1970 as redes convolucionais já estavam sendo desenvolvidas, porém os algoritmos de treinamento ainda eram precários e a técnica acabou sendo abandonada em detrimento de técnicas superficiais, como \textit{Support Vector Machines}.
+Na atualidade a segurança e bem estar das pessoas é um aspecto fundamental a ser garantido, ainda mais para trabalhadores em ambientes industriais, onde os riscos são mais severos. Diversas normas e regras existem no sentido de garantir que essa condição seja atendida. Com a progressão dos meios tecnológicos novas ferramentas surgiram para facilitar as medidas de controle e proteger as pessoas.
 
-Com o aumento drástico do poder de processamento essas redes ultrapassaram seus predecessores e ganharam destaque novamente após o trabalho de Hinton \cite{hintonDL} em 2006, que estabeleceu uma base sólida para o treinamento de grandes redes convolucionais. Essa contribuição mudou o paradigma do aprendizado de máquina no que se refere à extração de características e se mostra ainda hoje como estado da arte. 
+Um caso concreto para aplicação dessas ferramentas ocorre na Wanke, indústria de eletrodomésticos de Indaial-SC, que conta com pontes rolantes, um sistema de transporte que facilita a movimentação de peças no meio industrial. Esse instrumento permite carregar moldes de até centenas de kilogramas entre estações de trabalho. É um fator de preocupação que um desses moldes se solte ou contenha peças livres que caiam e firam algum funcionário. 
 
-Destacam-se aplicações em visão computacional, onde após a introdução da técnica os trabalhos seguintes continuaram aperfeiçoando a técnica para atingir níveis melhores de classificação. Ainda, a recente vitória do algoritmo \textit{AlphaGo}, baseado em aprendizado por reforço, sobre o campeão mundial de Go trouxe a atenção do grande público para essa tecnologia.
+Esse trabalho pretende elaborar um sistema automático de detecção de pessoas que possibilite impedir que a ponte rolante se movimente enquanto houver colaboradores sob sua área de movimentação. Essa detecção é feita com base em imagens de profundidade e algoritmos de aprendizado de máquina. As imagens são obtidas através de uma câmera stereo de maneira que o valor de cada pixel representa a distância entre a câmera e o objeto. 
 
-O recente investimento de gigantes como \textit{Google}, \textit{Facebook} e \textit{Yahoo} nesse segmento em conjunto com a grande quantidade de artigos inovadores no tema demonstram que essa técnica é de grande relevância e permitirá explorar problemas complexos de grande interesse para a indústria e academia brasileiras.
+Os aspectos fundamentais e um comparativo entre técnicas tradicionais e de aprendizado profundo é apresentado. O resultado das diferentes técnicas em figuras de mérito tradicionais para classificação é destacado.
 
-\section{Metodologia}
-A metodologia consiste em revisar a literatura da área de forma a compreender as principais estruturas envolvidas, especialmente as redes convolucionais, suas conexões e mudanças em relação aos métodos tradicionais.
-
-Após a revisão, um problema de localização de objetos é introduzido. Trata-se da tecnologia de detecção de pessoas que é empregada em um ambiente industrial para garantir a segurança dos funcionários. Nessa indústria existe uma ponte rolante utilizada para carregar peças de até centenas de kilogramas em torno do ambiente industrial. Dessa forma, é necessário garantir que durante essa manipulação não existam colaboradores debaixo da mesma. Propõe-se então três soluções para esse problema a partir de imagens de profundidade geradas por uma câmera stereo.
-
-A primeira é fundamentada nos métodos tradicionais de visão computacional e aprendizado de máquina. Divide-se o algoritmo em obtenção de candidatos à pessoas e posterior extração de características, desenvolvida manualmente, e classificação através de \textit{Support Vector Machines}.
-
-Em seguida, propõe-se um método que emprega o mesmo algoritmo tradicional de obtenção de candidatos porém utiliza métodos de aprendizado profundo para encontrar de maneira automática um descritor de caracterísitcas específico para o conjunto de dados do problema. A classificação se dá nas camadas finais da rede profunda.
-
-A terceira solução é concebida utilizando-se integralmente soluções de aprendizado profundo. Uma rede de convolução é utilizada e recebe como entrada a imagem completa do ambiente industrial. A saída é uma máscara indicando a posição das pessoas encontradas na imagem. Essa rede é treinada utilizando um amplo conjunto de quadros e algortimo de propagação reversa de erros.
-
-Tendo implementado os métodos e de posse de um dataset grande o suficiente para o treinamento das redes profundas, espera-se avaliar a performance de cada opção proposta e verificar qual a melhor solução, além de observar o impacto da utilização das redes profundas em diferentes etapas do sistema.
-
-\section{Definições}
+\section{Aprendizado de máquina}
 Segundo Arthur Samuel, aprendizado de máquina é o ramo da inteligência artificial que estuda técnicas que possibilitam um computador realizar uma tarefa sem ser explicitamente programado para desempenhá-la. 
 
 Mitchell (1997) define: "Se diz que um computador aprende com uma experiência $E$ com respeito a uma tarefa $T$ e medida de performance $P$ a medida que a performance medida por $P$ medida em uma tarefa $T$ progride com a experiência $E$". 
@@ -36,7 +19,7 @@ As medidas de performance são específicas da tarefa em questão e seu uso deve
 
 As experiências são o conjunto de dados que o algoritmo utiliza para aprender, aqui também chamado de \textit{dataset}. Esse conjunto de dados é dito supervisionado quando possui um indicador da classe que cada amostra pertence ou o valor esperado para aquela amostra, no caso de regressão. Para um conjunto não supervisionado, espera-se aprender mais sobre a distribuição dos dados. Isso permite, por exemplo, detectar amostras anômalas e dividir o conjunto de dados em grupos (\textit{clusters}) que apresentem alguma similaridade estrutural.
 
-Uma experiência, também chamada de exemplo ou amostra, é uma coleção de descrições, obtida através de um descritor de características. Essa descrição é obtida através de um processo que pode mensurar alguma grandeza específica de algum objeto ou evento. Para o campo de imagens são comuns descritores de borda e histograma de cores. Em geral, um descritor busca obter uma representação compacta e discrimantiva entre as amostras. A etapa de extração de características pode ser vista como uma transformação para um domínio de maior relevância ou préprocessamento.
+Uma experiência, também chamada de exemplo ou amostra, é uma coleção de descrições, obtida através de um descritor de características. Essa descrição é obtida através de um processo que pode mensurar alguma grandeza específica de algum objeto ou evento. Para o campo de imagens são comuns descritores de borda e histograma de cores. Em geral, um descritor busca obter uma representação compacta, reduzindo dimensionalidade, e discrimantiva entre as amostras de maneira a facilitar a etapa de classificação. A etapa de extração de características pode ser vista como um préprocessamento ou transformação para um domínio de maior relevância.
 
 \begin{figure}[h]
 \caption{Exemplo de descritores: histograma de bordas e cores}
@@ -46,14 +29,16 @@ Uma experiência, também chamada de exemplo ou amostra, é uma coleção de des
 \end{figure}
 
 \section{Métodos clássicos}
-O problema de classificação de imagens é um clássico no campo de visão computacional e requer aprendizado de máquina. Uma abordagem tradicional consiste nos seguintes passos.
+O problema de classificação de objetos é um clássico no campo de visão computacional e requer aprendizado de máquina. Uma abordagem tradicional consiste nos seguintes passos.
 	\begin{enumerate}
 	\item Identificar uma região de interesse no caso de uma imagem com múltiplos objetos.
-	\item Utilizar um extrator de características para descrição da imagem.
+	\item Utilizar um extrator de características para descrição do objeto.
 	\item Introduzir a amostra, proveniente do descritor, em um classificador simples, obtendo a classe correspondente.
 	\end{enumerate}
 
-A escolha do descritor está diretamente ligada com a qualidade do processo de classificação. Um descritor é criado especificamente para uma aplicação e dificilmente pode ser utilizado em outros campos: um descritor para imagens não consegue entender um sinal de áudio. Assim, sua concepção demanda conhecimento e prática de especialistas da área de aplicação. Para um problema de classificação entre imagens de bananas e maçãs, por exemplo, um descritor relacionado a cor teria maior relevância do que a representação completa dos pixels das imagens.
+Métodos tradicionais são superficiais a medida que requerem que um extrator de características seja utilizado antes da classificação. Essa necessidade está relacionada com a necessidade de reduzir a dimensionalidade das amostras para melhor performance, e por discriminar amostras diferentes, o que reduz a complexidade do classificador.
+
+A escolha do descritor está diretamente ligada com a qualidade do processo de classificação. Um descritor é criado especificamente para uma aplicação e dificilmente pode ser utilizado em outros campos: um descritor para imagens não consegue entender um sinal de áudio. Assim, sua concepção demanda conhecimento e prática de especialistas da área de aplicação. Para um problema de classificação entre imagens de bananas e maçãs, por exemplo, um descritor relacionado a cor teria maior relevância do que a de bordas.
 
 % SVM
 Após ter uma representação adequada das experiências escolhe-se o tipo do classificador. O modelo de \textit{Support Vector Machines} é bastante utilizado pois possui representação e uso simplificado e demonstrou bons resultados ao tratar amostras de dimensões medianas (ordem de centenas) com um dataset pequeno (ordem de milhares de amostras) sem ajuste fino. Seu modelo consiste em encontrar um hiperplano de separação entre classes ótimo, no sentido de maximizar a distância entre as amostras e o hiperplano. As amostras mais próximas do hiperplano são chamadas vetores suportes.
@@ -65,7 +50,7 @@ Após ter uma representação adequada das experiências escolhe-se o tipo do cl
 \label{fig:svm-hyperplane}
 \end{figure}
 
-Para amostras com distribuição complexa a possibilidade de não existir um hiperplano que consiga separar o conjunto satisfatóriamente é grande. Para resolver esse problema emprega-se uma função que mapeia essas amostras para um espaço de maior dimensionalidade em que as classes sejam linearmente separáveis. Na prática, entretanto, não se calcula as coordenadas da amostra transformada no novo espaço, mas uma técnica chamada \textit{kernel trick} em que o produto interno dessa amostra transformada é obtida diretamente através da amostra original, o que permite que o método seja escale mais facilmente.
+Para amostras com distribuição complexa a possibilidade de não existir um hiperplano que consiga separar o conjunto satisfatóriamente é grande. Para resolver esse problema emprega-se uma função que mapeia essas amostras para um espaço de maior dimensionalidade em que as classes sejam linearmente separáveis. Na prática, entretanto, não se calcula as coordenadas da amostra transformada no novo espaço, mas uma técnica chamada \textit{kernel trick} em que o produto interno dessa amostra transformada é obtida diretamente através da amostra original, o que permite que o método escale facilmente.
 
 \begin{figure}[h]
 \caption{Exemplo de mapeamento para obter um classes linearmente separáveis}
@@ -94,13 +79,12 @@ Em contraposição com métodos tradicionais, em que é necessário criar um ext
 
 Outros autores também afirmam que o método é chamado profundo pois pressupõe um grande número de camadas intermediárias. O preço a pagar por não precisar criar um descritor manual específico para uma aplicação é a maior complexidade do sistema e o grande volume de amostras necessárias para o treinamento do classificador.
 
-
 \subsection{Perceptron multicamadas (MLP)}
 A evolução do único perceptron para uma rede de camadas desse elemento aumentou a capacidade de aprendizado do modelo. Essa estrutura pode ser subdividida em: camada de entrada, camadas escondidas e camada de saída. As camadas de entrada e de saída são compostas por um \textit{perceptron} para cada dimensão da entrada/saída. As camadas escondidas são fundamentais pois permitem justamente a elaboração automática de um descritor.
 
 Esse processo evolutivo só foi possível com o advento de algoritmos de aprendizado por propagação reversa, \textit{backpropagation learning}. Ele  permite ajustar os parâmetros de cada unidade de maneira automática baseada na influência que essa unidade exerce sobre o erro das saídas e assim minimizar o erro total. Isso é feito calculando a derivada do erro na camada de saída em relação a cada um das unidades da camada anterior. Ajusta-se os parâmetros proporcionalmente a essa derivada e o processo se repete. Utiliza-se, então, um método de otimização, sendo o \textit{Stochastic Gradient Descent} o mais utilizado, para encontrar os parâmetros ótimos da rede.
 
-Outro problema enfrentado foi o de gradiente enfraquecido: como o aumento das camadas escondidas, as alterações dos parâmetros das primeiras camadas da rede, proveniente das derivadas, são muito pequenas, o que ocasiona um aprendizado bastante lento e impossibilita uma boa performance do sistema. Uma solução proposta foi a mudança da função de ativação, anteriormente sigmoide\ref{eq:sigm} para outra conhecida como \textit{Rectified Linear Unit -- RELU}\ref{eq:relu}, cuja derivada para valores positivos é unitária. 
+Outro problema enfrentado foi o do gradiente enfraquecido: como o aumento das camadas escondidas, as alterações dos parâmetros das primeiras camadas da rede, proveniente das derivadas, são muito pequenas, o que ocasiona um aprendizado bastante lento e impossibilita uma boa performance do sistema. Uma solução proposta foi a mudança da função de ativação, anteriormente sigmoide\ref{eq:sigm} para outra conhecida como \textit{Rectified Linear Unit -- RELU}\ref{eq:relu}, cuja derivada para valores positivos é unitária. 
 
 %Equações RELU, sigmoide
 \begin{equation}
@@ -113,19 +97,40 @@ Outro problema enfrentado foi o de gradiente enfraquecido: como o aumento das ca
 	\text{RELU}(x) = \max(0,x)
 \end{equation}
 
-Entretanto, a técnica ainda se demonstrava desvantajosa perante \textit{SVM} e outros classificadores simples por sua complexidade e necessidade de ajusto fino em alguns casos. 
+\begin{figure}[h]
+\caption{Exemplo de MLP com 5 camadas intermediárias}
+\centering
+\includegraphics[width=0.8\textwidth]{mlp}
+\label{fig:mlp}
+\end{figure}
 
 \subsection{Redes convolucionais}
-As redes convolucionais surgiram logo depois do avanço com propagação reversa. Uma aplicação famosa se deu em 1989, quando LeCun utilizou a primeira rede desse tipo em escala comercial para automatizar o sistema de correio americano. Seu método prevalesceu sob todos os anteriores e deu grande incentivo à técnica, apesar do método de treinamento ter sido bastante manual, com muitos ajustes finos.
+Na década de 1970 as redes convolucionais já estavam sendo desenvolvidas. Uma aplicação famosa se deu em 1989, quando LeCun utilizou uma rede desse tipo em escala comercial para automatizar a leitura de talão de cheques. Apesar disso os algoritmos de treinamento ainda eram precários e a técnica acabou sendo abandonada em detrimento de técnicas superficiais, como \textit{Support Vector Machines}.
 
-Essas redes definem filtros, na forma de pequena matrizes, que são convoluídas com uma imagem e resultam em outra imagem, com algum aspecto realçado. Em geral, muitos filtros são definidos e há, portanto, muitas imagens de saída para cada nível de convolução, o que aumenta drasticamente a dimensionalidade da rede. Por isso é comum utilizar um processo de \textit{maxpooling} em que seleciona-se diversos pixels (sob máscara quadrada) e retorna-se um único pixel cujo valor é o máximo dos pixels do conjunto original.
+Com o aumento drástico do poder de processamento essas redes ultrapassaram seus predecessores e ganharam destaque novamente após o trabalho de Hinton \cite{hintonDL} em 2006, que estabeleceu uma base sólida para o treinamento de grandes redes convolucionais. Essa contribuição mudou o paradigma do aprendizado de máquina no que se refere à extração de características e se mostra ainda hoje como estado da arte. 
+
+Nessas estruturas definem-se filtros, na forma matrizes, que são convoluídas com uma imagem (proveniente da camada anterior) e resultam em outra imagem, com algum aspecto realçado. Em geral, muitos filtros são definidos e há, portanto, muitas imagens de saída para cada nível de convolução, o que aumenta drasticamente a dimensionalidade da rede. Nesses casos é comum utilizar um processo de \textit{max-pooling} em que seleciona-se diversos pixels (sob máscara quadrada) e retorna-se um único pixel cujo valor é o máximo dos pixels do conjunto original.
 
 A grande vantagem dessas redes é reduzir o número de parâmetros geral do modelo e ainda assim manter uma alta capacidade de aprendizado. Elas também possibilitam que estruturas locais sejam encontradas mais facilmente de maneira a compor um descritor mais complexo e discriminativo para imagens.
 
-Além disso, existe a vantagem da invariância à translação: em uma rede MLP, para encontrar faces em uma imagem, seria necessário amostras em todas as posições da imagem possíveis. Já em uma rede convolucional, como o mesmo filtro é aplicado a toda a imagem, esse problema é resolvido e garante esse aspecto fundamental para detecção de objetos.
+Além disso, existe a vantagem da invariância à translação: em uma rede MLP, para encontrar faces em uma imagem, seria necessário amostras em todas as posições da imagem possíveis. Já em uma rede convolucional, como o filtro é convoluído com a imagem, esse problema é resolvido e garante esse aspecto fundamental para detecção de objetos.
 
-%Imagem redes convolucionais e maxpooling
+\begin{figure}[h]
+\caption{Exemplo de rede convolucional com }
+\centering
+\includegraphics[width=0.8\textwidth]{convnet}
+\label{fig:convnet}
+\end{figure}
 
-\section{Caracterização da aplicação}
+\section{Organização}
+O trabalho é organizado em três soluções. A primeira é fundamentada nos métodos tradicionais de visão computacional e aprendizado de máquina. Divide-se o algoritmo em localização de candidatos à pessoas e posterior extração de características, desenvolvida manualmente, e classificação através de \textit{Support Vector Machines}.
+
+Em seguida, propõe-se um método que emprega o mesmo algoritmo tradicional de localização de candidatos porém utiliza métodos de aprendizado profundo para o processo de classificação. Compreende-se que o classificador encontra de maneira automática um descritor de caracterísitcas específico para o conjunto de dados do problema nas camadas de convolução. A classificação própriamente dita se dá nas camadas finais da rede profunda.
+
+A terceira solução é concebida utilizando-se integralmente soluções de aprendizado profundo: tanto localização como detecção. Uma rede de convolução é utilizada e recebe como entrada a imagem completa do ambiente industrial. A saída é uma máscara indicando a posição das pessoas encontradas na imagem. Essa rede é treinada utilizando um amplo conjunto de quadros e algortimo de propagação reversa de erros.
+
+Tendo implementado os métodos e de posse de um dataset grande o suficiente para o treinamento das redes profundas, espera-se avaliar a performance de cada opção proposta e verificar qual a melhor solução, além de observar o impacto da utilização das redes profundas em diferentes etapas do sistema.
+
+
 
 
