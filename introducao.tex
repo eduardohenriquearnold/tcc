@@ -6,7 +6,7 @@ Um caso concreto para aplicação dessas ferramentas ocorre na Wanke, indústria
 
 Esse trabalho pretende elaborar um sistema automático de detecção de pessoas que possibilite impedir que a ponte rolante se movimente enquanto houver colaboradores sob sua área de movimentação. Essa detecção é feita com base em imagens de profundidade e algoritmos de aprendizado de máquina. As imagens são obtidas através de uma câmera stereo de maneira que o valor de cada pixel representa a distância entre a câmera e o objeto. 
 
-Os aspectos fundamentais e um comparativo entre técnicas tradicionais e de aprendizado profundo é apresentado. O resultado das diferentes técnicas em figuras de mérito tradicionais para classificação é destacado.
+Os aspectos fundamentais e um comparativo entre técnicas tradicionais e de aprendizado profundo é apresentado. O resultado das diferentes técnicas em figuras de mérito específicas para classificação é destacado.
 
 \section{Aprendizado de máquina}
 Segundo Arthur Samuel, aprendizado de máquina é o ramo da inteligência artificial que estuda técnicas que possibilitam um computador realizar uma tarefa sem ser explicitamente programado para desempenhá-la. 
@@ -19,7 +19,7 @@ As medidas de performance são específicas da tarefa em questão e seu uso deve
 
 As experiências são o conjunto de dados que o algoritmo utiliza para aprender, aqui também chamado de \textit{dataset}. Esse conjunto de dados é dito supervisionado quando possui um indicador da classe que cada amostra pertence ou o valor esperado para aquela amostra, no caso de regressão. Para um conjunto não supervisionado, espera-se aprender mais sobre a distribuição dos dados. Isso permite, por exemplo, detectar amostras anômalas e dividir o conjunto de dados em grupos (\textit{clusters}) que apresentem alguma similaridade estrutural.
 
-Uma experiência, também chamada de exemplo ou amostra, é uma coleção de descrições, obtida através de um descritor de características. Essa descrição é obtida através de um processo que pode mensurar alguma grandeza específica de algum objeto ou evento. Para o campo de imagens são comuns descritores de borda e histograma de cores. Em geral, um descritor busca obter uma representação compacta, reduzindo dimensionalidade, e discrimantiva entre as amostras de maneira a facilitar a etapa de classificação. A etapa de extração de características pode ser vista como um préprocessamento ou transformação para um domínio de maior relevância.
+Uma experiência, também chamada de exemplo ou amostra, é uma coleção de descrições, obtida através de um descritor de características, figura \ref{fig:features}. Essa descrição é obtida através de um processo que pode mensurar alguma grandeza específica de algum objeto ou evento. Para o campo de imagens são comuns descritores de borda e histograma de cores. Em geral, um descritor busca obter uma representação compacta, reduzindo dimensionalidade, e discrimantiva entre as amostras de maneira a facilitar a etapa de classificação. A etapa de extração de características pode ser vista como um préprocessamento ou transformação para um domínio de maior relevância.
 
 \begin{figure}[h]
 \caption{Exemplo de descritores: histograma de bordas e cores}
@@ -36,12 +36,12 @@ O problema de classificação de objetos é um clássico no campo de visão comp
 	\item Introduzir a amostra, proveniente do descritor, em um classificador simples, obtendo a classe correspondente.
 	\end{enumerate}
 
-Métodos tradicionais são superficiais a medida que requerem que um extrator de características seja utilizado antes da classificação. Essa necessidade está relacionada com a necessidade de reduzir a dimensionalidade das amostras para melhor performance, e por discriminar amostras diferentes, o que reduz a complexidade do classificador.
+Métodos tradicionais são superficiais a medida que requerem que um extrator de características seja utilizado antes da classificação. Isso se deve à necessidade de reduzir a dimensionalidade das amostras e discriminar classes diferentes, o que possibilita ganhos de performance com baixa complexidade do classificador.
 
 A escolha do descritor está diretamente ligada com a qualidade do processo de classificação. Um descritor é criado especificamente para uma aplicação e dificilmente pode ser utilizado em outros campos: um descritor para imagens não consegue entender um sinal de áudio. Assim, sua concepção demanda conhecimento e prática de especialistas da área de aplicação. Para um problema de classificação entre imagens de bananas e maçãs, por exemplo, um descritor relacionado a cor teria maior relevância do que a de bordas.
 
 % SVM
-Após ter uma representação adequada das experiências escolhe-se o tipo do classificador. O modelo de \textit{Support Vector Machines} é bastante utilizado pois possui representação e uso simplificado e demonstrou bons resultados ao tratar amostras de dimensões medianas (ordem de centenas) com um dataset pequeno (ordem de milhares de amostras) sem ajuste fino. Seu modelo consiste em encontrar um hiperplano de separação entre classes ótimo, no sentido de maximizar a distância entre as amostras e o hiperplano. As amostras mais próximas do hiperplano são chamadas vetores suportes.
+Após ter uma representação adequada das experiências escolhe-se o tipo do classificador. O modelo de \textit{Support Vector Machines} é bastante utilizado pois possui representação e uso simplificado e demonstrou bons resultados ao tratar amostras de dimensões medianas (ordem de centenas) com um dataset pequeno (ordem de milhares de amostras) sem ajuste fino. Seu modelo consiste em encontrar um hiperplano de separação entre classes ótimo, no sentido de maximizar a distância entre as amostras e o hiperplano. As amostras mais próximas do hiperplano são chamadas vetores suportes, como mostrado na figura \ref{fig:svm-hyperplane}.
 
 \begin{figure}[h]
 \caption{Hiperplano ótimo para separação das classes}
@@ -50,7 +50,7 @@ Após ter uma representação adequada das experiências escolhe-se o tipo do cl
 \label{fig:svm-hyperplane}
 \end{figure}
 
-Para amostras com distribuição complexa a possibilidade de não existir um hiperplano que consiga separar o conjunto satisfatóriamente é grande. Para resolver esse problema emprega-se uma função que mapeia essas amostras para um espaço de maior dimensionalidade em que as classes sejam linearmente separáveis. Na prática, entretanto, não se calcula as coordenadas da amostra transformada no novo espaço, mas uma técnica chamada \textit{kernel trick} em que o produto interno dessa amostra transformada é obtida diretamente através da amostra original, o que permite que o método escale facilmente.
+Para amostras com distribuição complexa a possibilidade de não existir um hiperplano que consiga separar o conjunto satisfatóriamente é grande. Para resolver esse problema emprega-se uma função que mapeia essas amostras para um espaço de maior dimensionalidade em que as classes sejam linearmente separáveis, como mostrado na figura \ref{fig:svm-kernel}. Na prática, entretanto, não se calcula as coordenadas da amostra transformada no novo espaço, mas uma técnica chamada \textit{kernel trick} em que o produto interno dessa amostra transformada é obtida diretamente através da amostra original, o que permite que o método escale facilmente.
 
 \begin{figure}[h]
 \caption{Exemplo de mapeamento para obter um classes linearmente separáveis}
@@ -75,7 +75,7 @@ Alguns problemas impediram os avanços desse classificador, a destacar: a incapa
 
 A partir da década de 1970 com o aumento drástico da capacidade computacional essa estrutura ganhou complexidade e passou a ser integrada por múltiplos \textit{perceptrons} organizados em camadas, o que possibilitou aprender datasets mais desafiadores. Foi esse evento que iniciou a jornada para o advento das técnicas de aprendizado profundo.
 
-Em contraposição com métodos tradicionais, em que é necessário criar um extrator de características manualmente, métodos profundos permitem que a amostra seja alimentada ao classificador sem préprocessamento. Isso é possível pois internalmente o sistema gera um descritor ótimo para descriminação das amostras. Ou seja, o próprio classificador encontra a melhor maneira de representar as amostras para obter um bom resultado, economizando tempo e acabando com a necessidade de especialistas em criar esses descritores. %Referencia apresentação LeCun
+Em contraposição com métodos tradicionais, em que é necessário criar um extrator de características manualmente, métodos profundos permitem que a amostra seja alimentada ao classificador sem préprocessamento. Isso é possível pois internamente o sistema gera um descritor ótimo para discriminação das amostras. Ou seja, o próprio classificador encontra a melhor maneira de representar as amostras para obter um bom resultado, economizando tempo e acabando com a necessidade de especialistas em criar esses descritores. %Referencia apresentação LeCun
 
 Outros autores também afirmam que o método é chamado profundo pois pressupõe um grande número de camadas intermediárias. O preço a pagar por não precisar criar um descritor manual específico para uma aplicação é a maior complexidade do sistema e o grande volume de amostras necessárias para o treinamento do classificador.
 
@@ -84,7 +84,7 @@ A evolução do único perceptron para uma rede de camadas desse elemento aument
 
 Esse processo evolutivo só foi possível com o advento de algoritmos de aprendizado por propagação reversa, \textit{backpropagation learning}. Ele  permite ajustar os parâmetros de cada unidade de maneira automática baseada na influência que essa unidade exerce sobre o erro das saídas e assim minimizar o erro total. Isso é feito calculando a derivada do erro na camada de saída em relação a cada um das unidades da camada anterior. Ajusta-se os parâmetros proporcionalmente a essa derivada e o processo se repete. Utiliza-se, então, um método de otimização, sendo o \textit{Stochastic Gradient Descent} o mais utilizado, para encontrar os parâmetros ótimos da rede.
 
-Outro problema enfrentado foi o do gradiente enfraquecido: como o aumento das camadas escondidas, as alterações dos parâmetros das primeiras camadas da rede, proveniente das derivadas, são muito pequenas, o que ocasiona um aprendizado bastante lento e impossibilita uma boa performance do sistema. Uma solução proposta foi a mudança da função de ativação, anteriormente sigmoide\ref{eq:sigm} para outra conhecida como \textit{Rectified Linear Unit -- RELU}\ref{eq:relu}, cuja derivada para valores positivos é unitária. 
+Outro problema enfrentado foi o do gradiente enfraquecido: com o o aumento das camadas escondidas, as alterações dos parâmetros das primeiras camadas da rede, proveniente das derivadas, são muito pequenas, o que ocasiona um aprendizado bastante lento e impossibilita uma boa performance do sistema. Uma solução proposta foi a mudança da função de ativação, anteriormente sigmoide\ref{eq:sigm} para outra conhecida como \textit{Rectified Linear Unit -- RELU}\ref{eq:relu}, cuja derivada para valores positivos é unitária. 
 
 %Equações RELU, sigmoide
 \begin{equation}
@@ -109,14 +109,14 @@ Na década de 1970 as redes convolucionais já estavam sendo desenvolvidas. Uma 
 
 Com o aumento drástico do poder de processamento essas redes ultrapassaram seus predecessores e ganharam destaque novamente após o trabalho de Hinton \cite{hintonDL} em 2006, que estabeleceu uma base sólida para o treinamento de grandes redes convolucionais. Essa contribuição mudou o paradigma do aprendizado de máquina no que se refere à extração de características e se mostra ainda hoje como estado da arte. 
 
-Nessas estruturas definem-se filtros, na forma matrizes, que são convoluídas com uma imagem (proveniente da camada anterior) e resultam em outra imagem, com algum aspecto realçado. Em geral, muitos filtros são definidos e há, portanto, muitas imagens de saída para cada nível de convolução, o que aumenta drasticamente a dimensionalidade da rede. Nesses casos é comum utilizar um processo de \textit{max-pooling} em que seleciona-se diversos pixels (sob máscara quadrada) e retorna-se um único pixel cujo valor é o máximo dos pixels do conjunto original.
+Nessas estruturas definem-se filtros, na forma de matrizes, que são convoluídas com uma imagem (proveniente da camada anterior) e resultam em outra imagem, com algum aspecto realçado. Em geral, muitos filtros são definidos e há, portanto, muitas imagens de saída para cada nível de convolução, o que aumenta drasticamente a dimensionalidade da rede. Nesses casos é comum utilizar um processo de \textit{max-pooling} em que seleciona-se diversos pixels (sob máscara quadrada) e retorna-se um único pixel cujo valor é o máximo dos pixels do conjunto original.
 
 A grande vantagem dessas redes é reduzir o número de parâmetros geral do modelo e ainda assim manter uma alta capacidade de aprendizado. Elas também possibilitam que estruturas locais sejam encontradas mais facilmente de maneira a compor um descritor mais complexo e discriminativo para imagens.
 
-Além disso, existe a vantagem da invariância à translação: em uma rede MLP, para encontrar faces em uma imagem, seria necessário amostras em todas as posições da imagem possíveis. Já em uma rede convolucional, como o filtro é convoluído com a imagem, esse problema é resolvido e garante esse aspecto fundamental para detecção de objetos.
+Além disso, existe a vantagem da invariância à translação: em uma rede MLP, para encontrar faces em uma imagem, seria necessário amostras em todas as posições da imagem possíveis. Já em uma rede convolucional esse problema é resolvido através da convolução e amostragem e garante esse aspecto fundamental para detecção de objetos.
 
 \begin{figure}[h]
-\caption{Exemplo de rede convolucional com }
+\caption{Exemplo de rede convolucional duas camadas convolucionais e de max-pooling}
 \centering
 \includegraphics[width=0.8\textwidth]{convnet}
 \label{fig:convnet}

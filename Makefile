@@ -52,3 +52,8 @@ clean:
 	find . -name \*bbl.bib -type f -delete
 	find . -name \*.brf -type f -delete
 
+dbpush:
+	../dropbox/dropbox_uploader.sh -f ../dropbox/conf upload * "Eduardo Arnold/TCC/"
+
+dbpull:
+	../dropbox/dropbox_uploader.sh -f ../dropbox/conf download "Eduardo Arnold/TCC/" .
