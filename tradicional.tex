@@ -1,4 +1,4 @@
-\chapter{Método tradicional}
+\chapter{Método tradicional} \label{chap:tradicional}
 
 O sistema de segurança na fábrica consiste na detecção de pessoas sob a área da ponte. Esse é um problema de localização de objetos, mais especificamente, de detecção de pessoas. Tradicionalmente divide-se essa tarefa em três técnicas de visão computacional: obtenção de candidatos a objeto, obter descrição de cada candidato e então validar a amostra através de classificador. Essa solução foi baseada no trabalho de \cite{rauter}.
 
@@ -104,4 +104,6 @@ Nesse trabalho utilizou-se a biblioteca \textit{Scikit-learn} para a implementa�
 A abordagem utilizada foi o método de treinamento automático fornecido pela biblioteca: indica-se um conjunto de elementos para cada um dos parâmetros e todas as combinações de parâmetros são testadas. Ao final do procedimento as estatísticas de cada tentativa é exibida e a que tiver melhor performance é escolhida.
 
 Nota-se ainda que é possível utilizar de todos os núcleos do processador com essa biblioteca, o que traz um impacto bastante positivo na performance temporal do algoritmo.
+
+Tendo treinado o modelo é possível obter o resultado da classificação para cada candidato e remover os que não forem reconhecidos como cabeças. O resultado final do processo é um vetor de quadrados contendo todas as cabeças encontradas no quadro.
 

@@ -1,0 +1,97 @@
+\chapter{Resultados}
+
+Para avaliar a performance das diferentes soluções apresentadas nesse trabalho se faz necessário a definição de medidas que permitam comparar os resultados objetivamente e indicar facilmente os aspectos positivos e negativos relevantes de cada método.
+
+Em geral, num problema de classificação os indicador mais comum é a \textbf{precisão geral}, definida como a razão das classificações corretas pelo total de classificações. É fundamental notar, entretanto, que essa medida sozinha não é suficiente para avaliar um classificador, especialmente se o dataset for desbalanceado. Por exemplo, ao considerar um dataset com duas amostras negativas entre 20 e utilizar um classificador trivial que classifica qualquer entrada como sendo positiva, obtem-se uma precisão geral de 90\%, demonstrando que essa medida sozinha não é suficiente para avaliação.
+
+Uma maneira compacta de representar a eficiência de um classificador é a \textbf{matriz de confusão}. Para uma classificação binária é uma matriz 2x2 em que a primeira linha indica as amostras falsas e a segunda as amostras verdadeiras. De forma semelhante, a primeira coluna indica amostras que foram classificadas como falsas e a segunda que foram classificadas como verdadeiras. Para saber quantas amostras positivas foram erroneamente classificadas como negativas (número de falso negativos), basta verificar o elemento da primeira coluna e segunda linha.
+
+\begin{table}[h]
+\centering
+\caption{Matriz de confusão}
+\label{tab:matriz-confusão}
+\begin{tabular}{ll|l|l|}
+\cline{3-4}
+                                            &   & \multicolumn{2}{l|}{Classificado} \\ \cline{3-4} 
+                                            &   & 0               & 1               \\ \hline
+\multicolumn{1}{|l|}{\multirow{2}{*}{Real}} & 0 & TN              & FP              \\ \cline{2-4} 
+\multicolumn{1}{|l|}{}                      & 1 & FN              & TP              \\ \hline
+\end{tabular}
+\end{table}
+
+De posse dessa matriz é possível obter outras medidas de interesse. Define-se \textbf{sensibilidade} como $S = \frac{TP}{TP+FN}$ e fornece um indicativo da relação com falso negativos. A \textbf{precisão específica} é definida por $\text{PE}=\frac{TP}{TP+FP}$ e indica a relação com falso positivos. Ambas as grandezas são importantes ao se avaliar um classificador, porém em uma aplicação específica uma delas pode ser mais relevante.
+
+\section{Método tradicional}
+O dataset foi gerado a partir de gravações realizadas no ambiente indústrial onde o sistema deverá ser instalado. A câmera foi posicionada num ponto próximo de onde deve ocorrer a sua instalação final. Diversos vídeos foram gravados e posteriormente analisados. Utilizando o algoritmo de detecção de candidatos, selecionou-se manualmente em cada quadro quais dos candidatos eram verdadeiramente cabeças. Repetindo esse processo em cada quadro formou-se um dataset de 2459 amostras negativas (não cabeças) e 667 positivas (cabeças).
+
+Avaliou-se o resultado das diferentes opções de descritores descritos no capítulo \ref{chap:tradicional}: grades simples (7x7) e anéis concêntricos de diferentes dimensões. Utilizando um processo de treinamento automático do SVM, varreu-se o espaço dos parâmetros $C$ entre $0.0001$ e $0.01$ com passos de $0.001$ e $\sigma$ entre $1$ e $100$ com passos de $5$. Os melhores resultados, selecionados segundo sensitividade, são apresentados na forma de matriz de confusão para cada um dos descritores.
+
+%TODO resultado grades simples
+
+\begin{table}[h]
+\centering
+\caption{Anéis concêntricos com 8 dimensões}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2364 & 65 \\ \hline
+\multicolumn{1}{|l|}{1} & 185 & 482 \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Anéis concêntricos com 12 dimensões}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2344 & 85 \\ \hline
+\multicolumn{1}{|l|}{1} & 183 & 484 \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Anéis concêntricos com 16 dimensões}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2385 & 44 \\ \hline
+\multicolumn{1}{|l|}{1} & 111 & 556 \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Anéis concêntricos com 18 dimensões}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2410 & 19 \\ \hline
+\multicolumn{1}{|l|}{1} & 60 & 607 \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Anéis concêntricos com 20 dimensões}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2359 & 70 \\ \hline
+\multicolumn{1}{|l|}{1} & 141 & 526 \\ \hline
+\end{tabular}
+\end{table}
+
+Tendo visto que o melhor resultado foi obtido com 18 dimensões, utilizou-se um dataset mais representativo com 9894 amostras negativas e 1222 positivas, avaliou-se esse descritor novamente, obtendo-se o seguinte resultado.
+
+\begin{table}[h!]
+\centering
+\caption{Anéis concêntricos com 18 dimensões, dataset expandido}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 9859 & 35 \\ \hline
+\multicolumn{1}{|l|}{1} & 213 & 1009 \\ \hline
+\end{tabular}
+\end{table}
