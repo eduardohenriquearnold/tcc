@@ -7,7 +7,7 @@ Para essa aplicação, recomenda-se a utilização de imagens de profundidade, e
 As imagens recebidas da câmera precisam ser préprocessadas de forma a obter um mapa de distâncias, que é a imagem de profundidade. Isso é feito pela biblioteca fornecida pela \textit{Stereolabs}. Em seguida, inverte-se a imagem (subtrai-se cada pixel da distância da câmera) de maneira que cada pixel forneça a altura em relação ao chão do objeto por ele representado. Além disso remove-se pixels cujas distâncias não foram corretamente estimadas e o resultado é uma imagem cujos valores representam a altura dos objetos em milimetros.
 
 \section{Obtenção de candidatos}
-O primeiro passo consiste em obter candidatos a pessoas, como a vista é superior, candidatos a cabeças. Em uma aplicação tradicional, com câmeras RGB esse processo dividiria a imagem em pequenos blocos de tamanhos que se espera para uma cabeça, sem qualquer informação sobre o posicionamento, isto é, varrendo uma "janela imaginária`` pela imagem.
+O primeiro passo consiste em obter candidatos a pessoas, como a vista é superior, candidatos a cabeças. Em uma aplicação tradicional, com câmeras RGB esse processo dividiria a imagem em pequenos blocos de tamanhos que se espera para uma cabeça, sem qualquer informação sobre o posicionamento, isto é, varrendo uma ``janela imaginária'' pela imagem.
 
 Para aprimorar esse método, assume-se a hipótese de que cabeças serão os objetos mais altos de uma vizinhança, se destacando na cena dos demais objetos. Embora ela não seja sempre verdadeira, ao se verificar que existem máquinas altas, é um método mais eficiente de selecionar candidatos pois utiliza informação prévia da cena.
 
@@ -56,3 +56,52 @@ Outro modelo é criado: descritor de anéis concêntricos. A ideia é similar, p
 \end{figure}
 
 \section{Classificação}
+%Referência SVM http://www.cs.columbia.edu/~kathy/cs4701/documents/jason_svm_tutorial.pdf
+
+Utiliza-se um classificador binário \textit{SVM}. Seja o dataset o conjunto $(x_i, y_i)$ para $i=1 \dots N$ com $x_i \in \mathbb{R}^d$ e $y_i \in {-1, 1}$. Deseja-se encontrar um classificador $f(x)$ tal que $f(x_i)>0 y_i=1$ e $f(x_i)<0, y_i=-1$, ou seja, $y_i f(x_i) > 0$ para uma classificação correta.
+
+A função de decisão do SVM pode ser descrita como $f(x)=w^T x+ b$ onde $w$ é o vetor de pesos, que fornece a inclinação do hiperplano e $b$ um deslocamento do hiperplano.
+
+O dataset é considerado linearmente separável se for possível encontrar uma reta ou hiperplano que separe todas as amostras corretamente. Para esse caso, considera-se que o melhor hiperplano possível é o que oferecer a maior distância entre os vetores suporte, ou seja, o que tiver a maior margem, como pode ser observado na figura \ref{fig:svm-margin}. A margem pode ser definida como $\frac{2}{\abs{w}}$.
+
+\begin{figure}[h]
+\caption{Exemplos de datasets: superiores são linearmente separáveis e os inferiores não.}
+\centering
+\includegraphics[width=0.6\textwidth]{svm/margin}
+\label{fig:svm-margin}
+\end{figure}
+
+O aprendizado consiste em encontrar o vetor de pesos $w$ e o escalar $b$ que minimizem $abs{w}$, portanto maximizando a margem, sujeitos à $y_i(w^T x_i) \geq 1$. Esse é um problema de otimização quadrática.
+
+Para o caso não onde o dataset não é linearmente separável, minimiza-se a função custo $\min P(w,b) = \abs{w} + C\sum_i H_1(y_i f(x_i))$. O primeiro termo está associado à maximização da margem e o segundo à minimização dos erros de treinamento, quando uma amostra é classificada erroneamente. A função $H_1(z)=\max(0,1-z)$ é utilizada para dar um peso negativo quanto maior for o erro do classificador (quando o argumento é negativo). O parâmetro $C$ controla quanto se penaliza os erros de classificação diante da maximização da margem, visto existir uma relação ideal entre eles.
+
+Esse modelo de \textit{SVM} é conhecido como linear, porém mesmo com esse método de penalização de erros de classificação datasets complexos não terão uma performance razoável. Dessa maneira, é introduzido um modelo não linear para o classificador: transforma-se as amostras $x_i$ em um novo espaço obtendo amostras $\Phi(x_i)$ que são, no caso ideal, linearmente separáveis, como mostrado na figura \ref{fig:svm-kernel}.
+
+\begin{figure}[h]
+\caption{Exemplo de mapeamento para obter um classes linearmente separáveis. Espaço transformado e original, respectivamente.}
+\centering
+\includegraphics[width=0.8\textwidth]{svm/svm-kernel}
+\label{fig:svm-kernel}
+\end{figure}
+
+Formalmente tem-se a função decisão modificada: $f(x)=w^T \Phi(x) +b$.  Na prática, entretanto, não se calcula as coordenadas da amostra transformada no novo espaço. Ao invés disso utiliza-se o \textit{kernel trick} em que o produto interno entre duas amostra transformadas é obtida diretamente através da avaliação da função $\Phi(x)$ sob as amostras originais.
+
+O teorema da representação de Kimeldorf e Wahba mostra que podemos representar $w$ como $w=\sum_{i=1}^m \alpha_i \Phi(x_i)$ para algumas variáveis $\alpha$. Portanto, ao invés de minimizar $w$ diretamente, podemos minimizar $\alpha$ e a função decisão se torna: 
+\begin{equation}
+	\label{eq:svm-decision-func}
+	f(x)=\sum_{i=1}^m \alpha_i \Phi(x_i) \Phi(x) +b
+\end{equation}
+
+Chamamos $K(x_i, x) = \Phi(x_i) \cdot \Phi(x)$ de função \textit{kernel} ou função núcleo. Um exemplo bastante utilizado é a \textit{Radial Basis Function -- RBF}, dada por: 
+
+\begin{equation}
+	\label{eq:svm-kernel-func}
+	K(x,x_i) = \exp\left(-\frac{\abs{x-x_i}^2}{2\sigma^2}\right)
+\end{equation}
+
+Nesse trabalho utilizou-se a biblioteca \textit{Scikit-learn} para a implementação do algoritmo de treinamento SVM. Além de fornecer as amostras, no caso, a descrição dos candidatos, é necessário configurar os parâmetros $C$, para penalidade dos erros de treinamento e o parâmetro $\sigma$ do \textit{kernel RBF}. 
+
+A abordagem utilizada foi o método de treinamento automático fornecido pela biblioteca: indica-se um conjunto de elementos para cada um dos parâmetros e todas as combinações de parâmetros são testadas. Ao final do procedimento as estatísticas de cada tentativa é exibida e a que tiver melhor performance é escolhida.
+
+Nota-se ainda que é possível utilizar de todos os núcleos do processador com essa biblioteca, o que traz um impacto bastante positivo na performance temporal do algoritmo.
+

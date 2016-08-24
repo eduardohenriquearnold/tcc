@@ -50,16 +50,7 @@ Após ter uma representação adequada das experiências escolhe-se o tipo do cl
 \label{fig:svm-hyperplane}
 \end{figure}
 
-Para amostras com distribuição complexa a possibilidade de não existir um hiperplano que consiga separar o conjunto satisfatóriamente é grande. Para resolver esse problema emprega-se uma função que mapeia essas amostras para um espaço de maior dimensionalidade em que as classes sejam linearmente separáveis, como mostrado na figura \ref{fig:svm-kernel}. Na prática, entretanto, não se calcula as coordenadas da amostra transformada no novo espaço, mas uma técnica chamada \textit{kernel trick} em que o produto interno dessa amostra transformada é obtida diretamente através da amostra original, o que permite que o método escale facilmente.
-
-\begin{figure}[h]
-\caption{Exemplo de mapeamento para obter um classes linearmente separáveis}
-\centering
-\includegraphics[width=0.8\textwidth]{svm/svm-kernel}
-\label{fig:svm-kernel}
-\end{figure}
-
-Para classificações não-binárias pode-se adotar a estratégia um-contra-um em que um classificador binário é utilizado para cada par de classes e o resultado é obtido pela classe que for mais votada entre os classificadores binários.
+Para amostras com distribuição complexa a possibilidade de não existir um hiperplano que consiga separar o conjunto satisfatóriamente é grande. Para resolver esse problema emprega-se uma função que mapeia essas amostras para um espaço de maior dimensionalidade em que as classes sejam linearmente separáveis.
 
 \section{Aprendizado profundo}
 As redes neurais artificiais foram inspiradas no entendimento rudimentar dos neurônios biológicos ainda na década de 1950, porém não mais pretende obter um modelo fiel do sistema biológico mas em obter bons resultados para tarefas de aprendizado de máquina. Suas estruturas eram então compostas por um único elemento chamado \textit{perceptron}, um modelo matemático que recebe múltiplas entradas, faz um somatório ponderado por parâmetros associados a cada entrada e então aplica uma função não-linear, chamada função de ativação, para retornar uma única saída.
