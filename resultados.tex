@@ -1,10 +1,12 @@
 \chapter{Resultados}
 
-Para avaliar o desempenho das diferentes soluções apresentadas nesse trabalho se faz necessário a definição de medidas que permitam comparar os resultados objetivamente e indicar facilmente os aspectos positivos e negativos relevantes de cada método.
+\section{Medidas de avaliação}
+%https://sigarra.up.pt/feup/pt/pub_geral.show_file?pi_gdoc_id=365661 (termos recall e accuracy)
+Para avaliar o desempenho das diferentes soluções apresentadas nesse trabalho se faz necessário a utilização de medidas que permitam comparar os resultados objetivamente e indicar facilmente os aspectos positivos e negativos relevantes de cada método. 
 
-Em geral, num problema de classificação os indicador mais comum é a \textbf{precisão geral}, definida como a razão das classificações corretas pelo total de classificações. É fundamental notar, entretanto, que essa medida sozinha não é suficiente para avaliar um classificador, especialmente se o dataset for desbalanceado. Por exemplo, ao considerar um dataset com duas amostras negativas entre 20 e utilizar um classificador trivial que classifica qualquer entrada como sendo positiva, obtem-se uma precisão geral de 90\%, demonstrando que essa medida sozinha não é suficiente para avaliação.
+Em geral, num problema de classificação o indicador mais comum é a \textit{accuracy}, definida como a razão das classificações corretas pelo total de classificações. É fundamental notar, entretanto, que essa medida sozinha não é suficiente para avaliar um classificador, especialmente se o dataset for desbalanceado. Por exemplo, ao considerar um dataset com duas amostras negativas entre 20 e utilizar um classificador trivial que classifica qualquer amostra como sendo positiva, obtem-se uma precisão geral de 90\%, demonstrando que essa medida sozinha não é suficiente para avaliação.
 
-Uma maneira compacta de representar a eficiência de um classificador é a \textbf{matriz de confusão}. Para uma classificação binária é uma matriz 2x2 em que a primeira linha indica as amostras falsas e a segunda as amostras verdadeiras. De forma semelhante, a primeira coluna indica amostras que foram classificadas como falsas e a segunda que foram classificadas como verdadeiras. Para saber quantas amostras positivas foram erroneamente classificadas como negativas (número de falso negativos), basta verificar o elemento da primeira coluna e segunda linha.
+Uma maneira compacta de representar a eficiência de um classificador é a \textbf{matriz de confusão}. Para uma classificação binária é uma matriz 2x2 em que a primeira linha indica as amostras falsas e a segunda as amostras verdadeiras. De forma semelhante, a primeira coluna indica amostras que foram classificadas como falsas e a segunda que foram classificadas como verdadeiras. Combinando-se essas linhas e colunas, obtém-se o número de verdadeiros negativos $TN$, falsos positivos $FP$, falsos negativos $FN$ e verdadeiros positivos $TP$, respectivamente.
 
 \begin{table}[h]
 \centering
@@ -14,23 +16,56 @@ Uma maneira compacta de representar a eficiência de um classificador é a \text
 \cline{3-4}
                                             &   & \multicolumn{2}{l|}{Classificado} \\ \cline{3-4} 
                                             &   & 0               & 1               \\ \hline
-\multicolumn{1}{|l|}{\multirow{2}{*}{Real}} & 0 & TN              & FP              \\ \cline{2-4} 
-\multicolumn{1}{|l|}{}                      & 1 & FN              & TP              \\ \hline
+\multicolumn{1}{|l|}{\multirow{2}{*}{Real}} & 0 & $TN$              & $FP$              \\ \cline{2-4} 
+\multicolumn{1}{|l|}{}                      & 1 & $FN$              & $TP$              \\ \hline
 \end{tabular}
 \end{table}
 
-De posse dessa matriz é possível obter outras medidas de interesse. Define-se \textbf{sensibilidade} como $S = \frac{TP}{TP+FN}$ e fornece um indicativo da relação com falso negativos. A \textbf{precisão específica} é definida por $\text{PE}=\frac{TP}{TP+FP}$ e indica a relação com falso positivos. Ambas as grandezas são importantes ao se avaliar um classificador, porém em uma aplicação específica uma delas pode ser mais relevante.
+Algumas grandezas utilizadas no campo de recuperação da informação \cite{inforetrival} são também úteis no contexto de classificação. O \textit{recall} é a fração de amostras positivas corretamente classificadas em relação ao número completo de amostras positivas do \textit{dataset}:
+\begin{equation}
+R = \frac{TP}{TP+FN}
+\end{equation}
+A \textit{precision} fornece a fração das amostras positivas corretamente classificadas com relação à todas as amostras classificadas como positivas:
+\begin{equation}
+P = \frac{TP}{TP+FP}
+\end{equation}
+
+Ambas as grandezas são importantes ao se avaliar um classificador, porém em uma aplicação específica uma delas pode ser mais relevante, como no caso desse trabalho. Para a indústria em questão é mais importante que a linha de produção se mantenha em funcionamento o maior tempo possível, portanto, deseja-se minimizar a quantidade de falsos positivos, que significam cabeças incorretamente identificadas que interrompem a produção sem necessidade. Nesse caso a medida de maior destaque será a \textit{precision}.
+
+Outro aspecto a destacar na avaliação de classificadores é que não basta avaliar os indicadores apresentados apenas no \textit{dataset}. Isso acontece visto que o modelo pode ter se tornado muito específico para o conjunto de dados de treinamento, isto é, não generaliza bem, processo conhecido como \textit{overfitting}. Portanto, para medir o real desempenho do classificador utiliza-se de outro conjunto de dados supervisionados chamado de conjunto de validação -- \textit{validation set}, que não é utilizado para o treinamento do classificador.
 
 \section{Método tradicional}
-O dataset foi gerado a partir de gravações realizadas no ambiente indústrial onde o sistema deverá ser instalado. A câmera foi posicionada num ponto próximo de onde deve ocorrer a sua instalação final. Diversos vídeos foram gravados e posteriormente analisados. Utilizando o algoritmo de detecção de candidatos, selecionou-se manualmente em cada quadro quais dos candidatos eram verdadeiramente cabeças. Repetindo esse processo em cada quadro formou-se um dataset de 2459 amostras negativas (não cabeças) e 667 positivas (cabeças).
+O dataset foi gerado a partir de gravações realizadas no ambiente indústrial onde o sistema deverá ser instalado. A câmera foi posicionada num ponto próximo de onde deve ocorrer a sua instalação final. Diversos vídeos foram gravados e posteriormente analisados. Utilizando o algoritmo de detecção de candidatos, selecionou-se manualmente em cada quadro quais dos candidatos eram verdadeiramente cabeças. Repetindo esse processo em cada quadro formou-se um dataset reduzido de 2459 amostras negativas (não cabeças) e 667 positivas (cabeças). Em seguida extendeu-se esse dataset reduzido para 9894 amostras negativas e 1222 positivas, formando o dataset completo. Criou-se, ainda, um conjunto de validação independente de 2738 amostras negativas e 235 amostras positivas.
 
-Avaliou-se o resultado das diferentes opções de descritores descritos no capítulo \ref{chap:tradicional}: grades simples (7x7) e anéis concêntricos de diferentes dimensões. Utilizando um processo de treinamento automático do SVM, varreu-se o espaço dos parâmetros $C$ entre $0.0001$ e $0.01$ com passos de $0.001$ e $\sigma$ entre $1$ e $100$ com passos de $5$. Os melhores resultados, selecionados segundo sensitividade, são apresentados na forma de matriz de confusão para cada um dos descritores.
-
-%TODO resultado grades simples
+Avaliou-se o resultado das diferentes descritores mencionados no capítulo \ref{chap:tradicional} utilizando um processo de treinamento automático do SVM: varreu-se o espaço dos parâmetros $C$ entre $0.0001$ e $0.01$ com passos de $0.001$ e $\sigma$ entre $1$ e $100$ com passos de $5$. Os melhores resultados, selecionados segundo a medida de \textit{precision}, são apresentados na forma de matriz de confusão para cada um dos descritores.
 
 \begin{table}[h]
 \centering
-\caption{Anéis concêntricos com 8 dimensões}
+\caption{Grades simples (7x7), dataset completo}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 9881 & 13 \\ \hline
+\multicolumn{1}{|l|}{1} & 36   & 1186 \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Grades simples (7x7), conjunto validação}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2445 & 293 \\ \hline
+\multicolumn{1}{|l|}{1} & 181  & 54 \\ \hline
+\end{tabular}
+\end{table}
+
+Para o descritor de anéis concêntricos, primeiramente utilizou-se o dataset reduzido para avaliar qual a melhor dimensão do descritor, observando os seguintes resultados.
+
+\begin{table}[h]
+\centering
+\caption{Anéis concêntricos com 8 dimensões, dataset reduzido}
 \begin{tabular}{l|l|l|}
 \cline{2-3}
                         & 0 & 1 \\ \hline
@@ -41,7 +76,7 @@ Avaliou-se o resultado das diferentes opções de descritores descritos no capí
 
 \begin{table}[h]
 \centering
-\caption{Anéis concêntricos com 12 dimensões}
+\caption{Anéis concêntricos com 12 dimensões, dataset reduzido}
 \begin{tabular}{l|l|l|}
 \cline{2-3}
                         & 0 & 1 \\ \hline
@@ -52,7 +87,7 @@ Avaliou-se o resultado das diferentes opções de descritores descritos no capí
 
 \begin{table}[h]
 \centering
-\caption{Anéis concêntricos com 16 dimensões}
+\caption{Anéis concêntricos com 16 dimensões, dataset reduzido}
 \begin{tabular}{l|l|l|}
 \cline{2-3}
                         & 0 & 1 \\ \hline
@@ -63,7 +98,7 @@ Avaliou-se o resultado das diferentes opções de descritores descritos no capí
 
 \begin{table}[h]
 \centering
-\caption{Anéis concêntricos com 18 dimensões}
+\caption{Anéis concêntricos com 18 dimensões, dataset reduzido}
 \begin{tabular}{l|l|l|}
 \cline{2-3}
                         & 0 & 1 \\ \hline
@@ -72,9 +107,9 @@ Avaliou-se o resultado das diferentes opções de descritores descritos no capí
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
-\caption{Anéis concêntricos com 20 dimensões}
+\caption{Anéis concêntricos com 20 dimensões, dataset reduzido}
 \begin{tabular}{l|l|l|}
 \cline{2-3}
                         & 0 & 1 \\ \hline
@@ -83,15 +118,26 @@ Avaliou-se o resultado das diferentes opções de descritores descritos no capí
 \end{tabular}
 \end{table}
 
-Tendo visto que o melhor resultado foi obtido com 18 dimensões, utilizou-se um dataset mais representativo com 9894 amostras negativas e 1222 positivas, avaliou-se esse descritor novamente, obtendo-se o seguinte resultado.
+Tendo visto que o melhor resultado foi obtido com 18 dimensões, utilizou-se o dataset completo para o treinamento e posterior avaliação através do conjunto de validação, como visto nas tabelas seguintes.
 
 \begin{table}[h!]
 \centering
-\caption{Anéis concêntricos com 18 dimensões, dataset expandido}
+\caption{Anéis concêntricos com 18 dimensões, dataset completo}
 \begin{tabular}{l|l|l|}
 \cline{2-3}
                         & 0 & 1 \\ \hline
 \multicolumn{1}{|l|}{0} & 9859 & 35 \\ \hline
 \multicolumn{1}{|l|}{1} & 213 & 1009 \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Anéis concêntricos com 18 dimensões, conjunto validação}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2573 & 165 \\ \hline
+\multicolumn{1}{|l|}{1} & 116  & 119 \\ \hline
 \end{tabular}
 \end{table}

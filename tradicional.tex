@@ -1,6 +1,6 @@
 \chapter{Detecção utilizando métodos tradicionais} \label{chap:tradicional}
 
-O sistema de segurança na fábrica consiste na detecção de pessoas sob a área da ponte. Esse é um problema de localização de objetos, mais especificamente, de detecção de pessoas. Tradicionalmente divide-se essa tarefa em três técnicas de visão computacional: obtenção de candidatos a objeto, obter descrição de cada candidato e então validar a amostra através de classificador. Essa solução foi baseada no trabalho de \cite{rauter}, que propõe um método de obtenção de candidatos e de extração de características. Primeiramente descreve-se aspectos técnicos da aplicação e em seguida cada uma das tarefas para a concretização da solução.
+O sistema de segurança na fábrica consiste na detecção de pessoas sob a área da ponte. Esse é um problema de localização de objetos, mais especificamente, de detecção de pessoas. Tradicionalmente divide-se essa tarefa em três técnicas de visão computacional: obtenção de candidatos a objeto, obter descrição de cada candidato e então validar a amostra através de classificador. Essa solução foi baseada no trabalho de \cite{rauter}, que propõe um método de obtenção de candidatos e de extração de características. Primeiramente descreve-se aspectos técnicos da aplicação e em seguida cada uma das tarefas para a concretização da solução, por fim, pontos sobre a implementação são mencionados.
 
 \section{Caracterização da aplicação}
 Para essa aplicação, recomenda-se a utilização de imagens de profundidade, em que o valor dos pixels indicam a distância entre a câmera e o objeto em questão. Isso se deve ao fato de esse sensor fornecer uma medida independente de luminosidade e variações de cor ou textura se comparada à uma câmera RGB tradicional. Três câmeras foram compradas e avaliadas: \textit{ASUS XtionPRO}, \textit{Orbbec Astra PRO} e \textit{Stereolabs ZED}. As duas primeiras funcionam com o princípio de laser estruturado, já a última funciona baseado em visão estéreo (duas câmeras). Através de testes determinou-se que as maiores distâncias detectadas foram de 4m, 5m e 20m respectivamente. Dado que a câmera será instalada a 6m do chão, em visão superior, optou-se por utilizar a câmera \textit{ZED}.
@@ -111,7 +111,10 @@ Chamamos $K(x_i, x) = \Phi(x_i) \cdot \Phi(x)$ de função \textit{kernel} ou fu
 	K(x,x_i) = \exp\left(-\frac{\abs{x-x_i}^2}{2\sigma^2}\right)
 \end{equation}
 
-Nesse trabalho utilizou-se a biblioteca \textit{Scikit-learn} para a implementação do algoritmo de treinamento SVM. Além de fornecer as amostras, no caso, a descrição dos candidatos, é necessário configurar os parâmetros $C$, para penalidade dos erros de treinamento e o parâmetro $\sigma$ do \textit{kernel RBF}. 
+\section{Implementação}
+Para os algoritmos de processamento de imagens e extração de características, fez-se uso da biblioteca \textit{OpenCV} que implementa grande quantidade de operações básicas em imagens e fornece um ambiente rico de trabalho para criar novas funcionalidades.
+
+No que se refere a aprendizado de máquina, utilizou-se a biblioteca \textit{Scikit-learn} que implementa o algoritmo de treinamento SVM. Além de fornecer as amostras, no caso, a descrição dos candidatos, é necessário configurar os parâmetros $C$, para penalidade dos erros de treinamento e o parâmetro $\sigma$ do \textit{kernel RBF}. 
 
 A abordagem utilizada foi o método de treinamento automático fornecido pela biblioteca: indica-se um conjunto de elementos para cada um dos parâmetros e todas as combinações de parâmetros são testadas. Ao final do procedimento as estatísticas de cada tentativa é exibida e a que tiver melhor performance é escolhida.
 
