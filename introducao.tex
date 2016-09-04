@@ -11,7 +11,7 @@ Os aspectos fundamentais e um comparativo entre técnicas tradicionais e de apre
 \section{Aprendizado de máquina}
 Segundo Arthur Samuel \cite{Samuel59somestudies}, aprendizado de máquina é o ramo da inteligência artificial que estuda técnicas que possibilitam um computador realizar uma tarefa sem ser explicitamente programado para desempenhá-la. 
 
-Mitchell (1997) define: "Se diz que um computador aprende com uma experiência $E$ com respeito a uma tarefa $T$ e medida de desempenho $P$ a medida que o desempenho verificado por $P$ diante de uma tarefa $T$ progride com a experiência $E$". 
+Mitchell \cite{Mitchell:ML} define: "Se diz que um computador aprende com uma experiência $E$ com respeito a uma tarefa $T$ e medida de desempenho $P$ a medida que o desempenho verificado por $P$ diante de uma tarefa $T$ progride com a experiência $E$". 
 
 Entre as tarefas pode-se citar classificação, em que uma amostra deve ser atribuída a uma das classes apresentadas; regressão, em que uma amostra deve ser mapeada em um valor real; síntese, onde o algoritmo deve gerar novas amostras que sejam similares às de entrada.
 
@@ -31,7 +31,7 @@ As experiências formam o conjunto de dados que o algoritmo utiliza para aprende
 Nesse trabalho deseja-se realizar a detecção de objetos, mais especificamente, pessoas. Essa tarefa é um caso particular de classificação e fará uso de um conjunto de dados supervisionados.
 
 \section{Métodos clássicos de classificação de objetos}
-O problema de classificação de objetos é um clássico no campo de visão computacional e requer aprendizado de máquina. Uma abordagem tradicional consiste nos seguintes passos.
+O problema de classificação de objetos é um clássico no campo de visão computacional e requer aprendizado de máquina. Uma abordagem tradicional \cite{traditional-objdetect} consiste nos seguintes passos.
 	\begin{enumerate}
 	\item Identificar uma região de interesse no caso de uma imagem com múltiplos objetos.
 	\item Utilizar um extrator de características para descrição do objeto.
@@ -43,7 +43,7 @@ Métodos tradicionais são superficiais a medida que requerem que um extrator de
 A escolha do descritor está diretamente ligada com a qualidade do processo de classificação. Um descritor é criado especificamente para uma aplicação e dificilmente pode ser utilizado em outros campos: um descritor para imagens é incompatível com um sinal de áudio. Assim, sua concepção demanda conhecimento e prática de especialistas da área de aplicação. Para um problema de classificação entre imagens de bananas e maçãs, por exemplo, um descritor relacionado a cor teria maior relevância do que a de bordas.
 
 % SVM
-Após ter uma representação adequada das experiências escolhe-se o tipo do classificador. O modelo de Máquina de Vetores Suporte, \textit{Support Vector Machines} -- SVM, é utilizado pois possui representação e uso simplificado e demonstrou bons resultados ao tratar amostras de dimensões medianas (ordem de centenas) com um dataset pequeno (ordem de milhares de amostras) sem ajuste fino. Seu modelo consiste em encontrar um hiperplano de separação entre classes ótimo, no sentido de maximizar a distância entre as amostras e o hiperplano. As amostras mais próximas do hiperplano são chamadas vetores suportes, como mostrado na figura \ref{fig:svm-hyperplane}.
+Após ter uma representação adequada das experiências escolhe-se o tipo do classificador. O modelo de Máquina de Vetores Suporte, \textit{Support Vector Machines} -- SVM, é utilizado pois possui representação e uso simplificado e demonstrou bons resultados \cite{smith2001svm} ao tratar amostras de dimensões medianas (ordem de centenas) com um dataset pequeno (ordem de milhares de amostras) sem ajuste fino. Seu modelo consiste em encontrar um hiperplano de separação entre classes ótimo, no sentido de maximizar a distância entre as amostras e o hiperplano. As amostras mais próximas do hiperplano são chamadas vetores suportes, como mostrado na figura \ref{fig:svm-hyperplane}.
 
 \begin{figure}[h]
 \centering
@@ -55,7 +55,7 @@ Após ter uma representação adequada das experiências escolhe-se o tipo do cl
 Para amostras com distribuição complexa a possibilidade de não existir um hiperplano que consiga separar o conjunto satisfatóriamente é grande. Para resolver esse problema emprega-se uma função que mapeia essas amostras para um espaço de maior dimensionalidade em que as classes sejam linearmente separáveis.
 
 \section{Aprendizado profundo}
-Outra técnica de aprendizado de destaque são as redes neurais artificiais. Essas foram inspiradas no entendimento rudimentar dos neurônios biológicos ainda na década de 1950, porém deixou o foco biológico para fornecer modelos robustos de aprendizado de máquina. Suas estruturas eram então compostas por um único elemento chamado \textit{perceptron}, um modelo matemático que recebe múltiplas entradas, faz um somatório ponderado por parâmetros associados a cada entrada e então aplica uma função não-linear, chamada função de ativação, para retornar uma única saída.
+Outra técnica de aprendizado de destaque são as redes neurais artificiais. Essas foram inspiradas no entendimento rudimentar dos neurônios biológicos ainda na década de 1950 \cite{perceptron1957}, porém deixou o foco biológico para fornecer modelos robustos de aprendizado de máquina. Suas estruturas eram então compostas por um único elemento chamado \textit{perceptron}, um modelo matemático que recebe múltiplas entradas, faz um somatório ponderado por parâmetros associados a cada entrada e então aplica uma função não-linear, chamada função de ativação, para retornar uma única saída.
 
 \begin{figure}[h]
 \centering
@@ -97,7 +97,7 @@ cuja derivada para valores positivos é unitária.
 \end{figure}
 
 \subsection{Redes convolucionais}
-A evolução natural da rede MLP se deu na década de 1970 através das redes convolucionais. Uma aplicação de destaque foi a leitura de caracteres (OCR) de talão de cheques criada por LeCun em 1989. Apesar disso os algoritmos de treinamento ainda eram precários e a técnica acabou sendo abandonada em detrimento de técnicas superficiais, como \textit{Support Vector Machines}.
+A evolução natural da rede MLP se deu na década de 1970 através das redes convolucionais. Uma aplicação de destaque foi a leitura de caracteres (OCR) de talão de cheques criada por LeCun em 1990 \cite{lecunhandwritten}. Apesar disso os algoritmos de treinamento ainda eram precários e a técnica acabou sendo abandonada em detrimento de técnicas superficiais, como \textit{Support Vector Machines}.
 
 Com o aumento drástico do poder de processamento essas redes ultrapassaram seus predecessores e ganharam destaque novamente após o trabalho de Hinton \cite{hintonDL} em 2006, que estabeleceu uma base sólida para o treinamento de grandes redes convolucionais. Essa contribuição mudou o paradigma do aprendizado de máquina no que se refere à extração de características e se mostra ainda hoje como estado da arte. 
 
