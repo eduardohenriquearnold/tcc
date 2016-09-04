@@ -1,0 +1,101 @@
+\documentclass[10pt,brazil]{book}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazilian]{babel}
+
+\usepackage{array}
+\usepackage{longtable}
+
+% Identificação
+\newcommand{\thetitle}{Técnicas de aprendizado de máquina para detecção de pessoas em ambiente industrial}
+\newcommand{\theauthor}{Eduardo Henrique Arnold}
+\newcommand{\theadvisor}{Danilo Silva}
+\newcommand{\thecoadvisor}{}
+\newcommand{\theplace}{Florianópolis}
+\newcommand{\thedate}{12 de Dezembro de 2016}
+
+
+% Paper geometry
+\usepackage[a5paper]{geometry}
+\geometry{tmargin=20mm, bmargin=15mm,
+  lmargin=25mm, rmargin=15mm,
+  % lmargin=20mm, rmargin=20mm, % Texto centralizado
+  headheight=7mm, footskip=7mm}
+
+% Graphics
+\usepackage{graphicx}
+\graphicspath{ {img/} }
+\usepackage[font=small]{caption}
+\usepackage[font=footnotesize]{subcaption}
+
+% Latin Modern font
+\usepackage{lmodern}
+
+% Hyperref configuration % Not necessary
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={\thetitle},
+  pdfauthor={\theauthor}}
+
+% Reformats section and subsection titles
+\usepackage{sectsty}
+\sectionfont{\sffamily\large}
+\subsectionfont{\sffamily\normalsize}
+\partfont{\sffamily\Huge}
+
+% Fancy chapter
+\usepackage[Sonny]{fncychap}
+
+% Fancy header customization
+\usepackage{fancyhdr}
+\fancyhead{} % Clear all header fields
+\fancyfoot{} % Clear all footer fields
+\fancyhead[EL]{\sffamily\footnotesize{\thepage}}   % even, left
+\fancyhead[ER]{\sffamily\footnotesize{\leftmark}}  % even, right
+\fancyhead[OL]{\sffamily\footnotesize{\rightmark}} % odd, left
+\fancyhead[OR]{\sffamily\footnotesize{\thepage}}   % odd, right
+\pagestyle{fancy}
+
+% Removes headers and footers for pages between chapters
+\usepackage{emptypage}
+
+% Line spacing
+\usepackage{setspace}
+\setstretch{1.1}
+\renewcommand{\arraystretch}{1.25}
+
+% Change numbered lists to lowercase roman numerals
+\usepackage{enumerate}
+\renewcommand{\labelenumi}{(\textit{\roman{enumi}})}
+\newcounter{tmpc} % This is for resuming an 'enumerate' list
+
+\newcommand{\cleardoublepageempty}{\clearpage{\pagestyle{empty}\cleardoublepage}}
+
+\usepackage[nottoc,notlot,notlof]{tocbibind} % incluir referencias bibliográficas no sumário
+
+\include{preamble}
+
+
+% Body
+\begin{document}
+  \input{cover-cool} % Para versão impressa comentar essa linha
+					 % Deixar apenas para a versão pdf
+					 
+  \pagenumbering{roman} 
+  \input{cover}
+  \input{ficha-catalografica}
+  \input{signatures}
+  \input{acknowledgment}
+  \input{table-of-contents}
+  \label{pg:roman-count}
+  \cleardoublepage
+
+  \pagenumbering{arabic}
+  \input{introducao}
+  \input{tradicional}
+  \input{resultados}
+  \input{bibliography}
+  \appendix
+  \label{pg:arabic-count}
+  \cleardoublepage
+\end{document}
