@@ -11,7 +11,7 @@ Os aspectos fundamentais e um comparativo entre técnicas tradicionais e de apre
 \section{Aprendizado de máquina}
 Segundo Arthur Samuel \cite{Samuel59somestudies}, aprendizado de máquina é o ramo da inteligência artificial que estuda técnicas que possibilitam um computador realizar uma tarefa sem ser explicitamente programado para desempenhá-la. 
 
-Mitchell \cite{Mitchell:ML} define: "Se diz que um computador aprende com uma experiência $E$ com respeito a uma tarefa $T$ e medida de desempenho $P$ a medida que o desempenho verificado por $P$ diante de uma tarefa $T$ progride com a experiência $E$". 
+Mitchell \cite{Mitchell:ML} define: ``Se diz que um computador aprende com uma experiência $E$ com respeito a uma tarefa $T$ e medida de desempenho $P$ a medida que o desempenho verificado por $P$ diante de uma tarefa $T$ progride com a experiência $E$''. 
 
 Entre as tarefas pode-se citar classificação, em que uma amostra deve ser atribuída a uma das classes apresentadas; regressão, em que uma amostra deve ser mapeada em um valor real; síntese, onde o algoritmo deve gerar novas amostras que sejam similares às de entrada.
 
@@ -30,8 +30,8 @@ As experiências formam o conjunto de dados que o algoritmo utiliza para aprende
 
 Nesse trabalho deseja-se realizar a detecção de objetos, mais especificamente, pessoas. Essa tarefa é um caso particular de classificação e fará uso de um conjunto de dados supervisionados.
 
-\section{Métodos clássicos de classificação de objetos}
-O problema de classificação de objetos é um clássico no campo de visão computacional e requer aprendizado de máquina. Uma abordagem tradicional \cite{traditional-objdetect} consiste nos seguintes passos.
+\section{Métodos clássicos de detecção de objetos}
+O problema de detecção de objetos é um clássico no campo de visão computacional e requer aprendizado de máquina. Uma abordagem tradicional \cite{traditional-objdetect} consiste nos seguintes passos.
 	\begin{enumerate}
 	\item Identificar uma região de interesse no caso de uma imagem com múltiplos objetos.
 	\item Utilizar um extrator de características para descrição do objeto.
@@ -119,7 +119,7 @@ Esse trabalho apresenta três soluções para o problema de detecção de pessoa
 
 Em seguida, propõe-se um método que emprega o mesmo algoritmo tradicional de localização de candidatos porém utiliza métodos de aprendizado profundo para a etapa de classificação. Compreende-se que o classificador encontra de maneira automática um descritor de caracterísitcas específico para o conjunto de dados do problema nas camadas de convolução. A classificação própriamente dita se dá nas camadas finais da rede profunda.
 
-A terceira solução é concebida utilizando-se integralmente soluções de aprendizado profundo: tanto localização como detecção. Uma rede de convolução é utilizada e recebe como entrada a imagem completa do ambiente industrial. A saída é uma máscara indicando a posição das pessoas encontradas na imagem. Essa rede é treinada utilizando um amplo conjunto de quadros e algortimo de propagação reversa de erros.
+A terceira solução é concebida utilizando-se integralmente soluções de aprendizado profundo: tanto localização como classificação. Uma rede de convolução é utilizada e recebe como entrada a imagem completa do ambiente industrial. A saída é uma máscara indicando a posição das pessoas encontradas na imagem. Essa rede é treinada utilizando um amplo conjunto de quadros e algortimo de propagação reversa de erros.
 
 Após a apresentação teórica das três soluções são exibidos os resultados e as figuras de mérito que permitem a comparar o desempenho das propostas e determinar a melhor solução.
 
