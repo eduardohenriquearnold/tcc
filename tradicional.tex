@@ -59,6 +59,7 @@ Após obter a descrição de cada candidato é possível classificar eles de man
 \end{figure}
 
 \section{Classificação}
+\label{sec:classificacao:svm}
 %Referência SVM http://www.cs.columbia.edu/~kathy/cs4701/documents/jason_svm_tutorial.pdf
 
 Utiliza-se um classificador binário \textit{SVM}. Seja o dataset o conjunto $(x_i, y_i)$ para $i=1 \dots N$ com $x_i \in \mathbb{R}^d$ e $y_i \in {-1, 1}$. Deseja-se encontrar um classificador $f(x)$ tal que 
@@ -81,7 +82,7 @@ O dataset é considerado linearmente separável se for possível encontrar uma r
 \label{fig:svm-margin}
 \end{figure}
 
-O aprendizado consiste em encontrar o vetor de pesos $w$ e o escalar $b$ que minimizem $abs{w}$, portanto maximizando a margem, sujeitos à $y_i(w^T x_i) \geq 1$. Esse é um problema de otimização quadrática.
+O aprendizado consiste em encontrar o vetor de pesos $w$ e o escalar $b$ que minimizem $abs{w}$, portanto maximizando a margem, sujeitos à $y_i(w^T x_i) \geq 1$. Esse é um problema de otimização convexa, em que qualquer mínimo local é também global.
 
 Para o caso não onde o dataset não é linearmente separável, minimiza-se a função custo 
 \begin{equation*}
