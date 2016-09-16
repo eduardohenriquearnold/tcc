@@ -56,12 +56,12 @@ Para amostras com distribuição complexa a possibilidade de não existir um hip
 
 \section{Aprendizado profundo}
 \label{introducao:perceptron}
-Outra técnica de aprendizado de destaque são as redes neurais artificiais. Essas foram inspiradas no entendimento rudimentar dos neurônios biológicos ainda na década de 1950 \cite{perceptron1957}, porém deixou o foco biológico para fornecer modelos robustos de aprendizado de máquina. Suas estruturas eram então compostas por um único elemento chamado \textit{perceptron}, um modelo matemático descrito por
+Outra técnica de aprendizado de destaque são as redes neurais artificiais. Essas foram inspiradas no entendimento rudimentar dos neurônios biológicos ainda na década de 1950 \cite{perceptron1957}, porém deixou o foco biológico para fornecer modelos robustos de aprendizado de máquina. Suas estruturas eram então compostas por um único elemento chamado de \textit{perceptron}, neurônio artificial ou unidade, um modelo matemático descrito por
 \begin{equation}
 \label{eq:perceptron}
-o(x) = \phi\left(\sum_{i=1}^n x_i w_i\right)
+o(x) = \phi\left(\sum_{i=1}^n x_i w_i+b\right) = \phi\left(w^T x+b\right)
 \end{equation}
-onde $\phi(x)$ é chamada de função de ativação e em geral é não linear. 
+onde $w$ é o vetor de pesos, $b$ de bias e $\phi(x)$ é chamada de função de ativação e em geral é não linear. 
 
 \begin{figure}[h]
 \centering
@@ -74,44 +74,34 @@ Alguns problemas impediram os avanços desse classificador, a destacar: a incapa
 
 A partir da década de 1970 com o aumento drástico da capacidade computacional essa estrutura ganhou complexidade e passou a ser integrada por múltiplos \textit{perceptrons} organizados em camadas, o que possibilitou aprender datasets mais desafiadores. Foi esse evento que iniciou a jornada para o advento das técnicas de aprendizado profundo.
 
-Em contraposição com métodos tradicionais, em que é necessário criar um extrator de características manualmente, métodos profundos permitem que a amostra seja alimentada ao classificador sem pré-processamento. Isso é possível pois internamente o sistema gera um descritor ótimo para discriminação das amostras. Ou seja, o próprio classificador encontra a melhor maneira de representar as amostras para obter um bom resultado, economizando tempo e acabando com a necessidade de especialistas em criar esses descritores. %Referencia apresentação LeCun
-
-Outros autores também afirmam que o método é chamado profundo pois pressupõe um grande número de camadas intermediárias. Substitui-se a criação manual de um descritor para uma aplicação por uma maior complexidade do sistema e a necessidade grande volume de amostras necessárias para o treinamento do classificador.
-
 \subsection{Perceptron multicamadas (MLP)}
 A evolução do único perceptron para uma rede de camadas desse elemento aumentou a capacidade de aprendizado do modelo. Essa estrutura pode ser subdividida em: camada de entrada, camadas intermediárias e camada de saída. As camadas de entrada e de saída são compostas por um \textit{perceptron} para cada dimensão da entrada/saída. As camadas intermediárias são fundamentais pois permitem justamente a elaboração automática de um descritor.
 
-Esse processo evolutivo só foi possível com o advento de algoritmos de aprendizado por propagação reversa, \textit{backpropagation learning}. Ele  permite ajustar os parâmetros de cada unidade de maneira automática baseada na influência que essa unidade exerce sobre o erro das saídas e assim minimizar o erro total. Isso é feito calculando a derivada do erro na camada de saída em relação a cada um das unidades da camada anterior. Ajusta-se os parâmetros proporcionalmente a essa derivada e o processo se repete. Utiliza-se, então, um método de otimização, sendo o \textit{Stochastic Gradient Descent} o mais utilizado, para encontrar os parâmetros ótimos da rede.
+Esse processo evolutivo só foi possível com o advento de algoritmos de aprendizado por propagação reversa \cite{backpropagation}, \textit{backpropagation learning}. Ele  permite ajustar os parâmetros de cada unidade automaticamente baseado na influência que essa unidade exerce sobre o erro das saídas e assim minimizar o erro total. Isso é feito utilizando esse algoritmo para calcular o gradiente da função custo, que indica o erro, em função dos parâmetros das diferentes unidades. Ajusta-se os parâmetros proporcionalmente a esse gradiente através de um método de otimização chamado de \textit{Stochastic Gradient Descent} até satisfazer alguma condição de erro mínimo num processo conhecido como treinamento.
 
-Outro problema enfrentado foi o do gradiente enfraquecido: com o o aumento das camadas escondidas, as alterações dos parâmetros das primeiras camadas da rede, proveniente das derivadas, são muito pequenas, o que ocasiona um aprendizado bastante lento e impossibilita o uso do sistema. Uma solução proposta foi a mudança da função de ativação, anteriormente sigmoide
-\begin{equation}
-	\label{eq:sigm}
-	\sigma(x) = \frac{1}{1+e^{-x}}
-\end{equation}
-para outra conhecida como \textit{Rectified Linear Unit -- RELU}
-\begin{equation}
-	\label{eq:relu}
-	\text{RELU}(x) = \max(0,x)
-\end{equation}
-cuja derivada para valores positivos é unitária. 
+Essa estrutura já era utilizada na decada de 80, porém era limitada pelo número de camadas intermediárias, dado o problema do gradiente enfraquecido. Esse problema se resume na impossibilidade de alterar os parâmetros das camadas iniciais visto que o grandiente da função erro se enfraquece ao se propagar reversamente pela rede. Esse enfraquecimento advém da função de ativação utilizada até então, a sigmoide, que satura facilmente e causa uma derivada quase nula. Uma solução proposta em \cite{nair2010relu} prevê uma nova função de ativação, conhecida como RELU, descrita posteriormente, que resolve o problema do gradiente enfraquecido e permite criar redes com muitas camadas.
+
+Uma rede é considerada profunda quando possui um grande número de camadas intermediárias. Essa característica, em contraposição com métodos superficiais, permite que a amostra seja alimentada ao classificador sem pré-processamento. Isso é possível pois internamente o sistema gera um descritor ótimo para discriminação das amostras. Ou seja, o próprio classificador encontra a melhor maneira de representar as amostras para obter um bom resultado, economizando tempo e acabando com a necessidade de especialistas em criar esses descritores.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{deep/mlp}
-\caption{Exemplo de MLP com 5 camadas intermediárias}
+\caption{Exemplo de MLP com 5 camadas intermediárias. Amarelo, verde e azul correspondem, respectivamente, às camadas de entrada, intermediária e de saída.}
 \label{fig:mlp}
 \end{figure}
 
 \subsection{Redes convolucionais}
-A evolução natural da rede MLP se deu na década de 1970 através das redes convolucionais. Uma aplicação de destaque foi a leitura de caracteres (OCR) de talão de cheques criada por LeCun em 1990 \cite{lecunhandwritten}. Apesar disso os algoritmos de treinamento ainda eram precários e a técnica acabou sendo abandonada em detrimento de técnicas superficiais, como \textit{Support Vector Machines}.
+A evolução natural da rede MLP se deu ainda década de 1970 através das redes convolucionais. Uma aplicação de destaque foi a leitura de caracteres (OCR) de talão de cheques criada por LeCun em 1990 \cite{lecunhandwritten}. Apesar disso os algoritmos de treinamento ainda não estavam completamente consolidados e acabaram sendo abandonados em detrimento de técnicas superficiais, como \textit{Support Vector Machines}.
 
-Com o aumento drástico do poder de processamento essas redes ultrapassaram seus predecessores e ganharam destaque novamente após o trabalho de Hinton \cite{hintonDL} em 2006, que estabeleceu uma base sólida para o treinamento de grandes redes convolucionais. Essa contribuição mudou o paradigma do aprendizado de máquina no que se refere à extração de características e se mostra ainda hoje como estado da arte. 
+Com o aumento drástico do poder de processamento essas redes ultrapassaram seus predecessores e ganharam destaque novamente após o trabalho de Hinton \cite{hintonCONVNET} em 2006, que estabeleceu uma base sólida para o treinamento de grandes redes convolucionais. Essa contribuição mudou o paradigma do aprendizado de máquina no que se refere à extração de características e se mostra ainda hoje como estado da arte. 
 
-Nessas estruturas definem-se filtros, na forma de matrizes, que são convoluídas com uma imagem (proveniente da camada anterior) e resultam em outra imagem, com algum aspecto realçado. Em geral, muitos filtros são definidos e há, portanto, muitas imagens de saída para cada nível de convolução, o que aumenta drasticamente a dimensionalidade da rede. Nesses casos é comum utilizar um processo de \textit{max pooling} em que se seleciona diversos pixels (sob máscara quadrada) e um único pixel cujo valor é o máximo dos pixels do conjunto original é retornado.
+Nessas estruturas definem-se filtros, na forma de matrizes, que são convoluídas com uma matriz (proveniente da camada anterior) e resultam em outra matriz, com algum aspecto realçado. Em geral, muitos filtros são definidos e há, portanto, muitas matrizes de saída para cada nível de convolução, o que aumenta drasticamente a dimensionalidade da rede. Nesses casos é comum utilizar um processo de \textit{max pooling} em que se seleciona diversas unidades (sob máscara quadrada) e o valor máximo das unidades selecionadas é retornado.
 
-A grande vantagem dessas redes é reduzir o número de parâmetros geral do modelo e ainda assim manter uma alta capacidade de aprendizado. Elas também possibilitam que estruturas locais sejam encontradas mais facilmente de maneira a compor um descritor mais complexo e discriminativo para imagens.
+A abordagem mais tradicional desse tipo de rede utiliza um número de camadas convolucionais para extrair características mais relevantes das imagens e em seguida utiliza uma rede MLP para realizar alguma operação de classificação ou regressão sobre essas descrições.
 
-Além disso, existe a vantagem da invariância à translação: em uma rede MLP, para encontrar faces em uma imagem, seria necessário amostras em todas as posições da imagem possíveis. Já em uma rede convolucional esse problema é resolvido através da convolução e amostragem e garante esse aspecto fundamental para detecção de objetos.
+A grande vantagem dessas redes é reduzir o número de parâmetros geral do modelo e ainda assim manter uma alta capacidade de aprendizado. Elas também possibilitam que estruturas locais sejam encontradas mais facilmente de maneira a compor um descritor mais complexo e discriminativo para dados complexos como imagens e sinais de áudio.
+
+Além disso, existe a vantagem da invariância à translação: em uma rede MLP, para encontrar faces em uma imagem, seria necessário amostras em todas as posições possíveis da imagem. Já em uma rede convolucional esse problema é resolvido através da convolução e amostragem que garantem esse aspecto fundamental para detecção de objetos.
 
 \begin{figure}[h]
 \centering
