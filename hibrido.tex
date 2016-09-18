@@ -14,7 +14,7 @@ y=w^Tx+b
 \end{equation}
 em que $w$ corresponde ao vetor de pesos do classificador e $b$ bias. Verifica-se que esse modelo pode ser treinado de maneira simples e rápida, porém serve apenas para casos em que o dataset é linearmente separável, diferente da maioria dos problemas reais. Como visto na seção \ref{sec:classificacao:svm}, técnicas de mapeamento não lineares $\phi(x)$ são alternativas para tentar tornar essas amostras linearmente separáveis, como é o caso da função RBF. Na abordagem superficial, deve-se escolher esse mapeamento de maneira específica às amostras de forma manual. 
 
-Advém, então, uma das principais contribuições dos métodos profundos: a função de mapeamento $\phi(x,\theta)$ é determinada, entre uma gama ampla de funções, pelo próprio sistema através dos parâmetros $\theta$. Isso pode ser interpretado como a seleção automática, pelo algoritmo, do extrator de características que melhor represente o dataset. Assim, o modelo se torna 
+Advém, então, uma das principais contribuições dos métodos profundos: a função de mapeamento $\phi(x,\theta)$ é determinada, entre uma gama ampla de funções, pelo próprio sistema através dos parâmetros $\theta$. Isso pode ser interpretado como a seleção automática, pelo algoritmo, do extrator de características que melhor representa o dataset. Assim, o modelo se torna 
 \begin{equation}
 y=f(x,\theta,w) = w^T\phi(x,\theta)
 \end{equation}
@@ -22,11 +22,11 @@ Na rede, $\phi$ corresponde às camadas intermediárias. Os parâmetros $w$ mape
 
 Nota-se, ainda, que no caso mais geral, para camadas de saída com funções de ativação não lineares, teríamos o modelo generalizado
 \begin{equation}
-y=f(x,\theta,w) = \gama(w^T\phi(x,\theta)+b)
+y=f(x,\theta,w,b) = \gamma(w^T\phi(x,\theta)+b)
 \end{equation}
-onde $\gama(x)$ é a função de ativação da camada de saída.
+onde $\gamma(x)$ é a função de ativação da camada de saída.
 
-\section{Funções de ativação}
+\section{Função de ativação}
 Como visto na seção \ref{introducao:perceptron}, os perceptrons aplicam uma função de ativação ao somatório ponderado das entradas. A escolha dessa função está associada à interpretação que se dá à saída. Duas funções foram utilizadas nesse trabalho e serão introduzidas a seguir.
 
 \subsection{Sigmoide}
@@ -52,22 +52,97 @@ Para resolver o problema do gradiente enfraquecido a \textit{Rectified Linear Un
 	\text{RELU}(x) = \max\{0,x\}
 \end{equation}
 
-Observa-se que para valores positivos essa função tem uma derivada constante e igual a um, proporcionando uma taxa de aprendizado considerável sempre que o perceptron estiver ativo. Por outro lado, para valores negativos considera-se o perceptron inativo e os pesos não são atualizados. Ao mesmo tempo essa característica garante a não linearidade da função.
+Observa-se que para valores positivos essa função tem uma derivada constante e igual a um, proporcionando um gradiente considerável sempre que o perceptron estiver ativo. Por outro lado, para valores negativos considera-se o perceptron inativo e os pesos não são atualizados. Ao mesmo tempo essa característica garante a não linearidade da função.
 
 \section{Treinamento}
-%utilizar referencia http://neuralnetworksanddeeplearning.com/chap3.html#the_cross-entropy_cost_function
-O processo de treinamento de uma rede neural é um problema de otimização. Porém, diferentemente do caso do SVM, trata-se de uma otimização não convexa, isto é, existem múltiplos mínimos locais para a função custo e diversas soluções podem ser encontradas, dependendo dos valores iniciais dos parâmtros. Esse fato advém do caráter não linear das funções de ativação nas camadas intermediárias que irão definir a extração de características.
+O processo de treinamento de uma rede neural é um problema de otimização. Porém, diferentemente do caso do SVM, trata-se de uma otimização não convexa, isto é, existem múltiplos mínimos locais para a função custo e diversas soluções podem ser encontradas, dependendo dos valores iniciais dos parâmetros. Esse fato advém do caráter não linear das funções de ativação nas camadas intermediárias que irão definir a extração de características.
 
-Durante essa etapa otimiza-se os parâmetros $\theta$ de forma que $y \approx f^*(x)$. Isso é feito através da minimização de uma função custo $J(\theta)$, que mede a proximidade entre os resultados do modelo e o conjunto de treinamento. Em geral escolhe-se a função de entropia cruzada
+Durante essa etapa otimiza-se os parâmetros $\theta$ de forma que $y \approx f^*(x)$. Isso é feito através da minimização de uma função custo $C(\theta)$ por um algoritmo de otimização chamado SGD utilizando o gradiente de $C$ obtidas por um algoritmo de propagação reversa de erros. Todos esses passos são descritos a seguir.
+
+\subsection{Função custo}
+A função custo quantifica a qualidade de representação que o modelo oferece para o conjunto de treinamento, isto é, qual a medida de erro que o classificador comete dentro do próprio conjunto de treinamento. Duas funções custos utilizadas na implementação são apresentadas a seguir.
+
+Em geral podemos escrever a função custo como
 \begin{equation}
-J(\theta) = -E_{x,y \sim p_{data}}\log p_\text{model}(y|x)
+C(\theta) = \sum_{x \in \text{dataset}} C_x
 \end{equation}
-A escolha da função custo está associada também à função de ativação das camadas de saída. Isso é importante pois no caso de uma ativação sigmoide a saída satura rapidamente, o que provoca uma derivada muito pequena que ocasionará um gradiente desprezível e consequentemente pouca variação nos pesos dos perceptrons. Essa formulação dá um caráter mais geral 
+de forma que podemos calcular o custo de cada amostra, nessa seção representada pelo par $(x,y)$, individualmente, correspondente ao erro equivalente àquela amostra.
 
-Observa-se que a camada de saída possui um valor alvo bem definido, porém as camadas intermediárias (\textit{hidden layers}) não têm um comportamento diretamente especificado. Nesse caso, utiliza-se o algoritmo de propagação reversa de erros (\textit{back-propagation}) para terminar como as variações dos pesos dos perceptrons devem se propagar pela rede.
+Uma função usual e que tem uma noção intuitiva forte é a média dos erros quadráticos -- MSE:
+\begin{equation}
+\label{eq:mse}
+C(\theta) = \frac{1}{n} \sum_{x_1 \ldots x_n} \left(y - f(x,\theta)\right)^2
+\end{equation}
+Nessa função fica evidenciado o cálculo do erro como a distância quadrática entre a categoria determinada pelo modelo e a verdadeira. Quando o modelo apresenta a mesma categoria especificada mediante treinamento para todas as amostras verifica-se um custo nulo.
 
+A escolha da função custo está associada também à função de ativação da camada de saída. Isso é importante pois no caso de uma ativação sigmoide a saída satura rapidamente, o que provoca uma derivada muito pequena e, como veremos adiante, impossibilita atualização dos parâmetros da rede. Para esse fim, introduz-se a função custo de entropia cruzada binária (\textit{binary cross entropy}) descrita por
+\begin{equation}
+\label{eq:bcr}
+C(\theta) = -\frac{1}{n} \sum_{x_1 \ldots x_n} \left[y \ln f(x,\theta) + (1-y) \ln (1-f(x,\theta))\right]
+\end{equation}
+cuja grande contribuição é permitir o uso de unidades sigmoidais na camada de saída sem que ocorra um gradiente baixo, visto que a função exponencial da ativação é revertida ao se utilizar o logaritmo natural imposto pela entropia cruzada. Nota-se ainda, no caso em que $f(x,\theta)=y=m$ de maneira que $m \in {0,1}$, temos um custo nulo dessa função.
+
+Tendo uma métrica para avaliar a qualidade do classificador em relação ao dataset utiliza-se um algoritmo de otimização para encontrar parâmetros que melhorem o desempenho desse mecanismo.
+
+\subsection{\textit{Stocastic Gradient Descent} -- SGD}
+Um método tradicional para minimização é o do gradiente descendente, que utiliza a aproximação
+\begin{equation}
+\Delta C \approx \pd{C}{w} \Delta w \pd{C}{b} \Delta b = \nabla C \cdot \Delta \theta
+\end{equation}
+para verificar a variação $\Delta C$ na função custo em função da variação nos parâmetros de $\Delta w$ e $\Delta b$. Basicamente escolhe-se os parâmetros inicialmente aleatórios e então busca-se encontrar o vetor de variação dos parâmetros $\Delta \theta = (\Delta w, \Delta b)^T$ que façam C diminuir. Se escolhermos $\Delta \theta = -\eta \nabla C$, teremos
+\begin{equation}
+\Delta C = -\eta \abs{\nabla C}^2
+\end{equation}
+que será negativo ao escolhermos $\eta > 0$, chamado de taxa de aprendizado (\textit{learning rate}). Esse processo é executado iterativamente, atualizando os parâmetros com $\theta \gets \theta + \Delta \theta$ até se encontrar um mínimo local.
+
+Em geral redes profundas necessitam de um grande número de amostras para serem treinadas. O cálculo do gradiente $\nabla C$ é custoso ao se considerar a quantidade amostras, visto que $\nabla C = \sum_x \nabla C_x$. Utiliza-se, então, uma variação do método chamada de \textit{Stochastic Gradient Descent} -- SGD. Essa variação divide o dataset em subconjuntos aleatórios $M$ chamados \textit{mini batches} e estima o gradiente fazendo a soma dos gradientes individuais apenas nesses subconjuntos a cada iteração do método, o que reduz drasticamente o tempo de execução do algoritmo.
+\begin{equation}
+\nabla C \approx \sum_{x \in M} \nabla C_x
+\end{equation}
+
+\subsection{Backpropagation}
+%neuralnetworksanddeeplearning.com/chap2.html
+
+O método de otimização anterior faz uso do gradiente de função custo $\nabla C$, porém não mostra como calcular essa quantidade. Para isso é necessário encontrar as derivadas da função custo em relação aos pesos individuais de cada elemento da rede, $w$ e $b$. De fato, utilizar as ferramentas do cálculo se mostra um desafio na prática, visto a complexidade da função custo em termos da função da rede $f(x, \theta)$ que combina todas as não linearidades encadeadas nas camadas. 
+
+Uma solução foi o algoritmo de propagação reversa de erros (\textit{backpropagation}), já existente na década de 1979 porém proposto mais recentemente em \cite{backpropagation}, que fornece um método eficiente de calcular as derivadas da função custo em relação a quaisquer parâmetros $w$ e $b$ da rede.
+
+Primeiramente formaliza-se a notação utilizada. Convenciona-se $w_{jk}^l$ como o peso da conexão entre o perceptron $j$ da camada $l$ a o perceptron $k$ da camada $(l-1)$, como ilustrado na figura \ref{fig:bp}. De maneira semelhante, $b^l_j$ e $a^l_j$ indicam o bias e a ativação do perceptron $j$ da camada $l$ com
+\begin{equation}
+a^l_j = \sigma (z^l_j) =\sigma \left( \sum_k w_{jk}^l a_k^{l-1} + b_j^l \right)
+\end{equation}
+onde $\sigma(x)$ é a função de ativação da rede. Define-se também uma grandeza intermediária chamada de erro da camada $l$, $\delta^l$, interpretada como a contribuição da camada $l$ para o erro total, através do qual serão calculadas as grandezas de interesse.
+
+\begin{figure}[ht]
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{deep/bp-weights}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=0.8\linewidth]{deep/bp-bias}
+\end{subfigure}
+\caption{Conveção das conexões entre perceptrons}
+\label{fig:bp}
+\end{figure}
+
+Esse algoritmo possui uma formulação complexa que não está no escopo desse trabalho. Entretanto, alguns aspectos serão enfatizados pela análise simples das equações fornecidas por esse método, vistas a seguir.
+
+\begin{align}
+\delta^L &= \nabla_a C \odot \sigma^\prime(z^L) \\ 
+\delta^l &= ((w^{l+1})^T\delta^{l+1}) \odot \sigma^\prime(z^l) \\
+\pd{C}{b_j^l{}} &= \delta_j^l \\ 
+\pd{C}{w_{jk}^l{}} &= a_k^{l-1} \delta_j^l 
+\end{align}
+
+Pode-se entender o algoritmo como calculando o erro na camada de saída, $\delta^L$ e propagando esse erro para as outras camadas, obtendo os correspondentes $\delta^l$ através dos quais as demais derivadas são obtidas e permitem obter o gradiente da função custo. 
+
+Um aspecto a destacar é o papel fundamental da derivada da função de ativação $\sigma(x)$. Se ela saturar, essa derivada terá um valor baixo, o que provoca um gradiente pequeno e a atualização dos parâmetros fica estagnada, impedindo o aprendizado. Por isso a importância de funções de ativação que impedem a saturação, como a RELU, vista anteriormente.
+
+Similarmente, a última equação mostra que a derivada da função custo em relação ao pesos de um determinado perceptron é proporcional à entrada correspondente ào perceptron de entrada. Portanto, caso a entrada seja nula, essa componente do gradiente será também nula, o que significa que o perceptron só tem seu peso atualizado quando estiver ativo.
 
 \section{Redes convolucionais}
-
+%http://neuralnetworksanddeeplearning.com/chap6.html#introducing_convolutional_networks
 \section{Implementação}
 Keras e theano. Diferentes configurações.
