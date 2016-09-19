@@ -39,158 +39,57 @@ O dataset foi gerado a partir de gravações realizadas no ambiente indústrial 
 
 Avaliou-se o resultado das diferentes descritores mencionados no capítulo \ref{chap:tradicional} utilizando um processo de treinamento automático do SVM: varreu-se o espaço dos parâmetros $C$ entre $0.0001$ e $0.01$ com passos de $0.001$ e $\sigma$ entre $1$ e $100$ com passos de $5$. Os melhores resultados, selecionados segundo a medida de \textit{precision}, são apresentados na forma de matriz de confusão para cada um dos descritores.
 
-\begin{table}[h]
+\newcommand{\cfmat}[5]
+{
+\begin{minipage}{0.48\textwidth}
+\vspace*{2mm}
 \centering
-\caption{Grades simples (7x7), dataset completo}
-\begin{tabular}{l|l|l|}
+\caption{{#1}}
+\begin{tabular}{c|c|c|}
 \cline{2-3}
                         & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 9881 & 13 \\ \hline
-\multicolumn{1}{|l|}{1} & 36   & 1186 \\ \hline
+\multicolumn{1}{|c|}{0} & {#2} & {#3} \\ \hline
+\multicolumn{1}{|c|}{1} & {#4} & {#5} \\ \hline
 \end{tabular}
-\end{table}
+\end{minipage}
+\hfill
+}
 
 \begin{table}[h]
-\centering
-\caption{Grades simples (7x7), conjunto validação}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2445 & 293 \\ \hline
-\multicolumn{1}{|l|}{1} & 181  & 54 \\ \hline
-\end{tabular}
+\cfmat{Grades simples (7x7), dataset completo}{9881}{13}{36}{1186}
+\cfmat{Grades simples (7x7), conjunto validação}{2445}{293}{181}{54}
 \end{table}
 
 Para o descritor de anéis concêntricos, primeiramente utilizou-se o dataset reduzido para avaliar qual a melhor dimensão do descritor, observando os seguintes resultados.
 
-\begin{table}[h]
-\centering
-\caption{Anéis concêntricos com 8 dimensões, dataset reduzido}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2364 & 65 \\ \hline
-\multicolumn{1}{|l|}{1} & 185 & 482 \\ \hline
-\end{tabular}
-\end{table}
-
-\begin{table}[h]
-\centering
-\caption{Anéis concêntricos com 12 dimensões, dataset reduzido}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2344 & 85 \\ \hline
-\multicolumn{1}{|l|}{1} & 183 & 484 \\ \hline
-\end{tabular}
-\end{table}
-
-\begin{table}[h]
-\centering
-\caption{Anéis concêntricos com 16 dimensões, dataset reduzido}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2385 & 44 \\ \hline
-\multicolumn{1}{|l|}{1} & 111 & 556 \\ \hline
-\end{tabular}
-\end{table}
-
-\begin{table}[h]
-\centering
-\caption{Anéis concêntricos com 18 dimensões, dataset reduzido}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2410 & 19 \\ \hline
-\multicolumn{1}{|l|}{1} & 60 & 607 \\ \hline
-\end{tabular}
-\end{table}
-
 \begin{table}[h!]
-\centering
-\caption{Anéis concêntricos com 20 dimensões, dataset reduzido}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2359 & 70 \\ \hline
-\multicolumn{1}{|l|}{1} & 141 & 526 \\ \hline
-\end{tabular}
+\cfmat{Anéis concêntricos com 8 dimensões, dataset reduzido}{2364}{65}{185}{482}
+\cfmat{Anéis concêntricos com 12 dimensões, dataset reduzido}{2344}{85}{183}{484}
+\cfmat{Anéis concêntricos com 16 dimensões, dataset reduzido}{2385}{44}{111}{556}
+\cfmat{Anéis concêntricos com 18 dimensões, dataset reduzido}{2410}{19}{60}{607}
+\cfmat{Anéis concêntricos com 20 dimensões, dataset reduzido}{2359}{70}{141}{526}
 \end{table}
 
 Tendo visto que o melhor resultado foi obtido com 18 dimensões, utilizou-se o dataset completo para o treinamento e posterior avaliação através do conjunto de validação, como visto nas tabelas seguintes.
 
 \begin{table}[h!]
-\centering
-\caption{Anéis concêntricos com 18 dimensões, dataset completo}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 9859 & 35 \\ \hline
-\multicolumn{1}{|l|}{1} & 213 & 1009 \\ \hline
-\end{tabular}
+\cfmat{Anéis concêntricos com 18 dimensões, dataset completo}{9859}{35}{213}{1009}
+\cfmat{Anéis concêntricos com 18 dimensões, conjunto validação}{2573}{165}{116}{119}
 \end{table}
 
-\begin{table}[h!]
-\centering
-\caption{Anéis concêntricos com 18 dimensões, conjunto validação}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2573 & 165 \\ \hline
-\multicolumn{1}{|l|}{1} & 116  & 119 \\ \hline
-\end{tabular}
-\end{table}
 
 \section{Classificador profundo}
 
 \subsection{MLP}
 Na estrutura MLP foram realizados testes com duas e três camadas intermediárias, com ativação RELU e um único perceptron de saída com ativação sigmoide indicando a probabilidade da amostra ser uma cabeça. Essa estrutura da saída como probabilidade é vantajosa pois permite ajustar o compromisso entre falso positivos e falso negativos do classificador, após treinamento, através da escolha do limiar de probabilidade $T$. Escolher um limiar mais alto significa exigir mais segurança do classificador e, portanto, reduzir o número de falsos positivos ao preço de possivelmente aumentar o número de falsos negativos.
 
-Na configuração de duas camadas foram utilizados 512 e 256 perceptrons, respectivamente. Os resultados obtidos para o dataset foram os seguintes.
+Na configuração de duas camadas foram utilizados 512 e 256 perceptrons, respectivamente. Os resultados obtidos para o dataset e conjunto de validação foram os seguintes.
 \begin{table}[h!]
-\centering
-\caption{MLP 2 camadas, $T=0.5$, dataset completo}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 9805 & 89 \\ \hline
-\multicolumn{1}{|l|}{1} & 100  & 1122 \\ \hline
-\end{tabular}
-\end{table}
+\cfmat{MLP 2 camadas, $T=0.5$, dataset completo}{9805}{89}{100}{1122}
+\cfmat{MLP 2 camadas, $T=0.9$, dataset completo}{9864}{30}{239}{983}
 
-\begin{table}[h!]
-\centering
-\caption{MLP 2 camadas, $T=0.9$, dataset completo}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 9864 & 30 \\ \hline
-\multicolumn{1}{|l|}{1} & 239  & 983 \\ \hline
-\end{tabular}
-\end{table}
-
-Para uma avaliação mais realista verificou-se o desempenho desse classificador para o conjunto de validação.
-\begin{table}[h!]
-\centering
-\caption{MLP 2 camadas, $T=0.5$, conjunto de validação}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2644 & 94 \\ \hline
-\multicolumn{1}{|l|}{1} & 45   & 190 \\ \hline
-\end{tabular}
-\end{table}
-
-\begin{table}[h!]
-\centering
-\caption{MLP 2 camadas, $T=0.9$, conjunto de validação}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2707 & 29 \\ \hline
-\multicolumn{1}{|l|}{1} & 88   & 147 \\ \hline
-\end{tabular}
+\cfmat{MLP 2 camadas, $T=0.5$, conjunto validação}{2644}{94}{45}{190}
+\cfmat{MLP 2 camadas, $T=0.9$, conjunto validação}{2707}{29}{88}{147}
 \end{table}
 
 Para três camadas foram utilizados 1024, 512 e 256 perceptrons respectivamente, entretanto os resultados foram semelhantes aos obtidos com duas camadas, portanto o aumento em complexidade não é justificado visto que o desempenho permaneceu o mesmo.
@@ -199,49 +98,15 @@ Para três camadas foram utilizados 1024, 512 e 256 perceptrons respectivamente,
 Para redes convolucionais utilizou-se uma única camada convolucional RELU com 16 núcleos 3x3 seguida por max-pooling (3x3) e uma camada densamente conectada de 128 percepetrons RELU e finalmente saída única com ativação sigmoide. Essa topologia foi a que teve o melhor desempenho, obtendo 100\% de \textit{accuracy} no conjunto de treinamento e 96.97\% no conjunto de validação, como observado a seguir.
 
 \begin{table}[h!]
-\centering
-\caption{CNN, $T=0.5$, conjunto de validação}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2660 & 78 \\ \hline
-\multicolumn{1}{|l|}{1} & 23   & 212 \\ \hline
-\end{tabular}
-\end{table}
-
-\begin{table}[h!]
-\centering
-\caption{CNN, $T=0.9$, conjunto de validação}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2690 & 48 \\ \hline
-\multicolumn{1}{|l|}{1} & 42   & 193 \\ \hline
-\end{tabular}
+\cfmat{CNN, $T=0.5$, conjunto de validação}{2660}{78}{23}{212}
+\cfmat{CNN, $T=0.9$, conjunto de validação}{2690}{48}{42}{193}
 \end{table}
 
 Tendo obtido o melhor desempenho até então, extendeu-se o conjunto de treinamento para 16898 amostras, das quais 14966 são negativas, e o processo de treinamento foi novamente efetuado, obtendo 99.9\% de \textit{accuracy} no treinamento e 97.54\% no conjunto de validação, como visto a seguir.
 
 \begin{table}[h!]
-\centering
-\caption{CNN treinamento extendido, $T=0.5$, conjunto de validação}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2672 & 66 \\ \hline
-\multicolumn{1}{|l|}{1} & 14   & 221 \\ \hline
-\end{tabular}
-\end{table}
-
-\begin{table}[h!]
-\centering
-\caption{CNN treinamento extendido, $T=0.9$, conjunto de validação}
-\begin{tabular}{l|l|l|}
-\cline{2-3}
-                        & 0 & 1 \\ \hline
-\multicolumn{1}{|l|}{0} & 2686 & 52 \\ \hline
-\multicolumn{1}{|l|}{1} & 21   & 214 \\ \hline
-\end{tabular}
+\cfmat{CNN treinamento extendido, $T=0.5$, conjunto de validação}{2672}{66}{14}{221}
+\cfmat{CNN treinamento extendido, $T=0.9$, conjunto de validação}{2686}{52}{21}{214}
 \end{table}
 
 Os resultados demonstram que essa topologia de rede é bastante eficiente para o problema em questão. Embora tenha ocorrido um aumento dos falsos positivos de 4 após extender o conjunto de treinamento, isso é justificável pela redução dos falsos negativos, que caiu pela metade, de 42 para 21.
