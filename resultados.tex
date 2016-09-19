@@ -144,8 +144,105 @@ Tendo visto que o melhor resultado foi obtido com 18 dimensões, utilizou-se o d
 
 \section{Classificador profundo}
 
-Na estrutura MLP foram realizados testes com duas e três camadas intermediárias, com ativação RELU e um único perceptron de saída com ativação sigmoide indicando a probabilidade da amostra ser uma cabeça. Na configuração de duas camadas foram utilizados 512 e 256 perceptrons, respectivamente. Para três camadas foram utilizados 1024, 512 e 256 perceptrons respectivamente. 
+\subsection{MLP}
+Na estrutura MLP foram realizados testes com duas e três camadas intermediárias, com ativação RELU e um único perceptron de saída com ativação sigmoide indicando a probabilidade da amostra ser uma cabeça. Essa estrutura da saída como probabilidade é vantajosa pois permite ajustar o compromisso entre falso positivos e falso negativos do classificador, após treinamento, através da escolha do limiar de probabilidade $T$. Escolher um limiar mais alto significa exigir mais segurança do classificador e, portanto, reduzir o número de falsos positivos ao preço de possivelmente aumentar o número de falsos negativos.
 
-Para redes convolucionais utilizou-se uma única camada convolucional seguida por uma camada densamente 
+Na configuração de duas camadas foram utilizados 512 e 256 perceptrons, respectivamente. Os resultados obtidos para o dataset foram os seguintes.
+\begin{table}[h!]
+\centering
+\caption{MLP 2 camadas, $T=0.5$, dataset completo}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 9805 & 89 \\ \hline
+\multicolumn{1}{|l|}{1} & 100  & 1122 \\ \hline
+\end{tabular}
+\end{table}
 
-Saída como probabilidade e vantagens
+\begin{table}[h!]
+\centering
+\caption{MLP 2 camadas, $T=0.9$, dataset completo}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 9864 & 30 \\ \hline
+\multicolumn{1}{|l|}{1} & 239  & 983 \\ \hline
+\end{tabular}
+\end{table}
+
+Para uma avaliação mais realista verificou-se o desempenho desse classificador para o conjunto de validação.
+\begin{table}[h!]
+\centering
+\caption{MLP 2 camadas, $T=0.5$, conjunto de validação}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2644 & 94 \\ \hline
+\multicolumn{1}{|l|}{1} & 45   & 190 \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{MLP 2 camadas, $T=0.9$, conjunto de validação}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2707 & 29 \\ \hline
+\multicolumn{1}{|l|}{1} & 88   & 147 \\ \hline
+\end{tabular}
+\end{table}
+
+Para três camadas foram utilizados 1024, 512 e 256 perceptrons respectivamente, entretanto os resultados foram semelhantes aos obtidos com duas camadas, portanto o aumento em complexidade não é justificado visto que o desempenho permaneceu o mesmo.
+
+\subsection{Redes convolucionais}
+Para redes convolucionais utilizou-se uma única camada convolucional RELU com 16 núcleos 3x3 seguida por max-pooling (3x3) e uma camada densamente conectada de 128 percepetrons RELU e finalmente saída única com ativação sigmoide. Essa topologia foi a que teve o melhor desempenho, obtendo 100\% de \textit{accuracy} no conjunto de treinamento e 96.97\% no conjunto de validação, como observado a seguir.
+
+\begin{table}[h!]
+\centering
+\caption{CNN, $T=0.5$, conjunto de validação}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2660 & 78 \\ \hline
+\multicolumn{1}{|l|}{1} & 23   & 212 \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{CNN, $T=0.9$, conjunto de validação}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2690 & 48 \\ \hline
+\multicolumn{1}{|l|}{1} & 42   & 193 \\ \hline
+\end{tabular}
+\end{table}
+
+Tendo obtido o melhor desempenho até então, extendeu-se o conjunto de treinamento para 16898 amostras, das quais 14966 são negativas, e o processo de treinamento foi novamente efetuado, obtendo 99.9\% de \textit{accuracy} no treinamento e 97.54\% no conjunto de validação, como visto a seguir.
+
+\begin{table}[h!]
+\centering
+\caption{CNN treinamento extendido, $T=0.5$, conjunto de validação}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2672 & 66 \\ \hline
+\multicolumn{1}{|l|}{1} & 14   & 221 \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{CNN treinamento extendido, $T=0.9$, conjunto de validação}
+\begin{tabular}{l|l|l|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|l|}{0} & 2686 & 52 \\ \hline
+\multicolumn{1}{|l|}{1} & 21   & 214 \\ \hline
+\end{tabular}
+\end{table}
+
+Os resultados demonstram que essa topologia de rede é bastante eficiente para o problema em questão. Embora tenha ocorrido um aumento dos falsos positivos de 4 após extender o conjunto de treinamento, isso é justificável pela redução dos falsos negativos, que caiu pela metade, de 42 para 21.
+
