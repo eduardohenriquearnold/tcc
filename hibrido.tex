@@ -144,5 +144,40 @@ Similarmente, a última equação mostra que a derivada da função custo em rel
 
 \section{Redes convolucionais}
 %http://neuralnetworksanddeeplearning.com/chap6.html#introducing_convolutional_networks
+
+A estrutura MLP vista anteriormente é chamada de completamente conectada, onde cada perceptron em uma camada está conectado à todos os perceptrons da próxima camada. Uma variante desse modelo são as chamadas redes convolucionais, que introduzem um aspecto espacial no processamento das amostras de forma que as camadas possuam uma estrutura. São especialmente úteis para amostras de maior dimensão que têm uma estrutura matricial, como imagens. Se destacam em relação à MLP pois a relação de estrutura não precisa ser incorporada ao modelo via treinamento mas já advém diretamente do modelo utilizado.
+
+Apesar de já existirem na década de 1970 considera-se que o trabalho \cite{lecun1998convnet} foi fundamental para estabelecer a teoria moderna das redes convolucionais. Essas redes continuam organizadas em camadas, porém não são completamente conectadas. Conectam-se as camadas através dos chamados campos receptivos locais (\textit{local receptive fields}) que ligam uma série de perceptrons da camada anterior à próxima, como vistos na figura \ref{fig:convnet-receptivefield}. Os campos receptivos são transladados para obter as conexões dos próximo perceptrons na camada intermediária.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{deep/convnet-receptivefield}
+\caption{Exemplo de rede convolucional e campos receptivos.}
+\label{fig:convnet-receptivefield}
+\end{figure}
+
+Além desse aspecto de estrutura introduzido pelos campos receptivos, tem-se que os pesos e bias são compartilhados pelos diferentes campos receptivos. Isto é, para cada perceptron da camada intermediária embora as ligações ocorram com diferentes perceptrons da camda anterior, elas compartilham o mesmo peso e isso reduz drasticamente a quantidade de parâmetros da rede, tornando o precesso de treinamento mais rápido. Portanto tem-se que os diferentes campos receptivos são sensíveis à um mesmo padrão ou característica (\textit{feature}) e isso garante uma invariância à translação. Os pesos compartilhados são também chamados de núcleo (\textit{kernel}). De fato, observa-se que essa operação é resumida como uma convolução entre a camada anterior e o núcleo:
+\begin{equation}
+a^1 = \sigma(b+ w \ast a^0) 
+\end{equation}
+onde $a^0$ é a camada anterior e $a^1$ o primeiro mapa de características, sendo $\sigma(x)$ a função de ativação e $w$ o núcleo.
+
+Na prática, entretanto, utilizam-se múltiplos núcleos de maneira a obter um mapa de características mais rico. Isso significa aumentar drasticamente a dimensionalidade da rede. Isso implica na necessidade de utilizar camadas de \textit{pooling} que reduzem a dimensionalidade da rede através de uma amostragem. Uma das possibilidades é utilizar \textit{max-pooling}, uma técnica não linear que implica selecionar a maior amostra dentro da região. Basicamente condensa-se a informação sobre a característica que se deseja encontrar sem se preocupar com sua localização exata. Atenta-se para o fato de que essa operação é realizada para cada mapa de características isoladamente.
+
+Por fim, após camadas convolucionais e de amostragem, tem-se mapas de características densos que possibilitam à camada densamente conectadas consecutivas fazer o processo final de classificação, como ilustrado na figura \ref{fig:convnet}. 
+
+O processo de treinamento é similar às MLPs, porém com pequenas modificações dado o caráter estrutural e convolucional da rede.
+
 \section{Implementação}
-Keras e theano. Diferentes configurações.
+A solução híbrida proposta nesse capítulo assume que os candidatos são obtidos através do algoritmo tradicional visto na seção \ref{sec:tradicional-candidatos} e utiliza um classificador profundo sem que haja pré-processamento das amostras. Dois tipos de estruturas foram utilizadas, primeiramente uma rede MLP e em seguida uma rede convolucional.
+
+Existem diversas plataformas para se implementar os métodos de redes neurais. Entre essas, destacam-se a biblioteca de código aberto \textsc{Theano} \cite{theano}, que permite a definição de e avaliação de expressões matemáticas multidimensionais, diferenciação simbólica, otimização para velocidade e estabilidade, além de uso transparente da GPU. Essa biblioteca, entretanto, não fornece funções específicas para a criação de redes neurais, ou seja, é necessário que o usuário crie as matrizes de pesos, defina função custo e de ativação.
+
+Para facilitar a utilização dos métodos profundos e tornar o processo de desenvolvimento mais rápido, utilizou-se a a biblioteca \textsc{Keras} \ref{keras}, que fornece uma abstração acima do \textsc{Theano} para utilização dos métodos profundos. Isso permite criar redes com poucas linhas de código, definindo camadas de maneira simples e escolhendo as funções de ativação e custo dentre as já definidas. Ainda assim, permite flexibilidade para o usuário criar suas próprias funções e ajustar parâmetros da rede, assim como métodos de iniciação dos parâmetros e diferentes tipos de otimizadores.
+
+Ambas as bibliotecas são desenvolvidas para \textsc{Python} e portanto houve a necessidade de integrar esse código ao já existente em C++. Destaca-se a dificuldade em integrar o funcionamento paralelo dos algoritmos sob a plataforma CUDA. Isso se deve ao fato do código em C++ referente ao processamento das imagens de profundidade e ao \textsc{Theano} utilizarem simultaneamente os recursos da GPU. Esse conflito foi resolvido utilizando um método de troca de contextos proviente da própria plataforma CUDA.
+
+Outro problema enfrentado ocorreu durante a etapa de treinamento. O dataset utilizado é fortemente desbalanceado, onde mais de 89\% das amostras pertence à classe negativa. Após a primeira época de treinamento observou-se uma \textit{accuracy} de aproximadamente 89\%, o que era aparentemente um ótimo resultado. Entretanto faltou a consideração da distribuição desses resultados: o classificador indicava todas as amostras como sendo negativas, pois o conjunto de dados é altamente enviesado. Para corrigir esse problema listou-se duas opções: equilibrar o dataset ou modificar a função custo para ponderar os pesos para as classes. Verificou-se que o dataset poderia ser artificialmente equilibrado replicando as amostras positivas até que seu número se equipare com as negativas, o que de fato demonstrou um resultado positivo na prática.
+
+Encontrou-se também uma dificuldade para convergência do método utilizando o otimizador SGD. A solução foi utilizar uma variante chamada Adam cuja formulação inclui considerações sobre momento, que consiste em adaptativamente corrigir a taxa de aprendizado $\eta$, o que impacta positivamente sobre a convergência do método.
+

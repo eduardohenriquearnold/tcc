@@ -8,6 +8,7 @@ Para essa aplicação, recomenda-se a utilização de imagens de profundidade, e
 As imagens recebidas da câmera precisam ser préprocessadas de forma a obter um mapa de distâncias, que é a imagem de profundidade. Isso é feito pela biblioteca fornecida pela \textit{Stereolabs}. Em seguida, inverte-se a imagem (subtrai-se cada pixel da distância da câmera) de maneira que cada pixel forneça a altura em relação ao chão do objeto por ele representado. Além disso remove-se pixels cujas distâncias não foram corretamente estimadas e o resultado é uma imagem cujos valores representam a altura dos objetos em milimetros. Essa informação é relevante pois permite obter candidatos a cabeças de maneira eficiente.
 
 \section{Obtenção de candidatos}
+\label{sec:tradicional-candidatos}
 O primeiro passo consiste em obter candidatos a pessoas, como a vista é superior, candidatos a cabeças. Em uma aplicação tradicional, com câmeras RGB esse processo dividiria a imagem em pequenos blocos de tamanhos que se espera para uma cabeça, sem qualquer informação sobre o posicionamento, isto é, varrendo uma ``janela imaginária'' pela imagem.
 
 Para aprimorar esse método, assume-se a hipótese de que cabeças serão os objetos mais altos de uma vizinhança, se destacando na cena dos demais objetos. Embora ela não seja sempre verdadeira, ao se verificar que existem máquinas altas, é um método mais eficiente de selecionar candidatos pois utiliza informação prévia da cena.
