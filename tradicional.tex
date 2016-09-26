@@ -15,11 +15,12 @@ Para aprimorar esse método, assume-se a hipótese de que cabeças serão os obj
 
 Aplica-se o método de máximos locais: a imagem é dividida em quadrados de áreas iguais. Para cada quadrado percorre-se os pixels e seleciona-se o maior deles, se este pixel for único no conjunto ele é considerado um ponto candidato à cabeça. Esse processo resulta num conjunto de pontos que determinam candidados à cabeças.
 
-O tamanho dos quadrados que dividem a imagem é fundamental nessa etapa: se forem muito grandes há alta probabilidade de se perder cabeças visto que na cena existem máquinas altas. Por outro lado, se forem muito pequenos, existirão muitos candidatos e o processo se torna lento. Esse tamanho é calculado utilizando a distância focal da câmera, a altura média de pessoas e o tamanho padrão de cabeças.
+O tamanho dos quadrados que dividem a imagem é fundamental nessa etapa: se forem muito grandes há alta probabilidade de se perder cabeças visto que na cena existem máquinas altas. Por outro lado, se forem muito pequenos, existirão muitos candidatos e o processo se torna lento. Esse tamanho é calculado utilizando a equação
 \begin{equation}
 	\label{eq:cam-proj}
 	s_w = \frac{f}{d} \cdot s_r
 \end{equation}
+ onde $f$ é a distância focal da câmera, a $d$ a distância média entre a câmera e as pessoas e o $s_r$ o tamanho padrão de cabeças.
 
 Em seguida, é necessário determinar um quadrado que delimite a cabeça de forma centralizada. Para obter o tamanho do quadrado, novamente utiliza-se a equação \eqref{eq:cam-proj}, porém dessa vez utilizando o valor do pixel encontrado para aquele candidato como altura. Tem-se então um quadrado de tamanho apropriado com o pixel máximo no centro, porém em poucos casos esse quadrado centraliza a cabeça.
 
@@ -87,8 +88,10 @@ O aprendizado consiste em encontrar o vetor de pesos $w$ e o escalar $b$ que min
 
 Para o caso não onde o dataset não é linearmente separável, minimiza-se a função custo 
 \begin{equation*}
-	\min P(w,b) = \abs{w} + C\sum_i H_1(y_i f(x_i))
-\end{equation*}. O primeiro termo está associado à maximização da margem e o segundo à minimização dos erros de treinamento, quando uma amostra é classificada erroneamente. A função $H_1(z)=\max(0,1-z)$ é utilizada para dar um peso negativo quanto maior for o erro do classificador (quando o argumento é negativo). O parâmetro $C$ controla quanto se penaliza os erros de classificação diante da maximização da margem, visto existir uma relação ideal entre eles.
+	\min P(w,b) = \abs{w} + C\sum_i H_1(y_i f(x_i)).
+\end{equation*} 
+
+O primeiro termo está associado à maximização da margem e o segundo à minimização dos erros de treinamento, quando uma amostra é classificada erroneamente. A função $H_1(z)=\max(0,1-z)$ é utilizada para dar um peso negativo quanto maior for o erro do classificador (quando o argumento é negativo). O parâmetro $C$ controla quanto se penaliza os erros de classificação diante da maximização da margem, visto existir uma relação ideal entre eles.
 
 Esse modelo de \textit{SVM} é conhecido como linear, porém mesmo com esse método de penalização de erros de classificação datasets complexos não terão um desempenho razoável. Dessa maneira, é introduzido um modelo não linear para o classificador: transforma-se as amostras $x_i$ em um novo espaço obtendo amostras $\Phi(x_i)$ que são, no caso ideal, linearmente separáveis, como mostrado na figura \ref{fig:svm-kernel}.
 
@@ -104,13 +107,13 @@ Formalmente tem-se a função decisão modificada: $f(x)=w^T \Phi(x) +b$.  Na pr
 O teorema da representação de Kimeldorf e Wahba mostra que podemos representar $w$ como $w=\sum_{i=1}^m \alpha_i \Phi(x_i)$ para algumas variáveis $\alpha$. Portanto, ao invés de minimizar $w$ diretamente, podemos minimizar $\alpha$ e a função decisão se torna
 \begin{equation}
 	\label{eq:svm-decision-func}
-	f(x)=\sum_{i=1}^m \alpha_i \Phi(x_i) \Phi(x) +b
+	f(x)=\sum_{i=1}^m \alpha_i \Phi(x_i) \Phi(x) +b.
 \end{equation}
 
 Chamamos $K(x_i, x) = \Phi(x_i) \cdot \Phi(x)$ de função \textit{kernel} ou função núcleo. Um exemplo bastante utilizado é a \textit{Radial Basis Function -- RBF}, dada por
 \begin{equation}
 	\label{eq:svm-kernel-func}
-	K(x,x_i) = \exp\left(-\frac{\abs{x-x_i}^2}{2\sigma^2}\right)
+	K(x,x_i) = \exp\left(-\frac{\abs{x-x_i}^2}{2\sigma^2}\right).
 \end{equation}
 
 \section{Implementação}

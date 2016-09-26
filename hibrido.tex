@@ -1,6 +1,6 @@
 \chapter{Classificação utilizando aprendizado profundo}
 
-O capítulo anterior tratou-se de uma solução baseada em seleção de candidatos, extração de características e posterior classificação, o que caracteriza uma técnica superficial. Nesse capítulo propomos uma solução híbrida, que utiliza a seleção de candidatos idêntica à anterior, porém utiliza técnicas profundas de classificação de modo que os candidatos são diretamente inseridos no classificador. Inicialmente introduz-se as redes MLP e convolucionais, fornecendo as bases teóricas, funções de ativação e processo treinamento.  Questões relativas à implementação também são abordadas.
+O capítulo \ref{chap:tradicional} tratou-se de uma solução baseada em seleção de candidatos, extração de características e posterior classificação, o que caracteriza uma técnica superficial. Nesse capítulo propomos uma solução híbrida, que utiliza a seleção de candidatos idêntica à anterior, porém utiliza técnicas profundas de classificação de modo que os candidatos são diretamente inseridos no classificador. Inicialmente introduz-se as redes MLP e convolucionais, fornecendo as bases teóricas, funções de ativação e processo treinamento.  Questões relativas à implementação também são abordadas.
 
 \section{Perceptron Multicamadas (MLP)}
 
@@ -30,10 +30,10 @@ onde $\gamma(x)$ é a função de ativação da camada de saída.
 Como visto na seção \ref{introducao:perceptron}, os perceptrons aplicam uma função de ativação ao somatório ponderado das entradas. A escolha dessa função está associada à interpretação que se dá à saída. Duas funções foram utilizadas nesse trabalho e serão introduzidas a seguir.
 
 \subsection{Sigmoide}
-Como visto anteriormente, a escolha da função relaciona-se com a interpretação do valor de saída. Para classificadores interpreta-se o valor dos perceptrons da camada de saída como probabilidades da amostra pertencer a uma determinada classe. Nesse caso espera-se que esses valores estejam no intervalo $[0,1]$. Uma função que assegura essa condição é a sigmoide
+A escolha da função relaciona-se com a interpretação do valor de saída. Para classificadores interpreta-se o valor dos perceptrons da camada de saída como probabilidades da amostra pertencer a uma determinada classe. Nesse caso espera-se que esses valores estejam no intervalo $[0,1]$. Uma função que assegura essa condição é a sigmoide
 \begin{equation}
 	\label{eq:sigm}
-	\sigma(x) = \frac{1}{1+e^{-x}}
+	\sigma(x) = \frac{1}{1+e^{-x}}.
 \end{equation}
 
 \begin{figure}[h]
@@ -49,7 +49,7 @@ Outra característica importante é a não linearidade da função que permite t
 Para resolver o problema do gradiente enfraquecido a \textit{Rectified Linear Unit -- RELU} foi proposta \cite{nair2010relu} como
 \begin{equation}
 	\label{eq:relu}
-	\text{RELU}(x) = \max\{0,x\}
+	\text{RELU}(x) = \max\{0,x\}.
 \end{equation}
 
 Observa-se que para valores positivos essa função tem uma derivada constante e igual a um, proporcionando um gradiente considerável sempre que o perceptron estiver ativo. Por outro lado, para valores negativos considera-se o perceptron inativo e os pesos não são atualizados. Ao mesmo tempo essa característica garante a não linearidade da função.
@@ -71,7 +71,7 @@ de forma que podemos calcular o custo de cada amostra, nessa seção representad
 Uma função usual e que tem uma noção intuitiva forte é a média dos erros quadráticos -- MSE:
 \begin{equation}
 \label{eq:mse}
-C(\theta) = \frac{1}{n} \sum_{x_1 \ldots x_n} \left(y - f(x,\theta)\right)^2
+C(\theta) = \frac{1}{n} \sum_{x_1 \ldots x_n} \left(y - f(x,\theta)\right)^2.
 \end{equation}
 Nessa função fica evidenciado o cálculo do erro como a distância quadrática entre a categoria determinada pelo modelo e a verdadeira. Quando o modelo apresenta a mesma categoria especificada mediante treinamento para todas as amostras verifica-se um custo nulo.
 
@@ -85,6 +85,7 @@ cuja grande contribuição é permitir o uso de unidades sigmoidais na camada de
 Tendo uma métrica para avaliar a qualidade do classificador em relação ao dataset utiliza-se um algoritmo de otimização para encontrar parâmetros que melhorem o desempenho desse mecanismo.
 
 \subsection{\textit{Stocastic Gradient Descent} -- SGD}
+\label{sec:sgd}
 Um método tradicional para minimização é o do gradiente descendente, que utiliza a aproximação
 \begin{equation}
 \Delta C \approx \pd{C}{w} \Delta w \pd{C}{b} \Delta b = \nabla C \cdot \Delta \theta
@@ -93,17 +94,18 @@ para verificar a variação $\Delta C$ na função custo em função da variaç�
 \begin{equation}
 \Delta C = -\eta \abs{\nabla C}^2
 \end{equation}
-que será negativo ao escolhermos $\eta > 0$, chamado de taxa de aprendizado (\textit{learning rate}). Esse processo é executado iterativamente, atualizando os parâmetros com $\theta \gets \theta + \Delta \theta$ até se encontrar um mínimo local.
+que será negativo ao escolhermos $\eta > 0$, chamada de taxa de aprendizado (\textit{learning rate}). Esse processo é executado iterativamente, atualizando os parâmetros com $\theta \gets \theta + \Delta \theta$ até se encontrar um mínimo local.
 
-Em geral redes profundas necessitam de um grande número de amostras para serem treinadas. O cálculo do gradiente $\nabla C$ é custoso ao se considerar a quantidade amostras, visto que $\nabla C = \sum_x \nabla C_x$. Utiliza-se, então, uma variação do método chamada de \textit{Stochastic Gradient Descent} -- SGD. Essa variação divide o dataset em subconjuntos aleatórios $M$ chamados \textit{mini batches} e estima o gradiente fazendo a soma dos gradientes individuais apenas nesses subconjuntos a cada iteração do método, o que reduz drasticamente o tempo de execução do algoritmo.
+Em geral redes profundas necessitam de um grande número de amostras para serem treinadas. O cálculo do gradiente $\nabla C$ é custoso ao se considerar a quantidade amostras, visto que $\nabla C = \sum_x \nabla C_x$. Utiliza-se, então, uma variação do método chamada de \textit{Stochastic Gradient Descent} -- SGD. Essa variação divide o dataset em subconjuntos aleatórios $M$ chamados \textit{mini batches} e estima o gradiente fazendo a soma dos gradientes individuais como
 \begin{equation}
 \nabla C \approx \sum_{x \in M} \nabla C_x
 \end{equation}
+ou seja, fazendo uma média do gradiente apenas nesses subconjuntos a cada iteração do método, o que reduz drasticamente o tempo de execução do algoritmo.
 
 \subsection{Backpropagation}
 %neuralnetworksanddeeplearning.com/chap2.html
 
-O método de otimização anterior faz uso do gradiente de função custo $\nabla C$, porém não mostra como calcular essa quantidade. Para isso é necessário encontrar as derivadas da função custo em relação aos pesos individuais de cada elemento da rede, $w$ e $b$. De fato, utilizar as ferramentas do cálculo se mostra um desafio na prática, visto a complexidade da função custo em termos da função da rede $f(x, \theta)$ que combina todas as não linearidades encadeadas nas camadas. 
+O método de otimização \ref{sec:sgd} faz uso do gradiente de função custo $\nabla C$, porém não mostra como calcular essa quantidade. Para isso é necessário encontrar as derivadas da função custo em relação aos pesos individuais de cada elemento da rede, $w$ e $b$. De fato, utilizar as ferramentas do cálculo se mostra um desafio na prática, visto a complexidade da função custo em termos da função da rede $f(x, \theta)$ que combina todas as não linearidades encadeadas nas camadas. 
 
 Uma solução foi o algoritmo de propagação reversa de erros (\textit{backpropagation}), já existente na década de 1979 porém proposto mais recentemente em \cite{backpropagation}, que fornece um método eficiente de calcular as derivadas da função custo em relação a quaisquer parâmetros $w$ e $b$ da rede.
 
@@ -127,8 +129,7 @@ onde $\sigma(x)$ é a função de ativação da rede. Define-se também uma gran
 \label{fig:bp}
 \end{figure}
 
-Esse algoritmo possui uma formulação complexa que não está no escopo desse trabalho. Entretanto, alguns aspectos serão enfatizados pela análise simples das equações fornecidas por esse método, vistas a seguir.
-
+Esse algoritmo possui uma formulação complexa que não está no escopo desse trabalho. Entretanto, alguns aspectos serão enfatizados pela análise simples das equações fornecidas por esse método, e disponíveis com demonstração em \cite{NeuralNetsDeep}, vistas a seguir:
 \begin{align}
 \delta^L &= \nabla_a C \odot \sigma^\prime(z^L) \\ 
 \delta^l &= ((w^{l+1})^T\delta^{l+1}) \odot \sigma^\prime(z^l) \\
@@ -147,7 +148,7 @@ Similarmente, a última equação mostra que a derivada da função custo em rel
 
 A estrutura MLP vista anteriormente é chamada de completamente conectada, onde cada perceptron em uma camada está conectado à todos os perceptrons da próxima camada. Uma variante desse modelo são as chamadas redes convolucionais, que introduzem um aspecto espacial no processamento das amostras de forma que as camadas possuam uma estrutura. São especialmente úteis para amostras de maior dimensão que têm uma estrutura matricial, como imagens. Se destacam em relação à MLP pois a relação de estrutura não precisa ser incorporada ao modelo via treinamento mas já advém diretamente do modelo utilizado.
 
-Apesar de já existirem na década de 1970 considera-se que o trabalho \cite{lecun1998convnet} foi fundamental para estabelecer a teoria moderna das redes convolucionais. Essas redes continuam organizadas em camadas, porém não são completamente conectadas. Conectam-se as camadas através dos chamados campos receptivos locais (\textit{local receptive fields}) que ligam uma série de perceptrons da camada anterior à próxima, como vistos na figura \ref{fig:convnet-receptivefield}. Os campos receptivos são transladados para obter as conexões dos próximo perceptrons na camada intermediária.
+Apesar de já existirem na década de 1970 considera-se que o trabalho \cite{lecun1998convnet} foi fundamental para estabelecer a teoria moderna das redes convolucionais. Essas redes continuam organizadas em camadas, porém não são completamente conectadas. Conectam-se as camadas através dos chamados campos receptivos locais (\textit{local receptive fields}) que ligam uma série de perceptrons da camada anterior à próxima, como ilustra a figura \ref{fig:convnet-receptivefield}. Os campos receptivos são transladados para obter as conexões dos próximo perceptrons na camada intermediária.
 
 \begin{figure}[h]
 \centering
@@ -162,16 +163,18 @@ a^1 = \sigma(b+ w \ast a^0)
 \end{equation}
 onde $a^0$ é a camada anterior e $a^1$ o primeiro mapa de características, sendo $\sigma(x)$ a função de ativação e $w$ o núcleo.
 
-Na prática, entretanto, utilizam-se múltiplos núcleos de maneira a obter um mapa de características mais rico. Isso significa aumentar drasticamente a dimensionalidade da rede. Isso implica na necessidade de utilizar camadas de \textit{pooling} que reduzem a dimensionalidade da rede através de uma amostragem. Uma das possibilidades é utilizar \textit{max-pooling}, uma técnica não linear que implica selecionar a maior amostra dentro da região. Basicamente condensa-se a informação sobre a característica que se deseja encontrar sem se preocupar com sua localização exata. Atenta-se para o fato de que essa operação é realizada para cada mapa de características isoladamente.
+Na prática, entretanto, utilizam-se múltiplos núcleos de maneira a obter um mapa de características mais rico. Isso significa aumentar drasticamente a dimensionalidade da rede e implica na necessidade de utilizar camadas de \textit{pooling} que reduzem a dimensionalidade da rede através de uma amostragem. Uma das possibilidades é utilizar \textit{max-pooling}, uma técnica não linear que seleciona a maior amostra dentro da região. Basicamente condensa-se a informação sobre a característica que se deseja encontrar sem se preocupar com sua localização exata. Atenta-se para o fato de que essa operação é realizada para cada mapa de características isoladamente.
 
 Por fim, após camadas convolucionais e de amostragem, tem-se mapas de características densos que possibilitam à camada densamente conectadas consecutivas fazer o processo final de classificação, como ilustrado na figura \ref{fig:convnet}. 
 
 O processo de treinamento é similar às MLPs, porém com pequenas modificações dado o caráter estrutural e convolucional da rede.
 
 \section{Implementação}
-A solução híbrida proposta nesse capítulo assume que os candidatos são obtidos através do algoritmo tradicional visto na seção \ref{sec:tradicional-candidatos} e utiliza um classificador profundo sem que haja pré-processamento das amostras. Dois tipos de estruturas foram utilizadas, primeiramente uma rede MLP e em seguida uma rede convolucional.
+A solução híbrida proposta nesse capítulo assume que os candidatos são obtidos através do algoritmo tradicional visto na seção \ref{sec:tradicional-candidatos} e utiliza um classificador profundo sem que haja pré-processamento das amostras. Dois tipos de estruturas foram utilizadas, primeiramente uma rede MLP e em seguida uma rede convolucional. 
 
-Existem diversas plataformas para se implementar os métodos de redes neurais. Entre essas, destacam-se a biblioteca de código aberto \textsc{Theano} \cite{theano}, que permite a definição de e avaliação de expressões matemáticas multidimensionais, diferenciação simbólica, otimização para velocidade e estabilidade, além de uso transparente da GPU. Essa biblioteca, entretanto, não fornece funções específicas para a criação de redes neurais, ou seja, é necessário que o usuário crie as matrizes de pesos, defina função custo e de ativação.
+Para ambas as estruturas é necessário especificar qual a topologia da rede: número de camadas e de perceptrons em cada camada, tamanho dos filtros convolutivos e de amostragem , funções de ativação e método de inicialização de pesos e de otimização.  A seleção desses parâmetros pressupõe o entendimento do funcionamento da rede e um ajuste fino baseados em experimentos empíricos pode melhorar o desempenho do classificador.
+
+Existem diversas plataformas para se implementar os métodos de redes neurais. Entre essas, destacam-se a biblioteca de código aberto \textsc{Theano} \cite{theano}, que permite a definição de e avaliação de expressões matemáticas multidimensionais, diferenciação simbólica, otimização para velocidade e estabilidade, além de uso transparente da GPU. Essa biblioteca, entretanto, não fornece funções específicas para a criação de redes neurais, ou seja, é necessário que o usuário crie as matrizes de pesos, defina função custo e de ativação e implemente o algoritmo de propagação reversa.
 
 Para facilitar a utilização dos métodos profundos e tornar o processo de desenvolvimento mais rápido, utilizou-se a a biblioteca \textsc{Keras} \cite{keras}, que fornece uma abstração acima do \textsc{Theano} para utilização dos métodos profundos. Isso permite criar redes com poucas linhas de código, definindo camadas de maneira simples e escolhendo as funções de ativação e custo dentre as já definidas. Ainda assim, permite flexibilidade para o usuário criar suas próprias funções e ajustar parâmetros da rede, assim como métodos de iniciação dos parâmetros e diferentes tipos de otimizadores.
 

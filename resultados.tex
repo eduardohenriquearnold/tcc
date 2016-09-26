@@ -23,11 +23,11 @@ Uma maneira compacta de representar a eficiência de um classificador é a \text
 
 Algumas grandezas utilizadas no campo de recuperação da informação \cite{inforetrival} são também úteis no contexto de classificação. O \textit{recall} é a fração de amostras positivas corretamente classificadas em relação ao número completo de amostras positivas do \textit{dataset}:
 \begin{equation}
-R = \frac{TP}{TP+FN}
+R = \frac{TP}{TP+FN}.
 \end{equation}
 A \textit{precision} fornece a fração das amostras positivas corretamente classificadas com relação à todas as amostras classificadas como positivas:
 \begin{equation}
-P = \frac{TP}{TP+FP}
+P = \frac{TP}{TP+FP}.
 \end{equation}
 
 Ambas as grandezas são importantes ao se avaliar um classificador, porém em uma aplicação específica uma delas pode ser mais relevante, como no caso desse trabalho. Para a indústria em questão é mais importante que a linha de produção se mantenha em funcionamento o maior tempo possível, portanto, deseja-se minimizar a quantidade de falsos positivos, que significam cabeças incorretamente identificadas que interrompem a produção sem necessidade. Nesse caso a medida de maior destaque será a \textit{precision}.
