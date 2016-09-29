@@ -3,6 +3,7 @@
 \usepackage{bm}
 \usepackage{multirow}
 \usepackage{thmtools}
+\usepackage[nomessages]{fp}
 
 \makeatletter
 \def\blfootnote{\gdef\@thefnmark{}\@footnotetext}
@@ -112,3 +113,25 @@
 
 \newcommand{\bfzero}{\mathbf{0}}
 \newcommand{\bfone}{\mathbf{1}}
+
+%Comando mostra tabela de resultados percentuais. Argumentos: #1 Título; #2-#5: Verdadeiros negativos, falsos positivos, falsos negativos, verdadeiros positivos em valores absolutos
+\newcommand{\cfmat}[5]
+{
+\FPeval{\vsum}{#2+#3+#4+#5}
+\FPeval{\rr}{round(100*(#2)/(\vsum),3)}
+\FPeval{\rrr}{round(100*(#3)/(\vsum),3)}
+\FPeval{\rrrr}{round(100*(#4)/(\vsum),3)}
+\FPeval{\rrrrr}{round(100*(#5)/(\vsum),3)}
+\begin{minipage}{0.48\textwidth}
+\vspace*{2mm}
+\centering
+\caption{{#1}}
+\begin{tabular}{c|c|c|}
+\cline{2-3}
+                        & 0 & 1 \\ \hline
+\multicolumn{1}{|c|}{0} & {\rr } & {\rrr } \\ \hline
+\multicolumn{1}{|c|}{1} & {\rrrr } & {\rrrrr } \\ \hline
+\end{tabular}
+\end{minipage}
+\hfill
+}

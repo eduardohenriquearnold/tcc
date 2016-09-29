@@ -43,6 +43,7 @@ onde $I$ é a imagem e $S(p)$ é o conjunto dos pixels no quadrado de centro $p$
 Ao final dessa etapa, conta-se com uma lista de candidatos representados pelo \textit{patch} da imagem correspondente, como ilustrado na figura \ref{fig:candidatos} pelos quadrados em vermelho.
 
 \section{Descritores}
+\label{sec:tradicional-descritores}
 Tendo a lista de candidatos é necessário obter uma descrição para cada um deles. No trabalho de referência se destacam dois descritores: grades simples e grades circulares. Observa-se que para todos os descritores a característica importante de representação está nos desníveis da cabeça em relação ao resto do corpo, que se dá de maneira aproximadamente circular. Portanto, objetiva-se encontrar uma maneira de evidenciar quando e em que grau esse tipo de padrão ocorre.
 
 O primeiro descritor, grades simples, divide o candidato em blocos, com uma quantidade ímpar em cada dimensão, como ilustrado na figura \ref{fig:descritores}. Então calcula-se a média dos pixels em cada um dos blocos. Em seguida subtrai-se de todos os blocos a média do bloco central e por fim gera-se um histograma dos valores resultantes, que corresponde à descrição do candidato. Para esse descritor em específico, fixou-se a quantidade de blocos em 7 para cada dimensão, 49 blocos no total pois avaliou-se que para o tamanho dos candidatos foi a representação mais adequada.
