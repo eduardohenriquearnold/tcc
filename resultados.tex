@@ -8,7 +8,7 @@ Em geral, num problema de classificação o indicador mais comum é a acurácia 
 
 Uma maneira compacta de representar o desempenho de um classificador é a \textbf{matriz de confusão} \cite{evaluationMetrics}, apresentada na tabela \ref{tab:matriz-confusão}. Para uma classificação binária é uma matriz 2x2 em que a primeira linha indica as amostras negativas e a segunda as amostras positivas. De forma semelhante, a primeira coluna indica amostras que foram classificadas como negativas e a segunda que foram classificadas como positivas. Combinando-se essas linhas e colunas, obtém-se o número de verdadeiros negativos TN, falsos positivos FP, falsos negativos FN e verdadeiros positivos TP, respectivamente. Essa estrutura supera os problemas da acurácia pois fornece a distribuição de acertos e erros de classificação. Adota-se a descrição dos valores em percentuais relativos ao conjunto de análise.
 
-\begin{table}[h]
+\begin{table}
 \centering
 \caption{Matriz de confusão}
 \label{tab:matriz-confusão}
@@ -21,9 +21,9 @@ Uma maneira compacta de representar o desempenho de um classificador é a \textb
 \end{tabular}
 \end{table}
 
-Outro aspecto a destacar na avaliação de classificadores é que não basta avaliar os indicadores apresentados apenas no conjunto de treinamento. Embora essas medidas forneçam um limite máximo para o desempenho do classificador e permitam detectar \textit{underfitting}, quando o modelo não tem capacidade de modelar o conjunto de treinamento, não se pode avaliar o desempenho do classificador em um caso geral. Por outro lado, se o modelo for demasiadamente complexo ele pode ter se tornado muito específico para algumas características do conjunto de treinamento, situação conhecida como \textit{overfitting}. Assim, para medir o desempenho do classificador em uma situação real utiliza-se de outro conjunto de dados supervisionados chamado de conjunto de teste -- \textit{test set}, independente do conjunto de treinamento. Afirma-se que o modelo generaliza bem se o desempenho no conjunto de treinamento se equiparar ao de teste.
+Outro aspecto a destacar na avaliação de classificadores é que não basta avaliar os indicadores apresentados apenas no conjunto de treinamento. Embora essas medidas forneçam um limite máximo para o desempenho do classificador e permitam detectar \textit{underfitting}, quando o modelo não tem capacidade de modelar o conjunto de treinamento, não se pode avaliar o desempenho do classificador em um caso geral, isto é, não incluso no conjunto de treinamento. Por outro lado, se o modelo for demasiadamente complexo ele pode ter se tornado muito específico para algumas características do conjunto de treinamento, situação conhecida como \textit{overfitting}. Assim, para medir o desempenho do classificador em uma situação real utiliza-se de outro conjunto de dados supervisionados chamado de conjunto de teste (\textit{test set}), independente do conjunto de treinamento. Afirma-se que o modelo generaliza bem se o desempenho no conjunto de treinamento se equiparar ao de teste.
 
-Graficamente pode-se avaliar classificadores através do gráfico ROC -- \textit{Receiver Operating Characteristic} \cite{evaluationMetrics}, que relaciona a taxa de verdadeiros positivos
+Graficamente pode-se avaliar classificadores através do gráfico ROC (\textit{Receiver Operating Characteristic}) \cite{evaluationMetrics}, que relaciona a taxa de verdadeiros positivos
 \begin{equation}
 \text{TVP} = \frac{\text{TP}}{\text{FN}+\text{TP}}
 \end{equation}
@@ -35,21 +35,21 @@ Dessa forma, o classificador ideal indicaria uma TVP unitária com TFP nula, o q
 
 A princípio cada classificador avaliado em um conjunto de dados corresponde a um ponto no espaço ROC. Entretanto existem classificadores cuja saída é a probabilidade da amostra ser positiva. Nesses casos é possível escolher um limiar de probabilidade $T$ acima do qual se considera uma amostra como positiva. Cada escolha desse limiar corresponderá a um ponto no espaço ROC e variando esse parâmetro é possível obter uma curva nesse espaço.
 
-Comparar diferentes classificadores não é trivial pois é uma tarefa multiobjetivo que envolve simultaneamente maximizar a TVP e minimizar TFP. Portanto só é possível afirmar que um classificador é melhor do que outro sse sua TVP é maior e sua TFP é menor que a do outro, nesse caso diz-se que o primeiro domina o segundo. Na prática, entretanto, utiliza-se a métrica \textit{Area Under Curve} -- AUC, que mede a área sob a curva ROC, para facilitar essa comparação, especialmente quando a região de operação não é especificada.
+Comparar diferentes classificadores não é trivial pois é uma tarefa multiobjetivo que envolve simultaneamente maximizar a TVP e minimizar TFP. Portanto só é possível afirmar que um classificador é melhor do que outro sse sua TVP é maior e sua TFP é menor que a do outro, nesse caso diz-se que o primeiro domina o segundo. Na prática, entretanto, pode-se utilizar a métrica \textit{Area Under Curve}, AUC, que mede a área sob a curva ROC, para facilitar essa comparação, especialmente quando a região de operação não é especificada.
 
 Um requerimento específico para a aplicação em questão é que a linha de produção se mantenha em funcionamento o maior tempo possível, para tanto deve-se minimizar a quantidade de falsos positivos FP, que significam cabeças incorretamente identificadas que interrompam a produção sem necessidade. Assim, demanda-se uma TFP menor que 10\%. Quando especificada, a AUC será correspondente à área sob a curva ROC com TFP inferior à esse limite.
 
-\section{Classificadores}
+\section{Desempenho dos Classificadores}
 \label{sec:resultados-classificadores}
-O classificador SVM originalmente possui saída categórica, porém pode ser adaptado para fornecer uma saída probabilística que indica a probabilidade da amostra ser positiva. Nota-se entretanto que internamente a formulação é ainda categórica. Já os métodos profundos possuem saídas probabilísticas por definição. Essa estrutura da saída como probabilidade é vantajosa pois permite ajustar o compromisso entre falso positivos e falso negativos do classificador, após treinamento, através da escolha do limiar de probabilidade $T$ acima do qual uma amostra é considerada positiva. Escolher um limiar mais alto significa exigir mais segurança do classificador e, portanto, reduzir o número de falsos positivos ao preço de aumentar o número de falsos negativos.
+O classificador SVM originalmente possui saída categórica, porém pode ser adaptado para fornecer uma saída probabilística que indica a probabilidade da amostra ser positiva conforme visto na seção \ref{sec:svm-probabilistic}. Nota-se entretanto que internamente a formulação é ainda categórica. Já os métodos profundos possuem saídas probabilísticas por definição. Essa estrutura da saída como probabilidade é vantajosa pois permite ajustar o compromisso entre falso positivos e falso negativos do classificador, após treinamento, através da escolha do limiar de probabilidade $T$ acima do qual uma amostra é considerada positiva. Escolher um limiar mais alto significa exigir mais segurança do classificador e, portanto, reduzir o número de falsos positivos ao preço de aumentar o número de falsos negativos.
 
-No caso de saídas probabilísticas, para representar a matriz de confusão se faz necessário escolher um limiar $T$. Nesse trabalho escolhem-se dois valores (0.5 e 0.9) para esse parâmetro de maneira a demonstrar sua influência sob a distribuição das amostras na classificação. Nota-se que a estrutura de classificação é a mesma, apenas o limiar é trocado.
+No caso de saídas probabilísticas, para representar a matriz de confusão se faz necessário escolher valores para $T$. Nesse trabalho escolhem-se dois valores (0.5 e 0.9) para esse parâmetro de maneira a demonstrar sua influência sob a distribuição das amostras na classificação. Nota-se que a estrutura de classificação é a mesma, apenas o limiar é trocado.
 
 Para realizar o treinamento dos classificadores foi gerado um conjunto de dados a partir de gravações realizadas no ambiente indústrial onde o sistema deverá ser instalado. A câmera foi posicionada num ponto próximo de onde deve ocorrer a sua instalação final. Diversos vídeos foram gravados e posteriormente analisados. Utilizando o algoritmo de detecção de candidatos visto em \ref{sec:tradicional-candidatos}, selecionou-se manualmente em cada quadro quais dos candidatos eram verdadeiramente cabeças.
 
 Repetindo esse processo em cada quadro formou-se um conjunto de treinamento, cuja amostra é o recorte do candidato, reduzido de 2459 amostras negativas (não cabeças) e 667 positivas (cabeças). Em seguida estendeu-se esse conjunto reduzido para 9894 amostras negativas e 1222 positivas, formando o conjunto de treinamento completo. Para averiguar o desempenho estendeu-se esse conjunto para 16898 amostras das quais 14966 são negativas. Criou-se, ainda, um conjunto de teste independente de 2738 amostras negativas e 235 amostras positivas.
 
-\subsection{Método tradicional}
+\subsection{SVM}
 Avaliou-se o resultado dos diferentes descritores mencionados em \ref{sec:tradicional-descritores} utilizando um processo de treinamento automático do SVM \cite{scikit-learn}: varreu-se o espaço dos parâmetros $C$ entre $0.0001$ e $0.01$ com passos de $0.001$ e $\sigma$ entre $1$ e $100$ com passos de $5$. Selecionou-se os melhores resultados através da medida conhecida como precisão (\textit{precision}) definida como
 \begin{equation}
 P = \frac{\text{TP}}{\text{FP}+\text{TP}}
@@ -85,9 +85,7 @@ Outro descritor que também foi avaliado foi o de grades simples com dimensão 7
 \cfmat{Grades simples, conjunto teste}{2445}{293}{181}{54}{cm:gradesTe}
 \end{table}
 
-\subsection{Classificador profundo}
-
-\subsubsection{MLP}
+\subsection{MLP}
 Na estrutura MLP foram realizados testes com duas e três camadas intermediárias, com ativação RELU e um único perceptron de saída com ativação sigmoide indicando a probabilidade da amostra ser uma cabeça. Na configuração de duas camadas foram utilizados 512 e 256 perceptrons, respectivamente. Os resultados obtidos para o conjunto de treinamento são apresentados nas tabelas \ref{cm:MLP:Tr:5} e \ref{cm:MLP:Tr:9}. O resultado do conjunto de teste são apresentados nas tabela \ref{cm:MLP:Te:5} e \ref{cm:MLP:Te:9}.
 
 \begin{table}
@@ -100,7 +98,7 @@ Na estrutura MLP foram realizados testes com duas e três camadas intermediária
 
 Para três camadas foram utilizados 1024, 512 e 256 perceptrons respectivamente, entretanto os resultados foram semelhantes aos obtidos com duas camadas, portanto o aumento em complexidade não é justificado visto que o desempenho permaneceu o mesmo.
 
-\subsubsection{Redes convolucionais}
+\subsection{CNN}
 Para redes convolucionais utilizou-se uma única camada convolucional RELU com 16 núcleos 3x3 seguida por max-pooling (3x3) e uma camada densamente conectada de 128 percepetrons RELU e finalmente saída única com ativação sigmoide. Essa topologia foi a que teve o melhor desempenho, obtendo 99\% de acurácia no conjunto de treinamento, demonstrados nas tabelas \ref{cm:CNN:Tr:5} e \ref{cm:CNN:Tr:9}. Também teve 96\% de acurácia no conjunto de teste, como observado nas tabelas \ref{cm:CNN:Te:5} e \ref{cm:CNN:Te:9}.
 
 \begin{table}
@@ -113,9 +111,9 @@ Para redes convolucionais utilizou-se uma única camada convolucional RELU com 1
 
 
 \subsection{Discussão}
-Verifica-se as curvas ROC dos classificadores correspondentes avaliados no conjunto de teste na figura \ref{fig:ROC}. Observando a região de interesse (TFP menor que 10\%) fica claro que os métodos profundos, com CNN e MLP, dominam sob os superficiais. Em mais detalhes, MLP domina entre TFP de 0.1\% a 1.3\%, a partir de onde CNN passa a dominar. Para especificar qual o melhor classificador entre os profundos é necessário saber exatamente a região de operação em que se deseja atuar. 
+Verifica-se as curvas ROC dos classificadores correspondentes avaliados no conjunto de teste na figura \ref{fig:ROC}. Observando a região de interesse (TFP menor que 10\%) fica claro que os métodos profundos, com CNN e MLP, dominam os superficiais. Em mais detalhes, MLP domina entre TFP de 0.1\% a 1.3\%, a partir de onde CNN passa a dominar. Para especificar qual o melhor classificador entre os profundos é necessário saber exatamente a região de operação em que se deseja atuar. 
 
-Observa-se que muitos classificadores obtiveram um desempenho elevado no conjunto de treinamento, em especial as redes convolucionais que obtiveram acurácia quase unitária (sob dataset balanceado), demonstrando a alta capacidade do modelo. Nota-se, entretanto, que há grande discrepância entre o desempenho dos classificadores no conjunto de treinamento e de teste nos métodos superficiais, o que caracteriza \textit{overfitting}. Os métodos profundos, em contraste, apresentam uma boa generalização. Isso é explicado porque o modelo em questão foi corretamente especificado através no número de camadas e tamanho de filtros, de forma que sua capacidade se ajuste de forma adequada aos dados.
+Observa-se que muitos classificadores obtiveram um desempenho elevado no conjunto de treinamento, em especial as redes convolucionais que obtiveram acurácia quase unitária (sob dataset balanceado) conforme tabelas \ref{cm:CNN:Tr:5} e \ref{cm:CNN:Tr:5}, demonstrando a alta capacidade do modelo. Nota-se, entretanto, que há grande discrepância entre o desempenho dos classificadores no conjunto de treinamento e de teste nos métodos superficiais, o que caracteriza \textit{overfitting}, como apontam as tabelas \ref{cm:aneis18Tr} e \ref{cm:aneis18Te}. Os métodos profundos, em contraste, apresentam uma boa generalização, como pode ser visto na tabela \ref{cm:CNN:Te:9}. Isso é explicado porque o modelo em questão foi corretamente especificado através no número de camadas e tamanho de filtros, de forma que sua capacidade se ajuste de forma adequada aos dados.
 
 \begin{figure}
 \centering
