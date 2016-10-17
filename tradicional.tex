@@ -76,6 +76,8 @@ Utiliza-se um classificador binário \textit{SVM}. Seja o dataset o conjunto $(x
 
 A função de decisão do SVM pode ser descrita como $f(x)=w^T x+ b$ onde $w$ é o vetor de pesos, que fornece a inclinação do hiperplano e $b$ um deslocamento do hiperplano.
 
+Essa função de decisão corresponde à distância (com sinal) da amostra até o hiperplano de separação. Redimensionando essa medida através da função de Platt \ref{svmProbabilisticOutput} é possível obter a probabilidade da amostra pertencer à determinada classe $P(y_i=1 | x_i)$. Permitindo, então, obter uma saída probabilística de um classificador SVM.
+
 O dataset é considerado linearmente separável se for possível encontrar uma reta ou hiperplano que separe todas as amostras corretamente. Para esse caso, considera-se que o melhor hiperplano possível é o que oferecer a maior distância entre os vetores suporte, ou seja, o que tiver a maior margem, como pode ser observado na figura \ref{fig:svm-margin}. A margem pode ser definida como $\frac{2}{\abs{w}}$.
 
 \begin{figure}[h]
@@ -85,7 +87,7 @@ O dataset é considerado linearmente separável se for possível encontrar uma r
 \label{fig:svm-margin}
 \end{figure}
 
-O aprendizado consiste em encontrar o vetor de pesos $w$ e o escalar $b$ que minimizem $abs{w}$, portanto maximizando a margem, sujeitos à $y_i(w^T x_i) \geq 1$. Esse é um problema de otimização convexa, em que qualquer mínimo local é também global.
+O aprendizado consiste em encontrar o vetor de pesos $w$ e o escalar $b$ que minimizem $\abs{w}$, portanto maximizando a margem, sujeitos à $y_i(w^T x_i) \geq 1$. Esse é um problema de otimização convexa, em que qualquer mínimo local é também global.
 
 Para o caso não onde o dataset não é linearmente separável, minimiza-se a função custo 
 \begin{equation*}

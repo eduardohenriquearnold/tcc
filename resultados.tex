@@ -6,7 +6,7 @@ Para avaliar o desempenho das diferentes soluções apresentadas nesse trabalho 
 
 Em geral, num problema de classificação o indicador mais comum é a acurácia (\textit{accuracy}), definida \cite{evaluationMetrics} como a razão das classificações corretas pelo total de classificações. É fundamental notar, entretanto, que essa medida sozinha não é suficiente para avaliar um classificador, especialmente se o dataset for desbalanceado. Por exemplo, ao considerar um dataset com duas amostras negativas entre 20 e utilizar um classificador trivial que classifica qualquer amostra como sendo positiva, obtem-se uma acurácia de 90\%, demonstrando o problema dessa métrica.
 
-Uma maneira compacta de representar o desempenho de um classificador é a \textbf{matriz de confusão} \cite{evaluationMetrics}. Para uma classificação binária é uma matriz 2x2 em que a primeira linha indica as amostras negativas e a segunda as amostras positivas. De forma semelhante, a primeira coluna indica amostras que foram classificadas como negativas e a segunda que foram classificadas como positivas. Combinando-se essas linhas e colunas, obtém-se o número de verdadeiros negativos TN, falsos positivos FP, falsos negativos FN e verdadeiros positivos TP, respectivamente. Essa estrutura supera os problemas da acurácia pois fornece a distribuição de acertos e erros de classificação. Adota-se a descrição dos valores em percentuais relativos ao conjunto de análise.
+Uma maneira compacta de representar o desempenho de um classificador é a \textbf{matriz de confusão} \cite{evaluationMetrics}, apresentada na tabela \ref{tab:matriz-confusão}. Para uma classificação binária é uma matriz 2x2 em que a primeira linha indica as amostras negativas e a segunda as amostras positivas. De forma semelhante, a primeira coluna indica amostras que foram classificadas como negativas e a segunda que foram classificadas como positivas. Combinando-se essas linhas e colunas, obtém-se o número de verdadeiros negativos TN, falsos positivos FP, falsos negativos FN e verdadeiros positivos TP, respectivamente. Essa estrutura supera os problemas da acurácia pois fornece a distribuição de acertos e erros de classificação. Adota-se a descrição dos valores em percentuais relativos ao conjunto de análise.
 
 \begin{table}[h]
 \centering
@@ -21,33 +21,42 @@ Uma maneira compacta de representar o desempenho de um classificador é a \textb
 \end{tabular}
 \end{table}
 
-Outro aspecto a destacar na avaliação de classificadores é que não basta avaliar os indicadores apresentados apenas no \textit{dataset}. Embora essas medidas forneçam um limite máximo de desempenho do classificador, não se pode avaliar o desempenho do mesmo em um caso geral. Isso porque o modelo adquire um aspecto de memória das amostras, o que impede a avaliação da generalização do mesmo. Assim, o modelo pode ter se tornado muito específico para o conjunto de dados de treinamento, situação conhecida como \textit{overfitting}. Portanto, para medir o real desempenho do classificador utiliza-se de outro conjunto de dados supervisionados chamado de conjunto de validação -- \textit{validation set}, independente do conjunto de treinamento.
+Outro aspecto a destacar na avaliação de classificadores é que não basta avaliar os indicadores apresentados apenas no conjunto de treinamento. Embora essas medidas forneçam um limite máximo para o desempenho do classificador e permitam detectar \textit{underfitting}, quando o modelo não tem capacidade de modelar o conjunto de treinamento, não se pode avaliar o desempenho do classificador em um caso geral. Por outro lado, se o modelo for demasiadamente complexo ele pode ter se tornado muito específico para algumas características do conjunto de treinamento, situação conhecida como \textit{overfitting}. Assim, para medir o desempenho do classificador em uma situação real utiliza-se de outro conjunto de dados supervisionados chamado de conjunto de teste -- \textit{test set}, independente do conjunto de treinamento. Afirma-se que o modelo generaliza bem se o desempenho no conjunto de treinamento se equiparar ao de teste.
 
-Graficamente pode-se avaliar classificadores através da curva ROC -- \textit{Receiver Operating Characteristic} \cite{evaluationMetrics}, que demonstra como a taxa de verdadeiros positivos -- TVP ($\frac{TP}{FN+TP}$) se relaciona com a taxa de falsos positivos -- TFP ($\frac{FP}{TN+FP}$). Para classificadores discretos, cuja saída é apenas a classe, pode-se representar um ponto no espaço ROC. Já para classificadores com uma saída probabilistica, ao variar o limiar de probabilidade $T$ acima do qual se considera uma amostra como positiva é possível representar diversos pontos, caracterizando uma curva nesse espaço. O melhor classificador indicaria uma taxa de TVP unitária com TFP nula, o que caracteriza uma reta de $(0,1)$ a $(1,1)$ delimitando uma área, AUC (\textit{Area Under Curve}), unitária. Pontos mais próximos do classificador ideal $(0,1)$ são considerados melhores. Portanto, quanto maior a AUC melhor o desempenho do classificador. Além disso, essa curva pode ser utilizada para selecionar o limiar de probabilidade $T$ de forma a atingir uma taxa de TVP especificada ao preço de uma TFP correspondente no caso de saídas probabilísticas.
+Graficamente pode-se avaliar classificadores através do gráfico ROC -- \textit{Receiver Operating Characteristic} \cite{evaluationMetrics}, que relaciona a taxa de verdadeiros positivos
+\begin{equation}
+\text{TVP} = \frac{\text{TP}}{\text{FN}+\text{TP}}
+\end{equation}
+com a taxa de falsos positivos 
+\begin{equation}
+\text{TFP} = \frac{\text{FP}}{\text{TN}+\text{FP}}.
+\end{equation} 
+Dessa forma, o classificador ideal indicaria uma TVP unitária com TFP nula, o que caracteriza o ponto $(0,1)$.
 
-Um requerimento específico para a aplicação em questão é que a linha de produção se mantenha em funcionamento o maior tempo possível, para tanto deve-se minimizar a quantidade de falsos positivos FP, que significam cabeças incorretamente identificadas que interrompam a produção sem necessidade.
+A princípio cada classificador avaliado em um conjunto de dados corresponde a um ponto no espaço ROC. Entretanto existem classificadores cuja saída é a probabilidade da amostra ser positiva. Nesses casos é possível escolher um limiar de probabilidade $T$ acima do qual se considera uma amostra como positiva. Cada escolha desse limiar corresponderá a um ponto no espaço ROC e variando esse parâmetro é possível obter uma curva nesse espaço.
+
+Comparar diferentes classificadores não é trivial pois é uma tarefa multiobjetivo que envolve simultaneamente maximizar a TVP e minimizar TFP. Portanto só é possível afirmar que um classificador é melhor do que outro sse sua TVP é maior e sua TFP é menor que a do outro, nesse caso diz-se que o primeiro domina o segundo. Na prática, entretanto, utiliza-se a métrica \textit{Area Under Curve} -- AUC, que mede a área sob a curva ROC, para facilitar essa comparação, especialmente quando a região de operação não é especificada.
+
+Um requerimento específico para a aplicação em questão é que a linha de produção se mantenha em funcionamento o maior tempo possível, para tanto deve-se minimizar a quantidade de falsos positivos FP, que significam cabeças incorretamente identificadas que interrompam a produção sem necessidade. Assim, demanda-se uma TFP menor que 10\%. Quando especificada, a AUC será correspondente à área sob a curva ROC com TFP inferior à esse limite.
 
 \section{Classificadores}
 \label{sec:resultados-classificadores}
-O dataset foi gerado a partir de gravações realizadas no ambiente indústrial onde o sistema deverá ser instalado. A câmera foi posicionada num ponto próximo de onde deve ocorrer a sua instalação final. Diversos vídeos foram gravados e posteriormente analisados. Utilizando o algoritmo de detecção de candidatos visto em \ref{sec:tradicional-candidatos}, selecionou-se manualmente em cada quadro quais dos candidatos eram verdadeiramente cabeças. Repetindo esse processo em cada quadro formou-se um dataset, cuja amostra é o recorte do candidato, reduzido de 2459 amostras negativas (não cabeças) e 667 positivas (cabeças). Em seguida extendeu-se esse dataset reduzido para 9894 amostras negativas e 1222 positivas, formando o dataset completo. Criou-se, ainda, um conjunto de validação independente de 2738 amostras negativas e 235 amostras positivas.
+O conjunto de dados foi gerado a partir de gravações realizadas no ambiente indústrial onde o sistema deverá ser instalado. A câmera foi posicionada num ponto próximo de onde deve ocorrer a sua instalação final. Diversos vídeos foram gravados e posteriormente analisados. Utilizando o algoritmo de detecção de candidatos visto em \ref{sec:tradicional-candidatos}, selecionou-se manualmente em cada quadro quais dos candidatos eram verdadeiramente cabeças. Repetindo esse processo em cada quadro formou-se um conjunto de treinamento, cuja amostra é o recorte do candidato, reduzido de 2459 amostras negativas (não cabeças) e 667 positivas (cabeças). Em seguida estendeu-se esse conjunto reduzido para 9894 amostras negativas e 1222 positivas, formando o conjunto de treinamento completo. Criou-se, ainda, um conjunto de teste independente de 2738 amostras negativas e 235 amostras positivas.
 
 \subsection{Método tradicional}
-Avaliou-se o resultado das diferentes descritores mencionados em \ref{sec:tradicional-descritores} utilizando um processo de treinamento automático do SVM \cite{scikit-learn}: varreu-se o espaço dos parâmetros $C$ entre $0.0001$ e $0.01$ com passos de $0.001$ e $\sigma$ entre $1$ e $100$ com passos de $5$. Os melhores resultados, selecionados segundo a medida de \textit{precision}, são apresentados na forma de matriz de confusão para cada um dos descritores.
+Avaliou-se o resultado dos diferentes descritores mencionados em \ref{sec:tradicional-descritores} utilizando um processo de treinamento automático do SVM \cite{scikit-learn}: varreu-se o espaço dos parâmetros $C$ entre $0.0001$ e $0.01$ com passos de $0.001$ e $\sigma$ entre $1$ e $100$ com passos de $5$. Selecionou-se os melhores resultados através da medida conhecida como precisão (\textit{precision}) definida como
+\begin{equation}
+P = \frac{\text{TP}}{\text{FP}+\text{TP}}
+\end{equation}
+comumente utilizada e disponível no \textit{toolkit} utilizado.
 
-\begin{table}[h]
-\cfmat{Grades simples (7x7), dataset completo}{9881}{13}{36}{1186}
-\cfmat{Grades simples (7x7), conjunto validação}{2589}{149}{198}{37}
-\end{table}
-
-Para o descritor de anéis concêntricos, primeiramente utilizou-se o dataset reduzido para avaliar qual a melhor dimensão do descritor, observando os seguintes resultados.
+Primeiramente avaliou-se qual a dimensão do descritor de anéis concêntricos que apresenta melhor resultado. Para tanto treinou-se classificadores SVM de saída probabilística com as descrições em 8, 16 e 18 dimensões sob o conjunto de treinamento reduzido, obtendo as matrizes de confusão das tabelas \ref{cm:aneisR8}, \ref{cm:aneisR16} e \ref{cm:aneisR18}. Obtiveram-se as curvas ROC desses classificadores avaliados no conjunto de teste, vistas na figura \ref{fig:roc-rings}. 
 
 \begin{table}[h!]
-\cfmat{Anéis concêntricos com 8 dimensões, dataset reduzido}{2364}{65}{185}{482}
-\cfmat{Anéis concêntricos com 16 dimensões, dataset reduzido}{2385}{44}{111}{556}
-\cfmat{Anéis concêntricos com 18 dimensões, dataset reduzido}{2410}{19}{60}{607}
+\cfmat{Anéis concêntricos, 8 dimensões, conjunto de treinamento reduzido}{2364}{65}{185}{482}{cm:aneisR8}
+\cfmat{Anéis concêntricos, 16 dimensões, conjunto de treinamento reduzido}{2385}{44}{111}{556}{cm:aneisR16}
+\cfmat{Anéis concêntricos, 18 dimensões, conjunto de treinamento reduzido}{2410}{19}{60}{607}{cm:aneisR18}
 \end{table}
-
-Deseja-se avaliar qual das descrições anteriores demonstra melhor resultado para o problema de detecção de pessoas. Para tanto, treinou-se um classificador SVM para cada uma das descrições utilizando o dataset reduzido. Em seguida avaliou-se o desempenho de cada uma sob o dataset de validação, forçando uma saída probabilística no SVM e assim permitindo traçar uma curva ROC. O resultado se apresenta graficamente sob forma das curvas ROC na figura \ref{fig:roc-rings}.
 
 \begin{figure}[h]
 \centering
@@ -56,11 +65,18 @@ Deseja-se avaliar qual das descrições anteriores demonstra melhor resultado pa
 \label{fig:roc-rings}
 \end{figure}
 
-Tendo visto que o melhor resultado foi obtido com a descrição de 18 dimensões (AUC=0.84), utilizou-se o dataset completo para o treinamento e posterior avaliação através do conjunto de validação, como visto nas tabelas seguintes.
+Tendo visto que o classificador de 18 dimensões domina sob os outros na região de operação com menor TFP, decidiu-se selecionar esse descritor para seguir com a análise. Para tanto utilizou-se o conjunto de treinamento completo para o treinamento e posterior avaliação através do conjunto de teste, como visto nas tabelas \ref{cm:aneis18Tr} e \ref{cm:aneis18Te}.
 
 \begin{table}[h!]
-\cfmat{Anéis concêntricos com 18 dimensões, dataset completo}{9890}{4}{79}{1143}
-\cfmat{Anéis concêntricos com 18 dimensões, conjunto validação}{2564}{174}{158}{77}
+\cfmat{Anéis concêntricos com 18 dimensões, conjunto treinamento}{9890}{4}{79}{1143}{cm:aneis18Tr}
+\cfmat{Anéis concêntricos com 18 dimensões, conjunto teste}{2564}{174}{158}{77}{cm:aneis18Te}
+\end{table}
+
+Outro descritor que também foi avaliado foi o de grades simples com dimensão 7x7, como demonstra as tabelas \ref{cm:gradesTr} e \ref{cm:gradesTe}.
+
+\begin{table}[h]
+\cfmat{Grades simples, conjunto treinamento}{9881}{13}{36}{1186}{cm:gradesTr}
+\cfmat{Grades simples, conjunto teste}{2445}{293}{181}{54}{cm:gradesTe}
 \end{table}
 
 \subsection{Classificador profundo}
@@ -68,38 +84,34 @@ Tendo visto que o melhor resultado foi obtido com a descrição de 18 dimensões
 \subsubsection{MLP}
 Na estrutura MLP foram realizados testes com duas e três camadas intermediárias, com ativação RELU e um único perceptron de saída com ativação sigmoide indicando a probabilidade da amostra ser uma cabeça. Essa estrutura da saída como probabilidade é vantajosa pois permite ajustar o compromisso entre falso positivos e falso negativos do classificador, após treinamento, através da escolha do limiar de probabilidade $T$. Escolher um limiar mais alto significa exigir mais segurança do classificador e, portanto, reduzir o número de falsos positivos ao preço de possivelmente aumentar o número de falsos negativos.
 
-Na configuração de duas camadas foram utilizados 512 e 256 perceptrons, respectivamente. Os resultados obtidos para o dataset e conjunto de validação foram os seguintes.
-\begin{table}[h!]
-\cfmat{MLP 2 camadas, $T=0.5$, dataset completo}{9805}{89}{100}{1122}
-\cfmat{MLP 2 camadas, $T=0.9$, dataset completo}{9864}{30}{239}{983}
+Na configuração de duas camadas foram utilizados 512 e 256 perceptrons, respectivamente. Os resultados obtidos para o conjunto de treinamento são apresentados nas tabelas \ref{cm:MLP:Tr:5} e \ref{cm:MLP:Tr:9}. O resultado do conjunto de teste são apresentados nas tabela \ref{cm:MLP:Te:5} e \ref{cm:MLP:Te:9}.
 
-\cfmat{MLP 2 camadas, $T=0.5$, conjunto validação}{2644}{94}{45}{190}
-\cfmat{MLP 2 camadas, $T=0.9$, conjunto validação}{2707}{29}{88}{147}
+\begin{table}[h!]
+\cfmat{MLP, conjunto treinamento extendido $T=0.5$}{14533}{433}{104}{1828}{cm:MLP:Tr:5}
+\cfmat{MLP, conjunto treinamento extendido $T=0.9$}{14794}{172}{252}{1680}{cm:MLP:Tr:9}
+
+\cfmat{MLP, conjunto teste $T=0.5$}{2489}{249}{10}{225}{cm:MLP:Te:5}
+\cfmat{MLP, conjunto teste $T=0.9$}{2635}{103}{25}{210}{cm:MLP:Te:9}
 \end{table}
 
 Para três camadas foram utilizados 1024, 512 e 256 perceptrons respectivamente, entretanto os resultados foram semelhantes aos obtidos com duas camadas, portanto o aumento em complexidade não é justificado visto que o desempenho permaneceu o mesmo.
 
 \subsubsection{Redes convolucionais}
-Para redes convolucionais utilizou-se uma única camada convolucional RELU com 16 núcleos 3x3 seguida por max-pooling (3x3) e uma camada densamente conectada de 128 percepetrons RELU e finalmente saída única com ativação sigmoide. Essa topologia foi a que teve o melhor desempenho, obtendo 100\% de acurácia no conjunto de treinamento e 96.97\% no conjunto de validação, como observado a seguir.
+Para redes convolucionais utilizou-se uma única camada convolucional RELU com 16 núcleos 3x3 seguida por max-pooling (3x3) e uma camada densamente conectada de 128 percepetrons RELU e finalmente saída única com ativação sigmoide. Essa topologia foi a que teve o melhor desempenho, obtendo 99\% de acurácia no conjunto de treinamento, demonstrados nas tabelas \ref{cm:CNN:Tr:5} e \ref{cm:CNN:Tr:9}. Também teve 96\% de acurácia no conjunto de teste, como observado nas tabelas \ref{cm:CNN:Te:5} e \ref{cm:CNN:Te:9}.
 
 \begin{table}[h!]
-\cfmat{CNN, $T=0.5$, conjunto de validação}{2660}{78}{23}{212}
-\cfmat{CNN, $T=0.9$, conjunto de validação}{2690}{48}{42}{193}
+\cfmat{CNN, $T=0.5$, conjunto treinamento extendido}{14934}{32}{23}{1909}{cm:CNN:Tr:5}
+\cfmat{CNN, $T=0.9$, conjunto treinamento extendido}{14950}{16}{113}{1819}{cm:CNN:Tr:9}
+
+\cfmat{CNN, $T=0.5$, conjunto de teste}{2521}{88}{16}{219}{cm:CNN:Te:5}
+\cfmat{CNN, $T=0.9$, conjunto de teste}{2691}{47}{34}{201}{cm:CNN:Te:9}
 \end{table}
 
-Tendo obtido o melhor desempenho até então, extendeu-se o conjunto de treinamento para 16898 amostras, das quais 14966 são negativas, e o processo de treinamento foi novamente efetuado, obtendo 99.9\% de acurácia no treinamento e 97.54\% no conjunto de validação, como visto a seguir.
-
-\begin{table}[h!]
-\cfmat{CNN treinamento extendido, $T=0.5$, conjunto de validação}{2672}{66}{14}{221}
-\cfmat{CNN treinamento extendido, $T=0.9$, conjunto de validação}{2686}{52}{21}{214}
-\end{table}
-
-Os resultados demonstram que essa topologia de rede é bastante eficiente para o problema em questão. Embora tenha ocorrido um aumento dos falsos positivos de 4 após extender o conjunto de treinamento, isso é justificável pela redução dos falsos negativos, que caiu pela metade, de 42 para 21.
 
 \subsection{Discussão}
-Para os diferentes classificadores observou-se as tabelas de confusão correspondentes. Porém essa comparação é facilitada através de um gráfico de curvas ROC dos classificadores correspondentes avaliados no dataset de validação como ilustra a figura \ref{fig:ROC}. Deseja-se obter o melhor classificador, isto é, o classificador com maior AUC. 
+Para os diferentes classificadores observou-se as tabelas de confusão correspondentes. Porém essa comparação é facilitada através de um gráfico de curvas ROC dos classificadores correspondentes avaliados no conjunto de teste como ilustra a figura \ref{fig:ROC}. Deseja-se obter o melhor classificador, isto é, o classificador com maior AUC. 
 
-Observa-se que muitos classificadores obtiveram um desempenho elevado no conjunto de treinamento, em especial as redes convolucionais que obtiveram acurácia unitária (sob dataset balanceado), demonstrando a alta capacidade do modelo. Nota-se, entretanto, que há grande discrepância entre o desempenho dos classificadores no conjunto de treinamento e de validação, o que caracteriza \textit{overfitting}, e fica mais evidenciado nos métodos superficiais. Os métodos profundos, em contraste, apresentam uma boa generalização. Isso é explicado porque o modelo em questão foi corretamente especificado através no número de camadas e tamanho de filtros, de forma que sua capacidade se ajuste de forma adequada aos dados.
+Observa-se que muitos classificadores obtiveram um desempenho elevado no conjunto de treinamento, em especial as redes convolucionais que obtiveram acurácia unitária (sob dataset balanceado), demonstrando a alta capacidade do modelo. Nota-se, entretanto, que há grande discrepância entre o desempenho dos classificadores no conjunto de treinamento e de teste, o que caracteriza \textit{overfitting}, e fica mais evidenciado nos métodos superficiais. Os métodos profundos, em contraste, apresentam uma boa generalização. Isso é explicado porque o modelo em questão foi corretamente especificado através no número de camadas e tamanho de filtros, de forma que sua capacidade se ajuste de forma adequada aos dados.
 
 \begin{figure}[ht]
 \centering

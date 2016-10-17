@@ -115,7 +115,7 @@
 \newcommand{\bfone}{\mathbf{1}}
 
 %Comando mostra tabela de resultados percentuais. Argumentos: #1 Título; #2-#5: Verdadeiros negativos, falsos positivos, falsos negativos, verdadeiros positivos em valores absolutos
-\newcommand{\cfmat}[5]
+\newcommand{\cfmat}[6]
 {
 \FPeval{\vsum}{#2+#3+#4+#5}
 \FPeval{\rr}{round(100*(#2)/(\vsum),3)}
@@ -126,6 +126,7 @@
 \vspace*{2mm}
 \centering
 \caption{{#1}}
+\label{#6}
 \begin{tabular}{c|c|c|}
 \cline{2-3}
                         & 0 & 1 \\ \hline
