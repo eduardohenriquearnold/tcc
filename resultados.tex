@@ -113,7 +113,18 @@ Para redes convolucionais utilizou-se uma única camada convolucional RELU com 1
 \subsection{Discussão}
 Verifica-se as curvas ROC dos classificadores correspondentes avaliados no conjunto de teste na figura \ref{fig:ROC}. Observando a região de interesse (TFP menor que 10\%) fica claro que os métodos profundos, com CNN e MLP, dominam os superficiais. Em mais detalhes, MLP domina entre TFP de 0.1\% a 1.3\%, a partir de onde CNN passa a dominar. Para especificar qual o melhor classificador entre os profundos é necessário saber exatamente a região de operação em que se deseja atuar. 
 
-Observa-se que muitos classificadores obtiveram um desempenho elevado no conjunto de treinamento, em especial as redes convolucionais que obtiveram acurácia quase unitária (sob dataset balanceado) conforme tabelas \ref{cm:CNN:Tr:5} e \ref{cm:CNN:Tr:5}, demonstrando a alta capacidade do modelo. Nota-se, entretanto, que há grande discrepância entre o desempenho dos classificadores no conjunto de treinamento e de teste nos métodos superficiais, o que caracteriza \textit{overfitting}, como apontam as tabelas \ref{cm:aneis18Tr} e \ref{cm:aneis18Te}. Os métodos profundos, em contraste, apresentam uma boa generalização, como pode ser visto na tabela \ref{cm:CNN:Te:9}. Isso é explicado porque o modelo em questão foi corretamente especificado através no número de camadas e tamanho de filtros, de forma que sua capacidade se ajuste de forma adequada aos dados.
+Observa-se que muitos classificadores obtiveram um desempenho elevado no conjunto de treinamento, em especial as redes convolucionais que obtiveram acurácia quase unitária (sob dataset balanceado) conforme tabelas \ref{cm:CNN:Tr:5} e \ref{cm:CNN:Tr:5}, demonstrando a alta capacidade do modelo. Nota-se, entretanto, que há grande discrepância entre o desempenho dos classificadores no conjunto de treinamento e de teste nos métodos superficiais, o que caracteriza \textit{overfitting}, como apontam as tabelas \ref{cm:aneis18Tr} e \ref{cm:aneis18Te}. 
+
+Para esclarecer a presença de \textit{overfitting}, utiliza-se uma curva de validação da figura \ref{fig:validation-curve}, que mostra como o desempenho do conjunto de treinamento e de validação (utilizado para variar hiper-parâmetros do modelo) se relaciona com algum parâmetro do modelo, nesse caso, $C$, que modela o compromisso de maximização da margem versus erros do treinamento, também entendida como capacidade do modelo. Verifica-se que para $C$ acima de 10 o modelo começa a se tornar muito específico para as características do conjunto de treinamento, perdendo capacidade de generalização, e a performance do conjunto de validação passa a decrescer, configurando \textit{overfitting}. Especificamente nesse caso conlui-se que o maior problema está no extrator de características que não consegue discriminar as amostras suficientemente.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.6\linewidth]{results/18rings_validation_curve}
+  \caption{Curva de validação SVM com descritor de aneis 18dim.}
+  \label{fig:validation-curve}
+\end{figure}
+
+Os métodos profundos, em contraste, apresentam uma boa generalização, como pode ser visto na tabela \ref{cm:CNN:Te:9}. Isso é explicado porque o modelo em questão foi corretamente especificado através no número de camadas e tamanho de filtros, o que possibilita que a melhor representação (extração de características) para as amostras seja encontrada automaticamente.
 
 \begin{figure}
 \centering
@@ -130,4 +141,40 @@ Observa-se que muitos classificadores obtiveram um desempenho elevado no conjunt
 \end{figure}
 
 \section{Sistema completo}
-Nessa seção serão comparados os resultados do sistema de extração de candidatos e de classificação como um todo. Tendo em vista os resultados da seção \ref{sec:resultados-classificadores}, a solução baseada na seleção de candidatos vista em \ref{sec:tradicional-candidatos} e classificador CNN apresentada no capítulo \ref{chap:class-profundo} será avaliada em detrimento das demais variações de classificadores. A última solução, cuja detecção e classificação são realizadas utilizando métodos profundos, vista no capítulo X também será avaliada.
+Na seção \label{sec:resultados-classificadores} assumiu-se que os candidatos já haviam sido extraídos de forma a comparar apenas os classificadores. Nessa seção serão comparados os resultados do sistema completo, incluindo a extração de candidatos, vista em \ref{sec:tradicional-candidatos}, e posterior classificação via MLP e CNN, que demonstram os melhores resultados na seção \ref{sec:resultados-classificadores}. Como agora é possível que candidatos deixem de ser selecionados o sistema está limitado em performance pelos classificadores.
+
+O sistema toma como entrada um quadro e a saída é binária detectando ou não a presença de pessoas nesse quadro. Isto é, a saída do sistema $y$ deve ser 1 se houver pelo menos uma cabeça e 0 caso contrário.
+
+Após selecionar os candidatos cada um deles é introduzido no classificador e recebe uma probabilidade correspondente à amostra ser cabeça. É necessário agora converter esse conjunto de probabilidades em uma única probabilidade correspondente ao quadro conter uma ou mais cabeças. Pode-se utilizar uma abordagem de variáveis independentes, de forma que a probabilidade de o quadro conter cabeças é
+\begin{equation}
+P[y=1] = 1 - \prod_i^n (1-p_i)
+\end{equation}
+onde $n$ é o número de candidatos no quadro e $p_i$ é a probabilidade do candidato $i$ ser cabeça. Essa formulação não é satisfatória pois não leva em consideração a não idealidade do classificador, de forma que o erro na estimativa da probabilidade é propagado sucessivamente. Outra abordagem é considerar que a probabilidade de o quadro conter cabeças é
+\begin{equation}
+P[y=1] = \max\{p_1, \ldots, p_n  \}.
+\end{equation}
+Essa formulação é simples, evita propagar erros, fornece um resultado satisfatório para o sistema e foi a maneira adotada para representar essa probabilidade. 
+
+Avalia-se também o efeito da variação dos parâmetros do algoritmo de extração de candidatos e do uso de diferentes classificadores. Mais especificamente, para o extrator de candidatos varia-se o tamanho da janela de procura dos máximos locais em dois patamares: grosso (\textit{coarse}), cuja janela é maior, e fino (\textit{fine}), cujo tamanho da janela é menor. Ter uma janela menor para localização dos máximos locais permite maior segurança em encontrar cabeças, pois diminui o risco de máquinas maiores, comuns no ambiente, mascararem a presença de pessoas. Por outro lado, elas introduzem um número maior de candidatos por quadro no sistema, o que pode ser desafiador tanto em performance temporal como no desempenho do classificador, que deve conseguir eliminar candidatos que não são cabeças.
+
+O sistema resulta, no fim, uma probabilidade do quadro conter uma ou mais cabeças. É possível escolher um limiar ótimo para garantir uma TFP ou TVP especificada. O resultado é exibido na imagem \ref{fig:ROC-system} e compara as curvas ROC correspondentes à cada escolha dos parâmetros e classificadores num trecho de vídeo de teste.
+
+\begin{figure}
+\centering
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{results/ROC_system}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{results/ROC_system_zoom}
+\end{subfigure}
+\caption{Curva ROC comparando diferentes parâmetros e classificadores do sistema completo}
+\label{fig:ROC-system}
+\end{figure}
+
+Primeiramente nota-se que o classificador CNN domina o MLP na maior parte das regiões quando se comparara a mesma escala de extração de candidatos. Pode-se verificar também no zoom da direita da figura \ref{fig:ROC-system} que existem múltiplas possibilidades de TVP para uma mesma TFP. Isso ocorre sempre que o limiar de probabilidade $T$ acima do qual considera-se que o quadro possui cabeças puder diminuir sem ocasionar um falso positivo, mantendo TFP constante, e ao mesmo tempo garantir mais verdadeiros positivos, garantindo TVP maior.
+
+Finalmente, conclui-se que para o sistema em questão os melhores parâmetros se dão através do classificador CNN. Dependendo da região de operação, pode-se escolher um extrator de candidatos fino (obtendo 5\% de TFP e mais de 90\% de TVP) ou um grosseiro (obtendo menos de 2\% de TFP com aproximadamente 60\% de TVP). A melhor escolha seria a primeira e para evitar que a produção pare desnecessariamente um sistema de limite mínimo de quadros detectados com cabeça em sequência é necessário para paralizar a produção.
+
+
