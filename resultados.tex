@@ -33,7 +33,7 @@ com a taxa de falsos positivos
 \end{equation} 
 Dessa forma, o classificador ideal indicaria uma TVP unitária com TFP nula, o que caracteriza o ponto $(0,1)$.
 
-A princípio cada classificador avaliado em um conjunto de dados corresponde a um ponto no espaço ROC. Entretanto existem classificadores cuja saída é a probabilidade da amostra ser positiva. Nesses casos é possível escolher um limiar de probabilidade $T$ acima do qual se considera uma amostra como positiva. Cada escolha desse limiar corresponderá a um ponto no espaço ROC e variando esse parâmetro é possível obter uma curva nesse espaço.
+A princípio cada classificador avaliado em um conjunto de dados corresponde a um ponto no espaço ROC. Entretanto existem classificadores cuja saída é a probabilidade da amostra ser positiva. Nesses casos é possível escolher um limiar de probabilidade $T$ acima do qual se considera uma amostra como positiva. Cada escolha desse limiar corresponderá a um ponto no espaço ROC e variando esse parâmetro é possível obter uma curva nesse espaço. Para facilitar a distinção entre diferentes classificadores um subconjunto de pontos dessa curva são destacados com marcadores.
 
 Comparar diferentes classificadores não é trivial pois é uma tarefa multiobjetivo que envolve simultaneamente maximizar a TVP e minimizar TFP. Portanto só é possível afirmar que um classificador é melhor do que outro sse sua TVP é maior e sua TFP é menor que a do outro, nesse caso diz-se que o primeiro domina o segundo. Na prática, entretanto, pode-se utilizar a métrica \textit{Area Under Curve}, AUC, que mede a área sob a curva ROC, para facilitar essa comparação, especialmente quando a região de operação não é especificada.
 
@@ -141,27 +141,29 @@ Os métodos profundos, em contraste, apresentam uma boa generalização, como po
 \end{figure}
 
 \section{Sistema completo}
-Na seção \label{sec:resultados-classificadores} assumiu-se que os candidatos já haviam sido extraídos de forma a comparar apenas os classificadores. Nessa seção serão comparados os resultados do sistema completo, incluindo a extração de candidatos, vista em \ref{sec:tradicional-candidatos}, e posterior classificação via MLP e CNN, que demonstram os melhores resultados na seção \ref{sec:resultados-classificadores}. Como agora é possível que candidatos deixem de ser selecionados o sistema está limitado em performance pelos classificadores.
+Na seção \label{sec:resultados-classificadores} assumiu-se que os candidatos já haviam sido extraídos de forma a comparar apenas os classificadores. Nesta seção serão comparados os resultados do sistema completo, incluindo a extração de candidatos, vista na seção \ref{sec:tradicional-candidatos}, e posterior classificação via MLP e CNN, que demonstram os melhores resultados na seção \ref{sec:resultados-classificadores}. Como agora é possível que candidatos deixem de ser selecionados, o sistema está limitado em performance pelos classificadores.
 
 O sistema toma como entrada um quadro e a saída é binária detectando ou não a presença de pessoas nesse quadro. Isto é, a saída do sistema $y$ deve ser 1 se houver pelo menos uma cabeça e 0 caso contrário.
 
-Após selecionar os candidatos cada um deles é introduzido no classificador e recebe uma probabilidade correspondente à amostra ser cabeça. É necessário agora converter esse conjunto de probabilidades em uma única probabilidade correspondente ao quadro conter uma ou mais cabeças. Pode-se utilizar uma abordagem de variáveis independentes, de forma que a probabilidade de o quadro conter cabeças é
+Após selecionar os candidatos, cada um deles é introduzido no classificador e recebe uma probabilidade correspondente à amostra ser cabeça. É necessário agora converter esse conjunto de probabilidades em uma única probabilidade correspondente ao quadro conter uma ou mais cabeças. Uma possível abordagem é assumir que as classificações dos candidatos são variáveis independentes. Nesse caso a probabilidade de o quadro conter cabeças pode ser calculada como
 \begin{equation}
 P[y=1] = 1 - \prod_i^n (1-p_i)
 \end{equation}
-onde $n$ é o número de candidatos no quadro e $p_i$ é a probabilidade do candidato $i$ ser cabeça. Essa formulação não é satisfatória pois não leva em consideração a não idealidade do classificador, de forma que o erro na estimativa da probabilidade é propagado sucessivamente. Outra abordagem é considerar que a probabilidade de o quadro conter cabeças é
+onde $n$ é o número de candidatos no quadro e $p_i$ é a probabilidade do candidato $i$ ser cabeça conforme fornecido pelo classificador. Segundo testes realizados, essa formulação não é satisfatória pois não leva em consideração a não idealidade do classificador, de forma que erros na estimativa da probabilidade são sucessivamente propagados. Outra possível abordagem é considerar que a probabilidade de o quadro conter cabeças pode ser aproximada por
 \begin{equation}
 P[y=1] = \max\{p_1, \ldots, p_n  \}.
 \end{equation}
-Essa formulação é simples, evita propagar erros, fornece um resultado satisfatório para o sistema e foi a maneira adotada para representar essa probabilidade. 
+Essa formulação é simples, evita propagar erros, fornece um resultado satisfatório para o sistema e foi a maneira adotada para estimar essa probabilidade.
 
-Avalia-se também o efeito da variação dos parâmetros do algoritmo de extração de candidatos e do uso de diferentes classificadores. Mais especificamente, para o extrator de candidatos varia-se o tamanho da janela de procura dos máximos locais em dois patamares: grosso (\textit{coarse}), cuja janela é maior, e fino (\textit{fine}), cujo tamanho da janela é menor. Ter uma janela menor para localização dos máximos locais permite maior segurança em encontrar cabeças, pois diminui o risco de máquinas maiores, comuns no ambiente, mascararem a presença de pessoas. Por outro lado, elas introduzem um número maior de candidatos por quadro no sistema, o que pode ser desafiador tanto em performance temporal como no desempenho do classificador, que deve conseguir eliminar candidatos que não são cabeças.
+Avalia-se também o efeito da variação dos parâmetros do algoritmo de extração de candidatos e do uso de diferentes classificadores. Mais especificamente, para o extrator de candidatos varia-se o tamanho da janela de procura dos máximos locais, conforme visto na seção \ref{sec:tradicional-candidatos}, em dois patamares: grosso (\textit{coarse}), cujo tamanho da janela utilizado foi de 48 pixels, e fino (\textit{fine}), cujo tamanho da janela é a metade: 24 pixels.
+
+Ter uma janela menor para localização dos máximos locais permite maior segurança em encontrar cabeças, pois diminui o risco de máquinas maiores, comuns no ambiente, mascararem a presença de pessoas. Por outro lado, elas introduzem um número maior de candidatos por quadro no sistema, o que pode ser desafiador tanto em performance temporal como no desempenho do classificador, que deve conseguir descartar candidatos que não são cabeças.
 
 O sistema resulta, no fim, uma probabilidade do quadro conter uma ou mais cabeças. É possível escolher um limiar ótimo para garantir uma TFP ou TVP especificada. O resultado é exibido na imagem \ref{fig:ROC-system} e compara as curvas ROC correspondentes à cada escolha dos parâmetros e classificadores num trecho de vídeo de teste.
 
 \begin{figure}
 \centering
-\begin{subfigure}{.5\textwidth}
+\begin{subfigure}{0.5\textwidth}
   \centering
   \includegraphics[width=\linewidth]{results/ROC_system}
 \end{subfigure}%
@@ -169,12 +171,18 @@ O sistema resulta, no fim, uma probabilidade do quadro conter uma ou mais cabeç
   \centering
   \includegraphics[width=\linewidth]{results/ROC_system_zoom}
 \end{subfigure}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{results/ROC_system_zoom_best}
+\end{subfigure}
 \caption{Curva ROC comparando diferentes parâmetros e classificadores do sistema completo}
 \label{fig:ROC-system}
 \end{figure}
 
-Primeiramente nota-se que o classificador CNN domina o MLP na maior parte das regiões quando se comparara a mesma escala de extração de candidatos. Pode-se verificar também no zoom da direita da figura \ref{fig:ROC-system} que existem múltiplas possibilidades de TVP para uma mesma TFP. Isso ocorre sempre que o limiar de probabilidade $T$ acima do qual considera-se que o quadro possui cabeças puder diminuir sem ocasionar um falso positivo, mantendo TFP constante, e ao mesmo tempo garantir mais verdadeiros positivos, garantindo TVP maior.
+Primeiramente nota-se que o classificador CNN domina o MLP na maior parte das regiões quando se comparara a mesma escala de extração de candidatos. Pode-se verificar também no zoom da direita da figura \ref{fig:ROC-system} que existem múltiplas possibilidades de TVP para uma mesma TFP. Isso ocorre sempre que o limiar de probabilidade $T$, acima do qual considera-se que o quadro possui cabeças, puder diminuir sem ocasionar aumento da TFP. Esse comportamento se mostra frequente no vídeo em questão por ele apresentar forte desbalanceamento: mais de 90\% dos quadros apresentam cabeças, portanto são poucas as possibilidades de ocorrências de falsos positivos. Para facilitar a comparação, na última imagem da figura \ref{fig:ROC-system} filtrou-se os pontos de forma que para os pontos com mesma TFP apenas o com maior TVP é mantido.
 
-Finalmente, conclui-se que para o sistema em questão os melhores parâmetros se dão através do classificador CNN. Dependendo da região de operação, pode-se escolher um extrator de candidatos fino (obtendo 5\% de TFP e mais de 90\% de TVP) ou um grosseiro (obtendo menos de 2\% de TFP com aproximadamente 60\% de TVP). A melhor escolha seria a primeira e para evitar que a produção pare desnecessariamente um sistema de limite mínimo de quadros detectados com cabeça em sequência é necessário para paralizar a produção.
+Finalmente, conclui-se que para o sistema em questão os melhores parâmetros se dão através do classificador CNN. Dependendo da região de operação, pode-se escolher um extrator de candidatos fino (obtendo 5\% de TFP e mais de 90\% de TVP) ou grosso (obtendo menos de 2\% de TFP com aproximadamente 60\% de TVP). 
+
+Caso a TFP ainda seja muito elevada pode-se utilizar um sistema que só permita a interrupção da produção após um limite mínimo de quadros detectados com cabeça em sequência.
 
 
