@@ -106,7 +106,12 @@ Esse modelo de \textit{SVM} é conhecido como linear, porém mesmo com esse mét
 
 Formalmente tem-se a função decisão modificada: $f(x)=w^T \Phi(x) +b$.  Na prática, entretanto, não se calcula as coordenadas da amostra transformada no novo espaço. Ao invés disso utiliza-se o \textit{kernel trick} em que o produto interno entre duas amostra transformadas é obtida diretamente através da avaliação da função $\Phi(x)$ sob as amostras originais.
 
-O teorema da representação de Kimeldorf e Wahba mostra que podemos representar $w$ como $w=\sum_{i=1}^m \alpha_i \Phi(x_i)$ para algumas variáveis $\alpha$. Portanto, ao invés de minimizar $w$ diretamente, podemos minimizar $\alpha$ e a função decisão se torna
+Segue do teorema da representação de Kimeldorf e Wahba que
+\begin{equation}
+	\label{eq:teo-kimeldorf}
+	w=\sum_{i=1}^m \alpha_i \Phi(x_i)
+\end{equation}
+para alguma variável $\alpha$. Portanto, ao invés de minimizar $w$ diretamente, podemos minimizar $\alpha$ e a função decisão se torna
 \begin{equation}
 	\label{eq:svm-decision-func}
 	f(x)=\sum_{i=1}^m \alpha_i \Phi(x_i) \Phi(x) +b.
@@ -122,16 +127,16 @@ Chamamos $K(x_i, x) = \Phi(x_i) \cdot \Phi(x)$ de função \textit{kernel} ou fu
 \label{sec:svm-probabilistic}
 A formulação tradicional do SVM possui saída categórica, isto é, a classe à qual a amostra pertence. Entretanto, para uma classificação binária, é possível adicionar um componente que permite estimar uma saída probabilística, isto é, a probabilidade da amostra ser positiva.
 
-A função de decisão \eqref{eq:svm-decision} corresponde à distância (com sinal) da amostra até o hiperplano de separação. Redimensionando essa medida através da função de Platt \cite{svmProbabilisticOutput} é possível obter a probabilidade da amostra pertencer à determinada classe $P(y_i=1 | x_i)$. A função de Platt é simplesmente uma regressão logística, cujos parâmetros são encontrados por otimização após o treino do SVM tradicional. Permitindo, então, obter uma saída probabilística de um classificador SVM.
+A função de decisão \eqref{eq:svm-decision} é proporcional à distância (com sinal) da amostra até o hiperplano de separação. Redimensionando essa medida através da função de Platt \cite{svmProbabilisticOutput} é possível obter a probabilidade da amostra pertencer à determinada classe $P(y_i=1 | x_i)$. A função de Platt é simplesmente uma regressão logística, cujos parâmetros são encontrados por otimização após o treino do SVM tradicional. Permitindo, então, obter uma saída probabilística de um classificador SVM.
 
 Essa formulação é interessante pois dá flexibilidade do rigor da classificação através da escolha do limiar de probabilidade a partir do qual uma amostra é considerada positiva após o modelo ter sido treinado.
 
 \section{Implementação}
 Para os algoritmos de processamento de imagens e extração de características, fez-se uso da biblioteca \textit{OpenCV} que implementa grande quantidade de operações básicas em imagens e fornece um ambiente rico de trabalho para criar novas funcionalidades.
 
-No que se refere a aprendizado de máquina, utilizou-se a biblioteca \textit{Scikit-learn} que implementa o algoritmo de treinamento SVM. Além de fornecer as amostras, no caso, a descrição dos candidatos, é necessário configurar os parâmetros $C$, para penalidade dos erros de treinamento e o parâmetro $\sigma$ do \textit{kernel RBF}. 
+No que se refere a aprendizado de máquina, utilizou-se a biblioteca \textit{Scikit-learn} \cite{scikit-learn} que implementa o algoritmo de treinamento SVM. Além de fornecer as amostras, no caso, a descrição dos candidatos, é necessário configurar os parâmetros $C$, para penalidade dos erros de treinamento e o parâmetro $\sigma$ do \textit{kernel RBF}. 
 
-A abordagem utilizada foi o método de treinamento automático fornecido pela biblioteca: indica-se um conjunto de elementos para cada um dos parâmetros e todas as combinações de parâmetros são testadas. Ao final do procedimento as estatísticas de cada tentativa é exibida e a que tiver melhor performance é escolhida.
+A abordagem utilizada foi o método de treinamento automático fornecido pela biblioteca: indica-se um conjunto de elementos para cada um dos parâmetros e todas as combinações de parâmetros são testadas. Ao final do procedimento as estatísticas de cada tentativa é exibida e a que tiver melhor performance, segundo métrica estabelecida, é escolhida.
 
 Nota-se ainda que é possível utilizar de todos os núcleos do processador com essa biblioteca, o que traz um impacto bastante positivo na performance temporal do algoritmo.
 

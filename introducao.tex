@@ -15,7 +15,7 @@ Mitchell \cite{Mitchell:ML} define: ``Se diz que um computador aprende com uma e
 
 Entre as tarefas pode-se citar classificação, em que uma amostra deve ser atribuída a uma das classes apresentadas; regressão, em que uma amostra deve ser mapeada em um valor real; síntese, onde o algoritmo deve gerar novas amostras que sejam similares às de entrada.
 
-As medidas de desempenho são específicas da tarefa em questão e seu uso deve variar com a aplicação. Para conjuntos de dados simples e balanceados (distribuição uniforme de classes) uma medida comum a classificadores é a Exatidão Geral (EG), razão do número correto de classificações pelo número total. Porém a Exatidão Específica (EE), razão das classificações corretas pelo número total da classe, fornece maiores indicativos sobre o potencial discriminativo do algoritmo. Para problemas de regressão podem ser adotadas as medidas de erro médio quadrático.
+As medidas de desempenho são específicas da tarefa em questão e seu uso deve variar com a aplicação. Para conjuntos de dados simples e balanceados (distribuição uniforme de classes) uma medida comum a classificadores é acurácia, razão do número correto de classificações pelo número total. Porém outras medidas são necessárias para avaliar conjuntos de dados desbalanceados. Para problemas de regressão podem ser adotadas as medidas de erro médio quadrático.
 
 Uma experiência, também chamada de exemplo ou amostra, é uma coleção de descrições, obtida através de um descritor de características, figura \ref{fig:features}. Essa descrição é obtida através de um processo que pode mensurar alguma grandeza específica de algum objeto ou evento. Para o campo de imagens são comuns descritores de borda e histograma de cores. Em geral, um descritor busca obter uma representação compacta, reduzindo dimensionalidade, e discrimantiva entre as amostras de maneira a facilitar a etapa de classificação. A etapa de extração de características pode ser vista como um pré-processamento ou transformação para um domínio de maior relevância.
 
@@ -115,9 +115,7 @@ Esse trabalho apresenta três soluções para o problema de detecção de pessoa
 
 Em seguida, propõe-se um método que emprega o mesmo algoritmo tradicional de localização de candidatos porém utiliza métodos de aprendizado profundo para a etapa de classificação. Compreende-se que o classificador encontra de maneira automática um descritor de caracterísitcas específico para o conjunto de dados do problema nas camadas de convolução. A classificação própriamente dita se dá nas camadas finais da rede profunda.
 
-A terceira solução é concebida utilizando-se integralmente soluções de aprendizado profundo: tanto localização como classificação. Uma rede de convolução é utilizada e recebe como entrada a imagem completa do ambiente industrial. A saída é uma máscara indicando a posição das pessoas encontradas na imagem. Essa rede é treinada utilizando um amplo conjunto de quadros e algortimo de propagação reversa de erros.
-
-Após a apresentação teórica das três soluções são exibidos os resultados e as figuras de mérito que permitem a comparar o desempenho das propostas e determinar a melhor solução.
+Após a apresentação teórica das soluções, são exibidos os resultados e as figuras de mérito que permitem a comparar o desempenho das propostas e determinar a melhor solução.
 
 Finalmente, a conclusão discute os resultados e o impacto da utilização das redes profundas em diferentes etapas do sistema. São descritas as contribuições do trabalho assim como sugestões de trabalhos futuros.
 
