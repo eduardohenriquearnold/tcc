@@ -56,7 +56,7 @@ P = \frac{\text{TP}}{\text{FP}+\text{TP}}
 \end{equation}
 comumente utilizada e disponível no \textit{toolkit} utilizado.
 
-Primeiramente avaliou-se qual a dimensão do descritor de anéis concêntricos que apresenta melhor resultado. Para tanto treinou-se classificadores SVM de saída probabilística com as descrições em 8, 16 e 18 dimensões sob o conjunto de treinamento reduzido, obtendo as matrizes de confusão das tabelas \ref{cm:aneisR8}, \ref{cm:aneisR16} e \ref{cm:aneisR18}. Obtiveram-se as curvas ROC desses classificadores avaliados no conjunto de teste, vistas na figura \ref{fig:roc-rings}. 
+Primeiramente avaliou-se qual a dimensão do descritor de anéis concêntricos que apresenta melhor resultado. Para tanto treinou-se classificadores SVM de saída probabilística com as descrições em 8, 16 e 18 dimensões sob o conjunto de treinamento reduzido, obtendo as matrizes de confusão das tabelas \ref{cm:aneisR8}, \ref{cm:aneisR16} e \ref{cm:aneisR18}. Obtiveram-se as curvas ROC desses classificadores avaliados no conjunto de teste, vistas na Figura \ref{fig:roc-rings}. 
 
 \begin{table}
 \cfmat{Anéis concêntricos, 8 dimensões, conjunto de treinamento reduzido}{2364}{65}{185}{482}{cm:aneisR8}
@@ -111,11 +111,11 @@ Para redes convolucionais utilizou-se uma única camada convolucional RELU com 1
 
 
 \subsection{Discussão}
-Verifica-se as curvas ROC dos classificadores correspondentes avaliados no conjunto de teste na figura \ref{fig:ROC}. Observando a região de interesse (TFP menor que 10\%) fica claro que os métodos profundos, com CNN e MLP, dominam os superficiais. Em mais detalhes, MLP domina entre TFP de 0.1\% a 1.3\%, a partir de onde CNN passa a dominar. Para especificar qual o melhor classificador entre os profundos é necessário saber exatamente a região de operação em que se deseja atuar. 
+Verifica-se as curvas ROC dos classificadores correspondentes avaliados no conjunto de teste na Figura \ref{fig:ROC}. Observando a região de interesse (TFP menor que 10\%) fica claro que os métodos profundos, com CNN e MLP, dominam os superficiais. Em mais detalhes, MLP domina entre TFP de 0.1\% a 1.3\%, a partir de onde CNN passa a dominar. Para especificar qual o melhor classificador entre os profundos é necessário saber exatamente a região de operação em que se deseja atuar. 
 
 Observa-se que muitos classificadores obtiveram um desempenho elevado no conjunto de treinamento, em especial as redes convolucionais que obtiveram acurácia quase unitária (sob dataset balanceado) conforme tabelas \ref{cm:CNN:Tr:5} e \ref{cm:CNN:Tr:5}, demonstrando a alta capacidade do modelo. Nota-se, entretanto, que há grande discrepância entre o desempenho dos classificadores no conjunto de treinamento e de teste nos métodos superficiais, o que caracteriza \textit{overfitting}, como apontam as tabelas \ref{cm:aneis18Tr} e \ref{cm:aneis18Te}. 
 
-Para esclarecer a presença de \textit{overfitting}, utiliza-se uma curva de validação da figura \ref{fig:validation-curve}, que mostra como o desempenho do conjunto de treinamento e de validação (utilizado para variar hiper-parâmetros do modelo) se relaciona com algum parâmetro do modelo, nesse caso, $C$, que modela o compromisso de maximização da margem versus erros do treinamento, também entendida como capacidade do modelo. Verifica-se que para $C$ acima de 10 o modelo começa a se tornar muito específico para as características do conjunto de treinamento, perdendo capacidade de generalização, e a performance do conjunto de validação passa a decrescer, configurando \textit{overfitting}. Especificamente nesse caso conlui-se que o maior problema está no extrator de características que não consegue discriminar as amostras suficientemente.
+Para esclarecer a presença de \textit{overfitting}, utiliza-se uma curva de validação da Figura \ref{fig:validation-curve}, que mostra como o desempenho do conjunto de treinamento e de validação (utilizado para variar hiper-parâmetros do modelo) se relaciona com algum parâmetro do modelo, nesse caso, $C$, que modela o compromisso de maximização da margem versus erros do treinamento, também entendida como capacidade do modelo. Verifica-se que para $C$ acima de 10 o modelo começa a se tornar muito específico para as características do conjunto de treinamento, perdendo capacidade de generalização, e a performance do conjunto de validação passa a decrescer, configurando \textit{overfitting}. Especificamente nesse caso conlui-se que o maior problema está no extrator de características que não consegue discriminar as amostras suficientemente.
 
 \begin{figure}
   \centering
@@ -166,20 +166,28 @@ O sistema resulta, no fim, uma probabilidade do quadro conter uma ou mais cabeç
 \begin{subfigure}{0.5\textwidth}
   \centering
   \includegraphics[width=\linewidth]{results/ROC_system}
+  \caption{}
 \end{subfigure}%
 \begin{subfigure}{.5\textwidth}
   \centering
   \includegraphics[width=\linewidth]{results/ROC_system_zoom}
+  \caption{}
+  \label{fig:ROC-system:zoom}
 \end{subfigure}
 \begin{subfigure}{.5\textwidth}
   \centering
   \includegraphics[width=\linewidth]{results/ROC_system_zoom_best}
+  \caption{}
+  \label{fig:ROC-system:zoom_best}
 \end{subfigure}
 \caption{Curva ROC comparando diferentes parâmetros e classificadores do sistema completo}
 \label{fig:ROC-system}
 \end{figure}
 
-Primeiramente nota-se que o classificador CNN domina o MLP na maior parte das regiões quando se comparara a mesma escala de extração de candidatos. Pode-se verificar também no zoom da direita da figura \ref{fig:ROC-system} que existem múltiplas possibilidades de TVP para uma mesma TFP. Isso ocorre sempre que o limiar de probabilidade $T$, acima do qual considera-se que o quadro possui cabeças, puder diminuir sem ocasionar aumento da TFP. Esse comportamento se mostra frequente no vídeo em questão por ele apresentar forte desbalanceamento: mais de 90\% dos quadros apresentam cabeças, portanto são poucas as possibilidades de ocorrências de falsos positivos. Para facilitar a comparação, na última imagem da figura \ref{fig:ROC-system} filtrou-se os pontos de forma que para os pontos com mesma TFP apenas o com maior TVP é mantido.
+Primeiramente nota-se que o classificador CNN domina o MLP na maior parte das regiões quando se comparara a mesma escala de extração de candidatos. Pode-se verificar também na Figura \ref{fig:ROC-system:zoom} que existem múltiplas possibilidades de TVP para uma mesma TFP. 
+Esperaria-se que com o aumento do limiar de probabilidade $T$, acima do qual considera-se que o quadro possui cabeças, a TFP diminuisse. Entretanto, isso não ocorre pelo fato de existirem poucos quadros quadros sem cabeças.
+
+De fato, o vídeo em questão apresenta forte desbalanceamento: mais de 90\% dos quadros apresentam cabeças, portanto são poucas as possibilidades de ocorrências de falsos positivos. Para facilitar a comparação, na Figura \ref{fig:ROC-system:zoom_best} filtrou-se os pontos de forma que para os pontos com mesma TFP apenas o com maior TVP é mantido.
 
 Finalmente, conclui-se que para o sistema em questão os melhores parâmetros se dão através do classificador CNN. Dependendo da região de operação, pode-se escolher um extrator de candidatos fino (obtendo 5\% de TFP e mais de 90\% de TVP) ou grosso (obtendo menos de 2\% de TFP com aproximadamente 60\% de TVP). 
 
