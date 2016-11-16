@@ -44,15 +44,15 @@ Ao final dessa etapa, conta-se com uma lista de candidatos representados pelo \t
 
 \section{Descritores}
 \label{sec:tradicional-descritores}
-Tendo a lista de candidatos é necessário obter uma descrição para cada um deles. No trabalho de referência se destacam dois descritores: grades simples e grades circulares. Um terceiro descritor é proposto nesse trabalho para substituir o de grades circulares. Observa-se que para todos os descritores a característica importante de representação está nos desníveis da cabeça em relação ao resto do corpo, que se dá de maneira aproximadamente circular. Portanto, objetiva-se encontrar uma maneira de evidenciar quando e em que grau esse tipo de padrão ocorre.
+Tendo a lista de candidatos é necessário obter uma descrição para cada um deles. No trabalho de referência \cite{rauter} se destacam dois descritores: grades simples e grades circulares. Um terceiro descritor é proposto no presente trabalho para substituir o de grades circulares. Observa-se que para todos os descritores a característica importante de representação está nos desníveis da cabeça em relação ao resto do corpo, que se dá de maneira aproximadamente circular. Portanto, objetiva-se encontrar uma maneira de evidenciar quando e em que grau esse tipo de padrão ocorre.
 
-O primeiro descritor, grades simples, divide o candidato em blocos, com uma quantidade ímpar em cada dimensão, como ilustrado na Figura \ref{fig:descritores}. Para esse descritor em específico, fixou-se a quantidade de blocos em 7 para cada dimensão, 49 blocos no total pois avaliou-se que para o tamanho dos candidatos foi a representação mais adequada. Então calcula-se a média dos pixels em cada um dos blocos, gerando uma matriz de médias 7x7. Em seguida subtrai-se essa matriz pelo valor da média do bloco central. Por fim, gera-se um histograma com número de intervalos igual a 32 da matriz resultante. Esse vetor de histograma é considerado o vetor de descrição, cuja soma é 49.
+O primeiro descritor, grades simples, divide o candidato em blocos, com uma quantidade ímpar em cada dimensão, como ilustrado na Figura \ref{fig:descritores}. Para esse descritor em específico, fixou-se a quantidade de blocos em 7 para cada dimensão com 49 blocos no total, pois avaliou-se que para o tamanho dos candidatos esta foi a representação mais adequada. Então calcula-se a média dos pixels em cada um dos blocos, gerando uma matriz de médias 7x7. Em seguida, subtrai-se dessa matriz o valor da média do bloco central. Por fim, gera-se um histograma da matriz resultante com número de intervalos igual a 32. Esse vetor de histograma é considerado o vetor de descrição (\textit{feature vector}), cuja soma é 49.
 
-Já o segundo método, grades circulares, propõe que uma série de blocos seja disposta circularmente sobre a imagem candidata e que o mesmo procedimento do primeiro extrator seja realizado. O objetivo seria ter um descritor com maior invariância à rotação, dada a distribuição dos blocos. Porém esse extrator é difícil de generalizar devido à variação do tamanho dos candidatos.
+Já o segundo método, grades circulares, apresentado em \cite{rauter}, propõe que uma série de blocos quadrados seja disposta circularmente sobre a imagem candidata e que o mesmo procedimento do primeiro extrator seja realizado. O objetivo seria ter um descritor com maior invariância à rotação, dada a distribuição dos blocos. Porém, esse extrator é difícil de implementar devido à variação do tamanho dos candidatos.
 
-Definimos, então, um descritor de anéis concêntricos. A ideia é similar às grades circulares, porém ao invés de se dispor blocos de maneira circular, utilizam-se coroas que partem desde o centro da imagem até as bordas. Primeiramente divide-se a imagem em $n$ coroas circulares cujo centro coincide com o da imagem e cuja diferença entre os raios é constante, como visto na Figura \ref{fig:descritores}. Então gera-se um vetor $v \in \RR^n$ em que cada elemento corresponde à média dos pixels pertencentes à n-ésima coroa, desconsiderando os pixels inválidos. Em seguida subtrai-se desse vetor o valor da média da primeira coroa, cujo raio menor é 0 correspondendo então à um círculo. Por fim a descrição do candidato corresponde à diferenciação desse vetor para evidenciar ainda mais as diferenças entre das alturas médias das coroas. Para esse descritor diferentes valores de $n$ foram avaliados para identificar a melhor divisão.
+Para facilitar a implementação, propomos, então, um descritor de anéis concêntricos. A ideia é similar às grades circulares, porém ao invés de se dispor blocos de maneira circular, utilizam-se coroas que partem desde o centro da imagem até as bordas. Primeiramente divide-se a imagem em $n$ coroas circulares cujo centro coincide com o da imagem e cuja diferença entre os raios é constante, como visto na Figura \ref{fig:descritores}. Então gera-se um vetor $v \in \RR^n$ em que cada elemento corresponde à média dos pixels pertencentes à $n$-ésima coroa, desconsiderando os pixels inválidos. Em seguida subtrai-se desse vetor o valor da média da primeira coroa, cujo raio menor é 0 correspondendo então à um círculo. Por fim a descrição do candidato corresponde à diferenciação discreta (diferenças entre as componentes adjacentes) desse vetor, para evidenciar ainda mais as diferenças entre as alturas médias das coroas. Note que o vetor de descrição tem dimensão $d=n-1$. Para esse descritor diferentes valores de $n$ foram avaliados para identificar a melhor divisão, conforme descrito no Capítulo \ref{chap-resultados}.
 
-Após obter a descrição de cada candidato é possível classificar eles de maneira a validar que são cabeças de fato.
+Após obter a descrição de cada candidato é possível classificá-los de maneira a validar que são cabeças de fato.
 
 \begin{figure}[h]
 \centering
@@ -77,10 +77,10 @@ Utiliza-se um classificador binário SVM (\textit{Support Vector Machine}). Seja
 
 A função de decisão do SVM pode ser descrita como $f(x)=w^T x+ b$ onde $w \in \RR^d$ é o vetor de pesos, que fornece a inclinação do hiperplano e $b \in \RR$ um deslocamento do hiperplano em relação à origem. Define-se ainda a margem como a menor distância entre o hiperplano de separação e qualquer amostra, dada por $\frac{2}{\|w\|}$ onde
 \begin{equation}
-\|w\| = \sqrt{w_1^2 + \dots + w_n^2}
-\end{equation}.
+\|w\| = \sqrt{w_1^2 + \dots + w_n^2}.
+\end{equation}
 
-O aprendizado consiste em encontrar $w$ e $b$ que maximizem a a margem sujeitos à $y_i(w^T x_i) \geq 1$. Esse é um problema de otimização convexa, em que qualquer mínimo local é também global. Assim, minimiza-se a função custo \cite{bishop2007}
+O aprendizado consiste em encontrar $w$ e $b$ que maximizem a a margem sujeitos à $y_i(w^T x_i+b) \geq 1$. Esse é um problema de otimização convexa, em que qualquer mínimo local é também global. Assim, minimiza-se a função custo \cite{bishop2007}
 \begin{equation}
 	\label{eq:svm-cost}
 	\min P(w,b) = \frac{1}{2}\|w\|^2 + C\sum_i H_1(y_i f(x_i)).
@@ -89,7 +89,7 @@ onde a função
 \begin{equation*}
 H_1(z)=\max(0,1-z)
 \end{equation*}
-é utilizada para dar um peso negativo quanto maior for o erro do classificador (quando o argumento é negativo)
+é utilizada para dar um peso negativo quanto maior for o erro do classificador (quando o argumento é negativo).
 
 O primeiro termo da equação \eqref{eq:svm-cost} está associado à maximização da margem e o segundo à minimização dos erros de treinamento, quando uma amostra é classificada erroneamente. O parâmetro $C$ controla quanto se penaliza os erros de classificação diante da maximização da margem, visto existir uma relação ideal entre eles.
 
@@ -115,7 +115,7 @@ Formalmente \cite{bishop2007} tem-se a função decisão modificada como
 \begin{equation*}
 f(x)=w^T \Phi(x) +b.
 \end{equation*}
-Na prática, entretanto, não se calcula as coordenadas da amostra transformada no novo espaço. Ao invés disso utiliza-se o \textit{kernel trick} em que o produto interno entre duas amostra transformadas é obtida diretamente através da avaliação da função $\Phi(x)$ sob as amostras originais.
+Na prática, entretanto, não se calcula as coordenadas da amostra transformada no novo espaço. Ao invés disso utiliza-se o chamado \textit{kernel trick} \cite{bishop2007} em que o produto interno entre duas amostras transformadas é obtido diretamente através da avaliação da função $\Phi(x)$ sob as amostras originais.
 
 Segue do teorema da representação de Kimeldorf e Wahba \cite{kimeldorf1970correspondence} que
 \begin{equation}
@@ -133,7 +133,7 @@ Chamamos $K(x_i, x) = \Phi(x_i) \cdot \Phi(x)$ de \textit{kernel} ou função n�
 	\label{eq:svm-kernel-func}
 	K(x,x_i) = \exp\left(-\frac{\|x-x_i\|^2}{2\sigma^2}\right).
 \end{equation}
-Nota-se que quando $\|x-x_i\|$ é muito maior que $\sigma$ a função retorna um valor que tende a zero, o que demonstra que a amostra em questão tem pouca importância para o hiperplano de decisão. Assim, quanto menor o valor de $\sigma$, mais local tende a ser o classificador, o que também proporciona menor generalização do modelo.
+Nota-se que quando $\|x-x_i\|$ é muito maior que $\sigma$ a função retorna um valor que tende a zero, o que demonstra que a amostra em questão tem pouca importância para o hiperplano de decisão. Assim, quanto menor o valor de $\sigma$, mais local tende a ser o classificador, o que faz com que o desempenho no conjunto de treinamento seja excelente. Porém, ao mesmo tempo proporciona menor generalização do modelo, o que significa que esse desempenho não se replica no conjunto de teste.
 
 \section{Variação para saída probabilística}
 \label{sec:svm-probabilistic}
