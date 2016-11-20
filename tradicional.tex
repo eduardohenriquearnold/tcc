@@ -117,15 +117,15 @@ f(x)=w^T \Phi(x) +b.
 \end{equation*}
 Na prática, entretanto, não se calcula as coordenadas da amostra transformada no novo espaço. Ao invés disso utiliza-se o chamado \textit{kernel trick} \cite{bishop2007} em que o produto interno entre duas amostras transformadas é obtido diretamente através da avaliação da função $\Phi(x)$ sob as amostras originais.
 
-Segue do teorema da representação de Kimeldorf e Wahba \cite{kimeldorf1970correspondence} que
+O problema de minimizar $\|w\|$ sujeito à $y_i(w^T x_i+b) \geq 1$ pode ser visto como um problema de otimização com restrição. Nesse caso, pode-se utilizar o método de multiplicadores de Lagrange \cite{bishop2007} obtendo que o vetor de pesos pode ser representado por
 \begin{equation}
 	\label{eq:teo-kimeldorf}
-	w=\sum_{i=1}^m \alpha_i \Phi(x_i)
+	w=\sum_{i=1}^N \alpha_i \Phi(x_i)
 \end{equation}
 para alguma variável $\alpha$. Portanto, ao invés de minimizar $w$ diretamente, podemos minimizar $\alpha$ e a função decisão se torna
 \begin{equation}
 	\label{eq:svm-decision-func}
-	f(x)=\sum_{i=1}^m \alpha_i \Phi(x_i) \Phi(x) +b.
+	f(x)=\sum_{i=1}^N \alpha_i \Phi(x_i) \Phi(x) +b.
 \end{equation}
 
 Chamamos $K(x_i, x) = \Phi(x_i) \cdot \Phi(x)$ de \textit{kernel} ou função núcleo. Um exemplo bastante utilizado é a \textit{Radial Basis Function} (RBF), também conhecida como núcleo gaussiano, dada por
