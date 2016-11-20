@@ -26,6 +26,7 @@ y=f(x,\theta,w,b) = \gamma(w^T\phi(x,\theta)+b)
 onde $\gamma(x)$ é a função de ativação da camada de saída.
 
 \section{Função de ativação}
+\label{sec:funcao-ativacao}
 Como visto na seção \ref{introducao:perceptron}, os perceptrons aplicam uma função de ativação ao somatório ponderado das entradas. A escolha dessa função está associada à interpretação que se dá à saída. Duas funções foram utilizadas nesse trabalho e serão introduzidas a seguir.
 
 \subsection{Sigmoide}
@@ -143,6 +144,7 @@ Um aspecto a destacar é o papel fundamental da derivada da função de ativaç�
 Similarmente, a última equação mostra que a derivada da função custo em relação ao pesos de um determinado perceptron é proporcional à entrada correspondente ào perceptron de entrada. Portanto, caso a entrada seja nula, essa componente do gradiente será também nula, o que significa que o perceptron só tem seu peso atualizado quando estiver ativo.
 
 \section{Redes convolucionais}
+\label{sec:convnets}
 %http://neuralnetworksanddeeplearning.com/chap6.html#introducing_convolutional_networks
 
 A estrutura MLP vista anteriormente é chamada de completamente conectada, onde cada perceptron em uma camada está conectado à todos os perceptrons da próxima camada. Uma variante desse modelo são as chamadas redes convolucionais, que introduzem um aspecto espacial no processamento das amostras de forma que as camadas possuam uma estrutura. São especialmente úteis para amostras de maior dimensão que têm uma estrutura matricial, como imagens. Se destacam em relação à MLP pois a relação de estrutura não precisa ser incorporada ao modelo via treinamento mas já advém diretamente do modelo utilizado.
