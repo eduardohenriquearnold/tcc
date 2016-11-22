@@ -33,10 +33,10 @@ Atualiza-se o centro do retângulo
 \end{equation}
 onde $I$ é a imagem e $S(p)$ é o conjunto dos pixels no quadrado de centro $p$.
 
-\begin{figure}[h]
+\begin{figure}
 \centering
 \includegraphics[width=0.8\textwidth]{tradicional/candidatos}
-\caption{Pontos em azul são máximos locais e os quadrados vermelhos indicam os candidatos centralizados}
+\caption{Pontos em azul são máximos locais e os quadrados vermelhos indicam os candidatos centralizados.}
 \label{fig:candidatos}
 \end{figure}
 
@@ -50,11 +50,11 @@ O primeiro descritor, grades simples, divide o candidato em blocos, com uma quan
 
 Já o segundo método, grades circulares, apresentado em \cite{rauter}, propõe que uma série de blocos quadrados seja disposta circularmente sobre a imagem candidata e que o mesmo procedimento do primeiro extrator seja realizado. O objetivo seria ter um descritor com maior invariância à rotação, dada a distribuição dos blocos. Porém, esse extrator é difícil de implementar devido à variação do tamanho dos candidatos.
 
-Para facilitar a implementação, propomos, então, um descritor de anéis concêntricos. A ideia é similar às grades circulares, porém ao invés de se dispor blocos de maneira circular, utilizam-se coroas que partem desde o centro da imagem até as bordas. Primeiramente divide-se a imagem em $n$ coroas circulares cujo centro coincide com o da imagem e cuja diferença entre os raios é constante, como visto na Figura \ref{fig:descritores}. Então gera-se um vetor $v \in \RR^n$ em que cada elemento corresponde à média dos pixels pertencentes à $n$-ésima coroa, desconsiderando os pixels inválidos. Em seguida subtrai-se desse vetor o valor da média da primeira coroa, cujo raio menor é 0 correspondendo então à um círculo. Por fim a descrição do candidato corresponde à diferenciação discreta (diferenças entre as componentes adjacentes) desse vetor, para evidenciar ainda mais as diferenças entre as alturas médias das coroas. Note que o vetor de descrição tem dimensão $d=n-1$. Para esse descritor diferentes valores de $n$ foram avaliados para identificar a melhor divisão, conforme descrito no Capítulo \ref{chap-resultados}.
+Para facilitar a implementação, propomos, então, um descritor de anéis concêntricos. A ideia é similar às grades circulares, porém ao invés de se dispor blocos de maneira circular, utilizam-se coroas que partem desde o centro da imagem até as bordas. Primeiramente divide-se a imagem em $n$ coroas circulares cujo centro coincide com o da imagem e cuja diferença entre os raios é constante, como visto na Figura \ref{fig:descritores}. Então gera-se um vetor $v \in \RR^n$ em que cada elemento corresponde à média dos pixels pertencentes à $n$-ésima coroa, desconsiderando os pixels inválidos. Em seguida subtrai-se desse vetor o valor da média da primeira coroa, cujo raio menor é 0 correspondendo então à um círculo. Por fim a descrição do candidato corresponde à diferenciação discreta (diferenças entre as componentes adjacentes) desse vetor, para evidenciar ainda mais as diferenças entre as alturas médias das coroas. Note que o vetor de descrição tem dimensão $d=n-1$. Para esse descritor diferentes valores de $n$ foram avaliados para identificar a melhor divisão, conforme descrito no Capítulo \ref{chap:resultados}.
 
 Após obter a descrição de cada candidato é possível classificá-los de maneira a validar que são cabeças de fato.
 
-\begin{figure}[h]
+\begin{figure}
 \centering
 \includegraphics[width=0.8\textwidth]{tradicional/descritores}
 \caption{Ilustração dos descritores: grades simples e anéis concêntricos.}
@@ -73,33 +73,44 @@ Utiliza-se um classificador binário SVM (\textit{Support Vector Machine}). Seja
 		f(x_i)<0,& \text{se } y_i=-1 \\
 	\end{cases}
 \end{equation*}
- ou seja, $y_i f(x_i) > 0$ para uma classificação correta. 
+ ou seja, $y_i f(x_i) > 0$ para uma classificação correta da amostra $i$. 
 
-A função de decisão do SVM pode ser descrita como $f(x)=w^T x+ b$ onde $w \in \RR^d$ é o vetor de pesos, que fornece a inclinação do hiperplano e $b \in \RR$ um deslocamento do hiperplano em relação à origem. Define-se ainda a margem como a menor distância entre o hiperplano de separação e qualquer amostra, dada por $\frac{2}{\|w\|}$ onde
+A função de decisão do SVM pode ser descrita como $f(x)=w^T x+ b$ onde $w \in \RR^d$ é o vetor de pesos, que fornece a inclinação do hiperplano e $b \in \RR$ um deslocamento do hiperplano em relação à origem. 
+
+No caso de um conjunto de treinamento linearmente separável é possível que existam múltiplos hiperplanos que separem as classes corretamente. Nessa situação, pode-se escolher o hiperplano que oferece a maior margem, que em geral oferece melhor generalização. A margem é definida como a menor distância entre o hiperplano de separação e qualquer amostra. 
+
+Arbitrariamente, define-se que $f(x_+)=1$ e $f(x_-)=-1$, onde $x_+$ e $x_-$ são as amostras positiva e negativa mais próximas do hiperplano de separação, conforme Figura \ref{fig:svm-margin}, portanto $y_i f(x_i) \geq 1$ para todo $i$. Com essa formulação obtém-se que a margem é dada por $\frac{2}{\|w\|}$ onde
 \begin{equation}
 \|w\| = \sqrt{w_1^2 + \dots + w_n^2}.
 \end{equation}
 
-O aprendizado consiste em encontrar $w$ e $b$ que maximizem a a margem sujeitos à $y_i(w^T x_i+b) \geq 1$. Esse é um problema de otimização convexa, em que qualquer mínimo local é também global. Assim, minimiza-se a função custo \cite{bishop2007}
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{svm/svm-margin}
+\caption{Hiperplano de separação e margem para conjuntos linearmente separáveis.}
+\label{fig:svm-margin}
+\end{figure}
+
+O aprendizado consiste em encontrar $w$ e $b$ que maximizem a a margem sujeitos à $y_i(w^T x_i+b) \geq 1$. Esse é um problema de otimização convexa, em que qualquer mínimo local é também global. No entanto, o conjunto pode não ser linearmente separável, portanto a condição $y_i(w^T x_i+b) \geq 1$ não é atendida para todo $i$ e existem erros de treinamento. Ou, mesmo sendo o conjunto linearmente separável, o hiperplano que separa corretamente todas as amostras pode não ser o que oferece maior generalização, como o conjunto apresentado na Figura \ref{fig:svm-margin-ex}. 
+
+Dessa forma, para maior flexibilidade, minimiza-se a função custo \cite{bishop2007}
 \begin{equation}
 	\label{eq:svm-cost}
-	\min P(w,b) = \frac{1}{2}\|w\|^2 + C\sum_i H_1(y_i f(x_i)).
+	\min P(w,b) = \frac{1}{2}\|w\|^2 + C\sum_i H_1(y_i f(x_i)),
 \end{equation}
 onde a função
 \begin{equation*}
 H_1(z)=\max(0,1-z)
 \end{equation*}
-é utilizada para dar um peso negativo quanto maior for o erro do classificador (quando o argumento é negativo).
+é utilizada para dar um peso negativo quanto maior for o erro do classificador (quando $y_i f(x_i)<0$).
 
 O primeiro termo da equação \eqref{eq:svm-cost} está associado à maximização da margem e o segundo à minimização dos erros de treinamento, quando uma amostra é classificada erroneamente. O parâmetro $C$ controla quanto se penaliza os erros de classificação diante da maximização da margem, visto existir uma relação ideal entre eles.
 
-O dataset é considerado linearmente separável se for possível encontrar uma reta ou hiperplano que separe todas as amostras corretamente. Entretanto nem sempre que for linearmente separável a classificação sem erros é o ideal. Por exemplo, o dataset apresentado Figura \ref{fig:svm-margin} mostra que optar pela separação ótima gera perda de generalização. Fica evidente que nesse caso deveria-se priorizar uma margem maior em detrimento de alguns possíveis erros de classificação, o que pode ser feito diminuindo o valor de $C$.
-
 \begin{figure}
 \centering
-\includegraphics[width=0.3\textwidth]{svm/svm-margin}
-\caption{Exemplos de dataset em que separação perfeita não é ideal}
-\label{fig:svm-margin}
+\includegraphics[width=0.3\textwidth]{svm/svm-margin-ex}
+\caption{Exemplos de dataset em que separação perfeita não é ideal.}
+\label{fig:svm-margin-ex}
 \end{figure}
 
 O modelo de SVM apresentado até aqui é conhecido como linear. Mesmo com o método de penalização de erros de classificação, datasets complexos podem não ter um desempenho satisfatório. Dessa maneira, é introduzido um modelo não linear para o classificador: transforma-se as amostras $x_i$ em um novo espaço obtendo amostras $\Phi(x_i)$ que são, no caso ideal, linearmente separáveis, como mostrado na Figura \ref{fig:svm-kernel}.
@@ -119,7 +130,6 @@ Na prática, entretanto, não se calcula as coordenadas da amostra transformada 
 
 O problema de minimizar $\|w\|$ sujeito à $y_i(w^T x_i+b) \geq 1$ pode ser visto como um problema de otimização com restrição. Nesse caso, pode-se utilizar o método de multiplicadores de Lagrange \cite{bishop2007} obtendo que o vetor de pesos pode ser representado por
 \begin{equation}
-	\label{eq:teo-kimeldorf}
 	w=\sum_{i=1}^N \alpha_i \Phi(x_i)
 \end{equation}
 para alguma variável $\alpha$. Portanto, ao invés de minimizar $w$ diretamente, podemos minimizar $\alpha$ e a função decisão se torna
@@ -133,7 +143,7 @@ Chamamos $K(x_i, x) = \Phi(x_i) \cdot \Phi(x)$ de \textit{kernel} ou função n�
 	\label{eq:svm-kernel-func}
 	K(x,x_i) = \exp\left(-\frac{\|x-x_i\|^2}{2\sigma^2}\right).
 \end{equation}
-Nota-se que quando $\|x-x_i\|$ é muito maior que $\sigma$ a função retorna um valor que tende a zero, o que demonstra que a amostra em questão tem pouca importância para o hiperplano de decisão. Assim, quanto menor o valor de $\sigma$, mais local tende a ser o classificador, o que faz com que o desempenho no conjunto de treinamento seja excelente. Porém, ao mesmo tempo proporciona menor generalização do modelo, o que significa que esse desempenho não se replica no conjunto de teste.
+Nota-se que quando $\|x-x_i\|$ é muito maior que $\sigma$ a função retorna um valor que tende a zero, o que demonstra que a amostra em questão tem pouca importância para o hiperplano de decisão. Assim, quanto menor o valor de $\sigma$, mais local tende a ser o classificador, o que faz com que o desempenho no conjunto de treinamento seja excelente. Porém, ao mesmo tempo proporciona menor generalização do modelo, o que significa que esse desempenho não se replica no conjunto de teste. Portanto, é necessário escolher apropriadamente o parâmetro $\sigma$ de forma a ter um bom compromisso entre desempenho no treinamento e generalização.
 
 \section{Variação para saída probabilística}
 \label{sec:svm-probabilistic}
@@ -148,7 +158,9 @@ Para os algoritmos de processamento de imagens e extração de características,
 
 No que se refere a aprendizado de máquina, utilizou-se a biblioteca \textit{Scikit-learn} \cite{scikit-learn} que implementa o algoritmo de treinamento SVM. Além de fornecer as amostras, no caso, a descrição dos candidatos, é necessário configurar os parâmetros $C$, para penalidade dos erros de treinamento e o parâmetro $\sigma$ do \textit{kernel RBF}. 
 
-A abordagem utilizada foi o método de treinamento automático fornecido pela biblioteca: indica-se um conjunto de elementos para cada um dos parâmetros e todas as combinações de parâmetros são testadas utilizando um processo de validação cruzada. Basicamente divide-se o conjunto de treinamento em 5 conjuntos dos quais quatro são utilizados para treinamento e um para validação. Ao final do procedimento as estatísticas de cada tentativa é exibida e a que tiver melhor desempenho, segundo métrica estabelecida, é escolhida. Tendo obtido esses parâmetros um novo processo de treinamento é efetuado, agora utilizando todo o conjunto de treinamento, sem validação.
+A abordagem utilizada foi o método de treinamento automático fornecido pela biblioteca: indica-se um conjunto de elementos para cada um dos parâmetros. Para cada escolha de $C$ e $\sigma$ a avaliação de desempenho é medida através de um processo de validação cruzada. Nesse processo, divide-se o conjunto de treinamento em 5 conjuntos. Numa próxima etapa, 4 desses cojuntos são utilizados para o treinamento e um para validação. Essa etapa se repete até cada um dos 5 conjuntos ter sido escolhido para validação. Ao terminar essa etapa, faz-se a média do desempenho dos cinco testes, que é o resultado para uma escolha dos parâmetros.
+
+Ao final do procedimento de treinamento automático as estatísticas de cada escolha dos parâmetros é exibida e a que tiver melhor desempenho, segundo métrica estabelecida, é escolhida. Tendo obtido esses parâmetros um novo processo de treinamento é efetuado, agora utilizando todo o conjunto de treinamento, sem validação.
 
 Nota-se ainda que é possível utilizar de todos os núcleos do processador com essa biblioteca, o que traz um impacto bastante positivo na performance temporal do algoritmo.
 
