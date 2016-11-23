@@ -21,7 +21,7 @@ onde $\phi(z)$ é a função de ativação da rede. Denota-se por $\theta$ o vet
   \centering
   \includegraphics[width=0.8\linewidth]{deep/bp-bias}
 \end{subfigure}
-\caption{Conveção das conexões entre unidades}
+\caption{Conveção das conexões entre unidades.}
 \label{fig:bp}
 \end{figure}
 
@@ -46,7 +46,7 @@ Para classificadores interpreta-se o valor das unidades da camada de saída como
 \begin{figure}
 \centering
 \includegraphics[width=0.5\textwidth]{deep/sigmoid}
-\caption{Gráfico mostrando o comportamento da sigmoide}
+\caption{Gráfico mostrando o comportamento da sigmoide.}
 \label{fig:sigmoid}
 \end{figure}
 
@@ -62,7 +62,7 @@ Para resolver o problema do gradiente enfraquecido, obtendo uma melhora no desem
 \begin{figure}
 \centering
 \includegraphics[width=0.5\textwidth]{deep/relu}
-\caption{Gráfico mostrando o comportamento da função RELU}
+\caption{Gráfico mostrando o comportamento da função RELU.}
 \label{fig:relu}
 \end{figure}
 
@@ -130,16 +130,16 @@ Uma solução foi o algoritmo de propagação reversa de erros (\textit{backprop
 
 Primeiramente define-se uma grandeza intermediária chamada de erro da camada $l$, $\delta^l$, interpretada como a contribuição da camada $l$ para o erro total, através do qual serão calculadas as grandezas de interesse.
 
-Esse algoritmo possui uma formulação complexa que não está no escopo desse trabalho. Entretanto, alguns aspectos serão enfatizados pela análise simples das equações fornecidas por esse método, e disponíveis com demonstração em \cite{NeuralNetsDeep}, vistas a seguir:
+Esse algoritmo possui uma formulação complexa que não está no escopo desse trabalho. Entretanto, alguns aspectos serão enfatizados pela análise simples das equações fornecidas por esse método, disponíveis com demonstração em \cite{NeuralNetsDeep}, vistas a seguir:
 \begin{align}
-\delta^L &= a^L - y \label{eq:deltaL} \\ 
+\delta^L &= (a^L - y) \odot \phi^\prime(z^L) \label{eq:deltaL} \\ 
 \delta^l &= ((w^{l+1})^T\delta^{l+1}) \odot \phi^\prime(z^l) \label{eq:deltal}\\
 \pd{C}{b_j^l{}} &= \delta_j^l \label{eq:delCb}\\ 
 \pd{C}{w_{jk}^l{}} &= a_k^{l-1} \delta_j^l \label{eq:delCw}
 \end{align}
 onde $\odot$ é o operador de multiplicação elemento por elemento.
 
-Pode-se entender o algoritmo como calculando o erro na camada de saída, $\delta^L$ com \eqref{eq:deltaL} e propagando esse erro para as outras camadas, com a contribuição individual de cada unidade, obtendo os correspondentes $\delta^l$ conforme \eqref{eq:deltal}. Através dos quais as demais derivadas são obtidas e permitem obter o gradiente da função custo. 
+Pode-se entender o algoritmo como calculando o erro na camada de saída, $\delta^L$ com \eqref{eq:deltaL} (simplificada para um caso específico função custo) e propagando esse erro para as outras camadas, com a contribuição individual de cada unidade, obtendo os correspondentes $\delta^l$ conforme \eqref{eq:deltal}. Através dos quais as demais derivadas são obtidas, através de \eqref{eq:delCb} e \eqref{eq:delCw}, e permitem obter o gradiente da função custo. 
 
 Um aspecto a destacar é o papel fundamental da derivada da função de ativação $\phi(z)$ em \eqref{eq:deltal}. Se ela saturar, essa derivada terá um valor baixo, o que provoca um gradiente pequeno e a atualização dos parâmetros fica estagnada, impedindo o aprendizado. Por isso a importância de funções de ativação que impedem a saturação, como a RELU, vista anteriormente.
 
