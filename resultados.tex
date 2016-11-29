@@ -1,1 +1,74 @@
+\section{Resultados}
+
+\subsection{Medidas de desempenho}
+	\begin{frame}{\insertsubsection}
+		Os classificadores utilizados possuem uma saída probabilística. É possível escolher um limiar de probabilidade $T$ acima do qual se considera a amostra como sendo da classe positiva (cabeça).
+
+		Cada escolha de $T$ permite gerar uma \emph{matriz de confusão} que mostra a distribuição das amostras nas classes de \emph{verdadeiros positivos, falsos positivos, verdadeiros negativos e falsos negativos}.
+
+		\begin{table}
+		\centering
+		\caption{Matriz de confusão}
+		\label{tab:matriz-confusão}
+		\begin{tabular}{ll|l|l|}
+		\cline{3-4}
+					                    &   & \multicolumn{2}{l|}{Classificado} \\ \cline{3-4} 
+					                    &   & 0               & 1               \\ \hline
+		\multicolumn{1}{|l|}{\multirow{2}{*}{Real}} & 0 & \text{TN}              & \text{FP}              \\ \cline{2-4} 
+		\multicolumn{1}{|l|}{}                      & 1 & \text{FN}              & \text{TP}              \\ \hline
+		\end{tabular}
+		\end{table}	
+	\end{frame}
+
+	\begin{frame}{\insertsubsection}
+		Cada matriz permite calcular a taxa de verdadeiro positivo
+		\begin{equation}
+		\text{TVP} = \frac{\text{TP}}{\text{FN}+\text{TP}}
+		\end{equation}
+		e a taxa de falso positivo
+		\begin{equation}
+		\text{TFP} = \frac{\text{FP}}{\text{TN}+\text{FP}}.
+		\end{equation}
+
+		 Assim, cada escolha de $T$ representa um ponto no espaço \emph{Receiver Operating Characteristic}. Variando $T$ é possível obter uma curva nesse espaço.
+
+		A área sob essa curva \emph{Area Under Curve} (AUC) também pode ser utilizada como métrica para desempenho do sistema.
+	\end{frame}
+
+
+\subsection{Classificadores}
+	\begin{frame}{Descritor anéis concêntricos}
+		Avaliação do melhor número de anéis. Treinamento sob conjunto reduzido e avaliação no conjunto de testes.
+
+		\fig{results/ROC_rings}{Curvas ROC dos classificadores usando diferentes descritores.}
+	\end{frame}
+
+	\begin{frame}{Todos os classificadores} 
+		\only<1>{\fig{results/ROC_all}{Curvas ROC classificadores. Avaliação realizada no conjunto de testes.}[1][1]}
+		\only<2>{\fig{results/ROC_all_zoom}{Curvas ROC classificadores zoom.}[1][1]}
+	\end{frame}
+
+\subsection{Sistema completo}
+	\begin{frame}{\insertsubsection}
+		Avalia-se agora o sistema completo: extração de candidatos e clasificador.
+
+		Dado um quadro com múltiplos candidatos, cada cuja probabilidade de ser cabeça é $p_i$ para $i \in \{1 \dots n \}$, formula-se que a probabilidade de o quadro conter pelo menos uma cabeça é
+		\begin{equation}
+			P[y=1] = \max\{p_1, \ldots, p_n  \}.
+		\end{equation}				
+	\end{frame}
+
+	\begin{frame}{\insertsubsection}
+		\only<1>{\fig{results/ROC_system}{Curvas ROC sistema completo.}[1][0.9]}
+		\only<2>{\fig{results/ROC_system_zoom}{Curvas ROC sistema completo zoom.}[1][0.9]}
+		\only<3>{\fig{results/ROC_system_zoom_best}{Curvas ROC sistema completo zoom.}[1][0.9]}
+	\end{frame}
+
+	\begin{frame}{Vídeo de demonstração}
+		Demonstração do sistema em funcionamento no vídeo de testes.
+
+		\begin{center}
+		\href{run:/usr/bin/mplayer ../img/demo.ogv}{Demo}
+		\end{center}
+	\end{frame}
 
