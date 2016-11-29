@@ -1,1 +1,124 @@
+\section{Detecção utilizando métodos tradicionais}
+
+\subsection{Obtenção de candidatos}	
+	\begin{frame}{\insertsubsection}	
+		\begin{itemize}
+		\item<only@1> Utilizar informação da profundidade.
+		\item<only@2> Hipótese: pessoas estão entre os objetos mais altos da cena.
+		\item<only@2> Solução: obter máximos locais.
+		\item<only@3> Tamanho ideal da janela?
+		\end{itemize}
+		\only<1>{
+		\begin{columns}[T]
+		\column{0.5\textwidth} \fig{tradicional/color}{Imagem de cor.}[1][0.7]
+		\column{0.5\textwidth} \fig{tradicional/depth}{Imagem de profundidade.}[1][0.7]
+		\end{columns}
+		}
+		\only<2->{\fig{tradicional/local_max}{Imagem de profundidade com máximos locais.}[1][0.7]}
+	\end{frame}
+
+	\begin{frame}{\insertsubsection}	
+		\begin{itemize}
+		\item Estima-se tamanho do quadrado baseado na altura do ponto de máximo. 
+		\item Utiliza-se \emph{mean shift} para centralizar o quadrado sob o candidato.
+		\item O candidato é considerado como o recorte do retângulo sob a imagem original.
+		\end{itemize}
+		\fig{tradicional/candidates_depth}{Candidatos obtidos.}[1][0.5]
+	\end{frame}
+
+\subsection{Descritores de características}
+	\begin{frame}{Grades simples}
+		\begin{columns}
+		\column{0.5\textwidth}
+		\begin{enumerate}
+			\item Dividir o candidato em 7x7 blocos iguais. 
+			\item Obter média dos pixels de cada bloco $\rightarrow$ Matriz de médias 7x7.
+			\item Subtrair dessa matriz a média do bloco central.
+			\item Gerar histograma da matriz resultante, $x \in \mathbb{R}^d$, com $d=32$ intervalos.
+		\end{enumerate}
+		\column{0.5\textwidth}
+		\fig{tradicional/descGradesSimples}{Descritor grades simples}
+		\end{columns}
+	\end{frame}
+
+	\begin{frame}{Anéis concêntricos}
+		\begin{columns}
+		\column{0.5\textwidth}
+		\begin{enumerate}
+			\item Dividir o candidato em $n$ coroas circulares com espaçamento uniforme.
+			\item Obter vetor de médias dos pixels de cada coroa $\rightarrow$ $m \in \mathbb{R}^n$. 
+			\item Subtrair desse vetor a média da coroa interna, $m_0$.
+			\item Diferenciar o vetor resultante, resultando em $x \in \mathbb{R}^d$  com $d=n-1$.
+		\end{enumerate}
+		\column{0.5\textwidth}
+		\fig{tradicional/descAneis}{Descritor anéis concêntricos}
+		\end{columns}
+	\end{frame}
+
+\subsection{Classificação}
+	\begin{frame}{\textit{Support Vector Machine} binário}
+		Seja o dataset o conjunto $(x_i, y_i)$ para $i=1 \dots N$ com $x_i \in \mathbb{R}^d$ e $y_i \in \{-1, 1\}$.
+
+		Deseja-se encontrar um classificador $f(x)$ tal que 
+		\begin{equation*}
+		\label{eq:svm-decision}
+			\begin{cases}
+				f(x_i)>0,& \text{se } y_i=1 \\
+				f(x_i)<0,& \text{se } y_i=-1 \\
+			\end{cases}
+		\end{equation*}
+		 ou seja, $y_i f(x_i) > 0$ para uma classificação correta. \pause
+
+		A função decisão é dada por
+		\begin{equation}
+		f(x)=w^T x+ b
+		\end{equation} onde $w \in \mathbb{R}^d$ é o vetor de pesos, que fornece a inclinação do hiperplano e $b \in \mathbb{R}$ um deslocamento do hiperplano em relação à origem. 
+	\end{frame}
+
+	\begin{frame}{Intuição}
+		Para um conjunto de dados linearmente separável podem existir múltiplos hiperplanos de separação. \textbf{Como escolher?} \pause
+
+		Escolhe-se o que oferecer maior \emph{margem}. Que é menor distância entre o hiperplano de separação e qualquer amostra, dada por $\frac{2}{\|w\|}$.
+		\fig{svm/svm-margin}{Maximização da margem para conjunto linearmente separável.}[1][0.6]
+	\end{frame}
+
+	\begin{frame}{Treinamento}
+		Nem sempre o conjunto será linearmente separável, portanto podem haver classificações incorretas no conjunto de treinamento.
+
+		Dessa forma, para maior flexibilidade, minimiza-se a função custo
+		\begin{equation}
+			\label{eq:svm-cost}
+			\min_{w,b} P(w,b) = \textcolor{blue}{\frac{1}{2}\|w\|^2} + C\textcolor{red}{\sum_i H_1(y_i f(x_i))},
+		\end{equation}
+		onde
+		\begin{equation*}
+		H_1(z)=\max(0,1-z).
+		\end{equation*}
+	\end{frame}
+
+	\begin{frame}{Kernel geral}
+		Para tornar o conjunto de treinamento linearmente separável pode-se utilizar uma transformação não-linear das amostras para um espaço de maior dimensionalidade.
+
+		Uma função bastante utilizada para essa transformação é a \emph{Radial Basis Function}, dada por 
+		\begin{equation}
+			\label{eq:svm-kernel-func}
+			K(x,x_i) = \exp\left(-\frac{\|x-x_i\|^2}{2\sigma^2}\right).
+		\end{equation}
+
+		\fig{svm/svm-kernel}{Função de mapeamento}[1][0.5]
+	\end{frame}
+
+	\begin{frame}{Validação cruzada}
+		Para a escolha dos hiperparâmetros utiliza-se um processo de treinamento por \textbf{validação cruzada}. \pause
+	
+		Para cada descolha de $C$ e $\sigma$:
+		\begin{enumerate}
+			\item Divide-se o conjunto de treinamento em 5 conjuntos.
+			\item 4 conjuntos são utilizados para treinamento e 1 para validação.
+			\item Alterna-se o conjunto de validação até atingir todas as combinações.
+			\item Faz-se a média do desempenho (no conjunto de validação) dos cinco testes.
+		\end{enumerate} \pause
+
+		Ao final desse processo escolhe-se os parâmetros que obtiveram melhor resultado. Treina-se então o modelo com o conjunto de treinamento completo.
+	\end{frame}
 
