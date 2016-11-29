@@ -1,20 +1,78 @@
 \section{Introdução}
-\begin{frame}{Caracterização da aplicação}
 
-\fig{wanke3}{Indústria de eletrodomésticos com extrusoras de plástico}
-\end{frame}
+\subsection{Caracterização da aplicação}
+	\begin{frame}{\insertsubsection}
+	\fig{wanke3}{Indústria de eletrodomésticos com extrusoras de plástico.}
+	\end{frame}
 
-\begin{frame}{Caracterização da aplicação}
-\fig{wanke2}{Moldes das extrusoras precisam ser substituidos através de uma ponte rolante}
-\end{frame}
+	\begin{frame}{\insertsubsection}
+	\fig{wanke2}{Moldes das extrusoras precisam ser substituidos através de uma ponte rolante.}
+	\end{frame}
 
-\begin{frame}{Caracterização da aplicação}
-\fig{wanke1}{Estrutura da ponte rolante pela fábrica}
-\end{frame}
+	\begin{frame}{\insertsubsection}
+	\fig{wanke1}{Estrutura da ponte rolante pela fábrica.}
+	\end{frame}
 
-\begin{frame}{Aprendizado de máquina}
-	Aprendizado de máquina é o campo de estudo que dá ao computador a habilidade de desempenhar uma função sem ser explicitamente programado para fazer isso.
+	\begin{frame}{\insertsubsection}
+		\textbf{Sistema de segurança}
+		\begin{itemize}
+			\item Detectar pessoas automaticamente na região de trabalho.
+			\item Impedir movimentação da ponte ao detectar pessoas.
+		\end{itemize}
+	\end{frame}
+
+\subsection{Aprendizado de máquina}
+	\begin{frame}{\insertsubsection}
+	``Aprendizado de máquina é o campo de estudo que dá ao computador a habilidade de desempenhar uma função sem ser explicitamente programado para fazer isso.''
 
 	\textbf{Arthur Samuel}
-\end{frame}
+	\end{frame}
 
+	\begin{frame}{Histórico}
+		\begin{description}
+			\item [1952] Samuel cria primeiro programa com aprendizado: damas.
+			\item [1957] Perceptron de Rosenblatt: modelo biológico.
+			\item [1970] AI Winter: o ceticismo depois da euforia.
+			\item [1986] Processo de aprendizado \emph{backpropagation} é redescoberto.
+			\item [1995] Técnica de \emph{Support Vector Machine} se tornara clássica.
+			\item [2006] Avanços computacionais permitem a criação de redes neurais profundas.
+		\end{description}
+	\end{frame}
+
+	\begin{frame}{Comparativo métodos de aprendizado}
+	%https://www.quora.com/What-is-the-difference-between-deep-learning-and-shallow-learning#
+	\begin{columns}[T]
+		\column{0.5\textwidth}
+		\textbf{Superficiais}
+		\begin{itemize}
+			\item Requer pré-processamento das amostras: descrição.
+			\item Criar um extrator de características requer conhecimento do problema.
+			\item A descrição da amostra é crítica, portanto tem mais ênfase que o modelo em si.
+		\end{itemize}
+		\vfill
+
+		\column{0.5\textwidth}
+		\textbf{Profundos}
+		\begin{itemize}
+			\item Tem como entrada dados ``crus''.
+			\item Aprendem a melhor representação através de otimização -- aprendizado de representação.
+			\item Requer um grande número de amostras para o treinamento.
+		\end{itemize}
+		\vfill
+	\end{columns}
+	\end{frame}
+
+\subsection{Método clássico de detecção de objetos}
+	\begin{frame}{\insertsubsection}
+	\begin{enumerate}
+	\item Identificar uma região de interesse na imagem.
+	\item Utilizar um extrator de características para descrição do objeto.
+	\item Introduzir a amostra, proveniente do descritor, em um classificador simples, obtendo a classe correspondente.
+	\end{enumerate}
+
+	\fig{obj-detection}{Processo de detecção de objetos.}
+	\end{frame}
+
+	\begin{frame}{Panorama do trabalho}
+		\tableofcontents
+	\end{frame}

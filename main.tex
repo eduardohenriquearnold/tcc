@@ -2,8 +2,12 @@
 \usetheme{metropolis}           % Use metropolis theme
 
 %%% Packages
+\usepackage{amssymb}
 \usepackage{graphicx}
-\graphicspath{ {img/} }
+\graphicspath{ {img/} {../doc/img/} }
+
+\metroset{sectionpage=none}
+\metroset{subsectionpage=progressbar}
 
 \input{preamble}
 
@@ -17,22 +21,18 @@
 \begin{document}
 	\maketitle
 
-	\begin{frame}{Agenda}
-		\tableofcontents
-	\end{frame}
-
 	\input{introducao}
-	\input{tradicional}
-	\input{hibrido}
-	\input{resultados}
-	\input{conclusao}
+	%\input{tradicional}
+	%\input{hibrido}
+	%\input{resultados}
+	%\input{conclusao}
 
 	\begin{frame}[standout]
 	  Dúvidas?
 	\end{frame}
 
 	\begin{frame}[standout]
-	  Obrigado
+	  Obrigado pela atenção!
 	\end{frame}
 
 \end{document}
