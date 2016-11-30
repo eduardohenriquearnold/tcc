@@ -1,1 +1,35 @@
+\section{Conclusão}
 
+\subsection{}
+\begin{frame}{\insertsection}
+	\begin{itemize}
+		\item Sistema de detecção de pessoas em um ambiente indústrial.
+		\item Duas propostas de solução
+		\begin{itemize}
+			\item Métodos tradicionais de aprendizado
+			\item Métodos de aprendizado profundo
+		\end{itemize}
+
+		\item Desempenho superior das técnicas profundas em relação aos métodos tradicionais de aprendizado.
+		\item Possibilidade de utilizar conjuntos medianos e desbalanceados.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Trabalhos futuros}
+	\textbf{Ajuste fino do classificador}\\
+	\begin{itemize}
+		\item Video de testes limitado: poucos quadros sem pessoas, mesmos moldes.
+		\item Avaliar a ocorrência de falsos positivos após instalação.
+		\item Fazer treinamento de ajuste fino na camada de classificação.
+	\end{itemize} 
+
+	\pause
+
+	\textbf{Proposta de solução integralmente profunda}\\
+	\begin{itemize}
+		\item Não existe seleção de candidatos.
+		\item Utiza-se uma rede neural convolucional.
+		\item O quadro inteiro é tido como entrada do sistema.
+		\item Saída bidimensional como mapa de probabilidades.
+	\end{itemize}
+\end{frame}
