@@ -1,1 +1,88 @@
+\section{Classificação utilizando aprendizado profundo}
 
+\subsection{Redes neurais}
+
+\begin{frame}{Rede neural artificial}
+	\begin{itemize}
+		\item Rede perceptron multicamadas (MLP)
+		\item Rede profunda sem realimentação (\textit{deep feedforward networks})
+	\end{itemize}
+
+	\fig{deep/mlp}{Exemplo de rede neural com camada de entrada (amarela), camadas escondidas (verdes) e camada de saída (azul).}
+\end{frame}
+
+\begin{frame}{Rede neural artificial}
+	\fig{deep-p/deep-params}{Configurações dos pesos numa rede neural.}[1][0.4]
+
+	A ativação (saída) da unidade $j$ na camada $l$ é dada por
+	\begin{equation}
+	a^l_j = \textcolor{red}{\phi} \left( \sum_k w_{jk}^l a_k^{l-1} + b_j^l \right).
+	\end{equation}
+\end{frame}
+
+\begin{frame}{Funções de ativação}
+	\begin{columns}[T]
+	\column{0.5\textwidth}
+		\textbf{Sigmoide}		
+		\begin{itemize}
+			\item Historicamente utilizada para toda rede.
+			\item Saturação nas extremidades.
+			\item Saída no intervalo $[0,1]$, interpretação probabilística.
+		\end{itemize}
+
+		\begin{equation}
+		\sigma(z) = \frac{1}{1+e^{-z}}.
+		\end{equation}
+
+		\fig{deep/sigmoid}{Plot sigmoide}[0.7][0.7]
+	\column{0.5\textwidth}
+		\textbf{Rectified Linear Unit (RELU)}
+		\begin{itemize}
+			\item Derivada constante.
+			\item Usada nas camadas intermediárias.
+			\item Permite treinamento em redes profundas.
+		\end{itemize}
+
+		\begin{equation}
+			\text{RELU}(z) = \max\{0,z\}.
+		\end{equation}
+
+		\fig{deep/relu}{Plot RELU}[0.7][0.7]
+	\end{columns}
+\end{frame}
+
+\subsection{Redes convolucionais}
+\begin{frame}{\insertsubsection}
+	\begin{itemize}
+	\item Redes convolucionais são uma variação das redes neurais.
+	\item Os nós são ligados através de campos receptivos.
+	\item Pesos compartilhados entre campos receptivos, redução dos parâmetros.
+	\item Permite invariância à translação.
+	\end{itemize}
+
+	\begin{columns}
+		\column{0.5\textwidth}
+		\fig{deep/convnet-receptivefield}{Exemplo de rede convolucional e campos receptivos.}[0.8][0.4]
+
+		\column{0.5\textwidth}
+		Pode-se observar essa operação como uma convolução:
+		\begin{equation}
+		a^1 = \phi(w \ast a^0 + b).
+		\end{equation}
+
+	\end{columns}
+	
+\end{frame}
+
+\begin{frame}{\insertsubsection}
+	\fig{deep-p/convnet-example}{Exemplo de rede convolucional utilizada para OCR.}[1][1]
+\end{frame}
+
+\subsection{Processo de treinamento}
+
+\begin{frame}{Função custo}
+
+\end{frame}
+
+\begin{frame}{Cálculo do gradiente}
+\end{frame}
