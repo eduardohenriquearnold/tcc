@@ -13,8 +13,7 @@
 	\fig{wanke1}{Estrutura da ponte rolante pela fábrica.}
 	\end{frame}
 
-	\begin{frame}{\insertsubsection}
-		\textbf{Sistema de segurança}
+	\begin{frame}{Objetivos do sistema de segurança}
 		\begin{itemize}
 			\item Detectar pessoas automaticamente na região de trabalho.
 			\item Impedir movimentação da ponte ao detectar pessoas.
@@ -22,57 +21,53 @@
 	\end{frame}
 
 \subsection{Aprendizado de máquina}
-	\begin{frame}{\insertsubsection}
-	``Aprendizado de máquina é o campo de estudo que dá ao computador a habilidade de desempenhar uma função sem ser explicitamente programado para fazer isso.''
+%https://www.quora.com/What-is-the-difference-between-deep-learning-and-shallow-learning#
+%http://sebastianraschka.com/faq/docs/difference-deep-and-normal-learning.html
 
-	\textbf{Arthur Samuel}
-	\end{frame}
-
-	\begin{frame}{Histórico}
-		\begin{description}
-			\item [1952] Samuel cria primeiro programa com aprendizado: damas.
-			\item [1957] Perceptron de Rosenblatt: modelo biológico.
-			\item [1970] AI Winter: o ceticismo depois da euforia.
-			\item [1986] Processo de aprendizado \emph{backpropagation} é redescoberto.
-			\item [1995] Técnica de \emph{Support Vector Machine} se tornara clássica.
-			\item [2006] Avanços computacionais permitem a criação de redes neurais profundas.
-		\end{description}
-	\end{frame}
-
-	\begin{frame}{Comparativo métodos de aprendizado}
-	%https://www.quora.com/What-is-the-difference-between-deep-learning-and-shallow-learning#
-	\begin{columns}[T]
-		\column{0.5\textwidth}
-		\textbf{Superficiais}
+	\begin{frame}{Métodos tradicionais de aprendizado}
 		\begin{itemize}
-			\item Requer pré-processamento das amostras: descrição.
+			\item Requerem pré-processamento das amostras: descrição.
 			\item Criar um extrator de características requer conhecimento do problema.
-			\item A descrição da amostra é crítica, portanto tem mais ênfase que o modelo em si.
+			\item A descrição da amostra é crítica, em geral tem mais ênfase que o modelo em si.
+			\item Modelos comuns: SVM, redes neurais, \emph{random forests}.
 		\end{itemize}
-		\vfill
-
-		\column{0.5\textwidth}
-		\textbf{Profundos}
+	\end{frame}
+	
+	\begin{frame}{Métodos de aprendizado profundo}
 		\begin{itemize}
 			\item Tem como entrada dados ``crus''.
-			\item Aprendem a melhor representação através de otimização -- aprendizado de representação.
+			\item Aprendizado de representação.
+			\item Modelo com muitos parâmetros e diversas camadas.
 			\item Requer um grande número de amostras para o treinamento.
+			\item Inovações que permitem treinamento.
+			\item Modelos comuns: Redes neurais profundas, convolucionais, recursivas (LSTM).
 		\end{itemize}
-		\vfill
-	\end{columns}
 	\end{frame}
 
-\subsection{Método clássico de detecção de objetos}
-	\begin{frame}{\insertsubsection}
+\subsection{Método de detecção de objetos}
+	\begin{frame}{Utilizando métodos tradicionais}
 	\begin{enumerate}
-	\item Identificar uma região de interesse na imagem.
+	\item Identificar candidatos na imagem.
 	\item Utilizar um extrator de características para descrição do objeto.
-	\item Introduzir a amostra, proveniente do descritor, em um classificador simples, obtendo a classe correspondente.
+	\item Introduzir a amostra, proveniente do descritor, em um classificador SVM, obtendo a classe correspondente.
 	\end{enumerate}
 
-	\fig{obj-detection}{Processo de detecção de objetos.}
+	\fig{diagram/system}{}[1.1][1]
+	\end{frame}
+
+	\begin{frame}{Utilizando técnicas profundas}
+	\begin{enumerate}
+	\item Identificar candidatos na imagem.
+	\item Introduzir a amostra em um classificador profundo, obtendo a classe correspondente.
+	\end{enumerate}
+
+	\fig{diagram/system-deep}{}[1.1][1]
 	\end{frame}
 
 	\begin{frame}{Panorama do trabalho}
-		\tableofcontents
+		\begin{itemize}
+			\item Detecção utilizando métodos tradicionais de aprendizado.
+			\item Classificação utilizando aprendizado profundo.
+			\item Resultados
+		\end{itemize}
 	\end{frame}
