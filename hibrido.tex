@@ -3,16 +3,9 @@
 \subsection{Redes neurais}
 
 \begin{frame}{Rede neural artificial}
-	\begin{itemize}
-		\item Rede perceptron multicamadas (MLP)
-		\item Rede profunda sem realimentação (\textit{deep feedforward networks})
-	\end{itemize}
+	Também chamada de Rede perceptron multicamadas (MLP).
 
-	\fig{deep/mlp}{Exemplo de rede neural com camada de entrada (amarela), camadas escondidas (verdes) e camada de saída (azul).}
-\end{frame}
-
-\begin{frame}{Rede neural artificial}
-	\fig{deep-p/deep-params}{Configurações dos pesos numa rede neural.}[1][0.4]
+	\fig{deep-p/deep-params}{}[1][0.4]
 
 	A ativação (saída) da unidade $j$ na camada $l$ é dada por
 	\begin{equation}
@@ -30,9 +23,9 @@
 			\item Saída no intervalo $[0,1]$, interpretação probabilística.
 		\end{itemize}
 
-		\begin{equation}
+		\begin{equation*}
 		\sigma(z) = \frac{1}{1+e^{-z}}.
-		\end{equation}
+		\end{equation*}
 
 		\fig{deep/sigmoid}{Plot sigmoide}[0.7][0.7]
 	\column{0.5\textwidth}
@@ -43,46 +36,81 @@
 			\item Permite treinamento em redes profundas.
 		\end{itemize}
 
-		\begin{equation}
+		\begin{equation*}
 			\text{RELU}(z) = \max\{0,z\}.
-		\end{equation}
+		\end{equation*}
 
 		\fig{deep/relu}{Plot RELU}[0.7][0.7]
 	\end{columns}
+\end{frame}
+
+\begin{frame}{Rede neural artificial}
+	\fig{deep-p/mlp-mine}{}
+	\pause
+	\vspace{-30pt}
+	\center Aprendizado profundo?
 \end{frame}
 
 \subsection{Redes convolucionais}
 \begin{frame}{\insertsubsection}
 	\begin{itemize}
 	\item Redes convolucionais são uma variação das redes neurais.
-	\item Os nós são ligados através de campos receptivos.
+	\item Os nós são ligados através de campos receptivos (grupo de pixels adjacentes).
 	\item Pesos compartilhados entre campos receptivos, redução dos parâmetros.
 	\item Permite invariância à translação.
 	\end{itemize}
 
 	\begin{columns}
 		\column{0.5\textwidth}
-		\fig{deep/convnet-receptivefield}{Exemplo de rede convolucional e campos receptivos.}[0.8][0.4]
+		\fig{deep-p/convolution}{}[0.8][0.4]
 
 		\column{0.5\textwidth}
 		Pode-se observar essa operação como uma convolução:
-		\begin{equation}
+		\begin{equation*}
 		a^1 = \phi(w \ast a^0 + b).
-		\end{equation}
+		\end{equation*}
 
 	\end{columns}
 	
 \end{frame}
 
 \begin{frame}{\insertsubsection}
-	\fig{deep-p/convnet-example}{Exemplo de rede convolucional utilizada para OCR.}[1][1]
+	\fig{diagram/convnet-mine}{}[1.1][1]
 \end{frame}
 
 \subsection{Processo de treinamento}
 
 \begin{frame}{Função custo}
+	\begin{itemize}
+	\item Indica o desempenho do modelo conjunto de treinamento.
+	\item Para um modelo ideal teria o valor nulo.
+	\end{itemize}
 
+	\pause
+
+	Utiliza-se a função entropia cruzada binária (\textit{binary cross entropy})
+	\begin{equation*}
+	C(\theta) = -\frac{1}{N} \sum_i^N \left[y_i \ln f(x_i,\theta) + (1-y_i) \ln (1-f(x_i,\theta))\right]
+	\end{equation*}
+
+	\fig{deep/cross-entropy-loss}{Função custo entropia cruzada para amostras negativas (esquerda) e positivas (direita).}[1][0.5]
 \end{frame}
 
-\begin{frame}{Cálculo do gradiente}
+\begin{frame}{Otimização}
+	\begin{itemize}
+		\item Minimizar a função custo é um problema de otimização não convexa.
+		\item Utiliza-se o algoritmo \emph{Mini-Batch Gradient Descent}.
+		\item MB-GD é uma variação que avalia o gradiente em um conjunto de amostras ($1 < k \leq N$) a cada iteração.
+		\item É necessário calcular o gradiente da função custo.
+	\end{itemize}
+
+	\pause
+
+	\textbf{Propagação reversa de erros - Backpropagation} \\
+	\begin{itemize}
+		\item O cálculo do gradiente requer as derivadas parciais de cada parâmetro.
+		\item Numa rede profunda o cálculo simbólico se torna inviável.
+		\item Esse algoritmo faz uma propagação reversa do erro na saída para encontrar as derivadas parciais simultaneamente.
+	\end{itemize}
 \end{frame}
+
