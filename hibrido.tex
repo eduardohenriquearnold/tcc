@@ -1,5 +1,5 @@
 \chapter{Classificação utilizando aprendizado profundo} \label{chap:class-profundo}
-O Capítulo \ref{chap:tradicional} tratou de uma solução baseada em seleção de candidatos, extração de características e posterior classificação, o que caracteriza uma técnica de aprendizado superficial. Neste capítulo, propomos uma solução híbrida, que utiliza a seleção de candidatos idêntica à anterior, porém utiliza técnicas de aprendizado profundo para classificação, de modo que os candidatos são classificados sem pré-processamento. Inicialmente introduz-se as redes MLP e convolucionais, fornecendo as bases teóricas, funções de ativação e processo treinamento.  Questões relativas à implementação também são abordadas.
+O Capítulo \ref{chap:tradicional} tratou de uma solução baseada em seleção de candidatos, extração de características e posterior classificação, o que caracteriza uma técnica de aprendizado tradicional. Neste capítulo, propomos uma solução híbrida, que utiliza a seleção de candidatos idêntica à anterior, porém utiliza técnicas de aprendizado profundo para classificação, de modo que os candidatos são classificados sem pré-processamento. Remove-se o bloco de descrição dos candidatos e correspondentemente adiciona-se complexidade ao classificador. Inicialmente introduz-se as redes MLP e convolucionais, fornecendo as bases teóricas, funções de ativação e processo treinamento. Questões relativas à implementação também são abordadas.
 
 \section{Perceptron Multicamadas (MLP)}
 
@@ -175,14 +175,14 @@ O processo de treinamento é similar ao das MLPs, porém com pequenas modificaç
 \section{Implementação}
 \begin{figure}
 \centering
-\includegraphics[width=0.7\textwidth]{deep/diag-mlp}
+\includegraphics[width=0.7\textwidth]{diagram/diag-mlp}
 \caption{Estrutura proposta para rede MLP.}
 \label{fig:diag-mlp}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.6\textwidth]{deep/diag-cnn}
+\includegraphics[width=0.6\textwidth]{diagram/diag-cnn}
 \caption{Estrutura proposta para rede CNN.}
 \label{fig:diag-cnn}
 \end{figure}

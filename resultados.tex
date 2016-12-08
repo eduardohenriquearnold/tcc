@@ -86,7 +86,7 @@ Outro descritor que também foi avaliado foi o de grades simples com dimensão 7
 \end{table}
 
 \subsection{MLP}
-Na estrutura MLP foram realizados testes com duas e três camadas intermediárias, com ativação RELU e um único perceptron de saída com ativação sigmoide indicando a probabilidade da amostra ser uma cabeça. Na configuração de duas camadas foram utilizados 512 e 256 perceptrons, respectivamente. Os resultados obtidos para o conjunto de treinamento são apresentados nas Tabelas \ref{cm:MLP:Tr:5} e \ref{cm:MLP:Tr:9}. O resultado do conjunto de teste são apresentados nas Tabela \ref{cm:MLP:Te:5} e \ref{cm:MLP:Te:9}.
+Na estrutura MLP foram realizados testes com duas e três camadas intermediárias, com ativação RELU e um único perceptron de saída com ativação sigmoide indicando a probabilidade da amostra ser uma cabeça. Na configuração de duas camadas foram utilizados 512 e 256 perceptrons, respectivamente, conforme ilustra a Figura \ref{fig:diag-mlp}. Os resultados obtidos para o conjunto de treinamento são apresentados nas Tabelas \ref{cm:MLP:Tr:5} e \ref{cm:MLP:Tr:9}. O resultado do conjunto de teste são apresentados nas Tabela \ref{cm:MLP:Te:5} e \ref{cm:MLP:Te:9}.
 
 \begin{table}
 \cfmat{MLP, conjunto treinamento extendido $T=0.5$}{14533}{433}{104}{1828}{cm:MLP:Tr:5}
@@ -99,7 +99,7 @@ Na estrutura MLP foram realizados testes com duas e três camadas intermediária
 Para três camadas foram utilizados 1024, 512 e 256 perceptrons respectivamente, entretanto os resultados foram semelhantes aos obtidos com duas camadas, portanto o aumento em complexidade não é justificado visto que o desempenho permaneceu o mesmo.
 
 \subsection{CNN}
-Para redes convolucionais utilizou-se uma única camada convolucional RELU com 16 núcleos 3x3 seguida por max-pooling (3x3) e uma camada densamente conectada de 128 percepetrons RELU e finalmente saída única com ativação sigmoide. Essa topologia foi a que teve o melhor desempenho, obtendo 99\% de acurácia no conjunto de treinamento, demonstrados nas Tabelas \ref{cm:CNN:Tr:5} e \ref{cm:CNN:Tr:9}. Também teve 96\% de acurácia no conjunto de teste, como observado nas Tabelas \ref{cm:CNN:Te:5} e \ref{cm:CNN:Te:9}.
+Para redes convolucionais utilizou-se uma única camada convolucional RELU com 16 núcleos 3x3 seguida por max-pooling (3x3) e uma camada densamente conectada de 128 percepetrons RELU e finalmente saída única com ativação sigmóide. Essa topologia, ilustrada na Figura \ref{fig:diag-cnn}, foi a que teve o melhor desempenho, obtendo 99\% de acurácia no conjunto de treinamento, demonstrados nas Tabelas \ref{cm:CNN:Tr:5} e \ref{cm:CNN:Tr:9}. Também teve 96\% de acurácia no conjunto de teste, como observado nas Tabelas \ref{cm:CNN:Te:5} e \ref{cm:CNN:Te:9}.
 
 \begin{table}
 \cfmat{CNN, $T=0.5$, conjunto treinamento extendido}{14934}{32}{23}{1909}{cm:CNN:Tr:5}

@@ -1,6 +1,13 @@
 \chapter{Detecção utilizando métodos tradicionais} \label{chap:tradicional}
 
-O sistema de segurança na fábrica consiste na detecção de pessoas sob a área da ponte. Esse é um problema de localização de objetos, mais especificamente, de detecção de pessoas. Tradicionalmente divide-se essa tarefa em três técnicas de visão computacional: obtenção de candidatos a objeto, obter descrição de cada candidato e então validar a amostra através de classificador. Essa solução foi baseada no trabalho de \cite{rauter}, que propõe um método de obtenção de candidatos e de extração de características. Primeiramente descreve-se aspectos técnicos da aplicação e em seguida cada uma das tarefas para a concretização da solução, por fim, pontos sobre a implementação são mencionados.
+O sistema de segurança na fábrica consiste na detecção de pessoas sob a área da ponte. Esse é um problema de localização de objetos, mais especificamente, de detecção de pessoas. Tradicionalmente divide-se essa tarefa em três técnicas de visão computacional: obtenção de candidatos a objeto, obter descrição de cada candidato e então validar a amostra através de classificador. Essa solução, apresentada visualmente na Figura \ref{fig:system}, foi baseada no trabalho de \cite{rauter}, que propõe um método de obtenção de candidatos e de extração de características. Primeiramente descreve-se aspectos técnicos da aplicação e em seguida cada uma das tarefas para a concretização da solução, por fim, pontos sobre a implementação são mencionados.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{diagram/system}
+\caption{Diagrama demonstrando etapas do sistema de detecção de pessoas e seus respectivos sinais.}
+\label{fig:system}
+\end{figure}
 
 \section{Caracterização da aplicação}
 Para essa aplicação, recomenda-se a utilização de imagens de profundidade, em que o valor dos pixels indicam a distância entre a câmera e o objeto em questão. Isso se deve ao fato de esse sensor fornecer uma medida independente de luminosidade e variações de cor ou textura se comparada à uma câmera RGB tradicional. Três câmeras foram compradas e avaliadas: \textit{ASUS XtionPRO}, \textit{Orbbec Astra PRO} e \textit{Stereolabs ZED}. As duas primeiras funcionam com o princípio de laser estruturado, já a última funciona baseado em visão estéreo (duas câmeras). Através de testes determinou-se que as maiores distâncias detectadas foram de 4m, 5m e 20m respectivamente. Dado que a câmera será instalada a 6m do chão, em visão superior, optou-se por utilizar a câmera \textit{ZED}.
