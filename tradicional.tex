@@ -77,7 +77,7 @@ Utiliza-se um classificador binário SVM (\textit{Support Vector Machine}). Seja
 
 A função de decisão do SVM pode ser descrita como $f(x)=w^T x+ b$ onde $w \in \RR^d$ é o vetor de pesos, que fornece a inclinação do hiperplano e $b \in \RR$ um deslocamento do hiperplano em relação à origem. 
 
-No caso de um conjunto de treinamento linearmente separável é possível que existam múltiplos hiperplanos que separem as classes corretamente. Nessa situação, pode-se escolher o hiperplano que oferece a maior margem, que em geral oferece melhor generalização. A margem é definida como a menor distância entre o hiperplano de separação e qualquer amostra. 
+No caso de um conjunto de treinamento linearmente separável, é possível que existam múltiplos hiperplanos que separem as classes corretamente. Nessa situação, pode-se escolher o hiperplano que oferece a maior margem, que em geral oferece melhor generalização. A margem é definida como a menor distância entre o hiperplano de separação e qualquer amostra. 
 
 Arbitrariamente, define-se que $f(x_+)=1$ e $f(x_-)=-1$, onde $x_+$ e $x_-$ são as amostras positiva e negativa mais próximas do hiperplano de separação, conforme Figura \ref{fig:svm-margin}, portanto $y_i f(x_i) \geq 1$ para todo $i$. Com essa formulação obtém-se que a margem é dada por $\frac{2}{\|w\|}$ onde
 \begin{equation}
@@ -91,7 +91,7 @@ Arbitrariamente, define-se que $f(x_+)=1$ e $f(x_-)=-1$, onde $x_+$ e $x_-$ são
 \label{fig:svm-margin}
 \end{figure}
 
-O aprendizado consiste em encontrar $w$ e $b$ que maximizem a a margem sujeitos à $y_i(w^T x_i+b) \geq 1$. Esse é um problema de otimização convexa, em que qualquer mínimo local é também global. No entanto, o conjunto pode não ser linearmente separável, portanto a condição $y_i(w^T x_i+b) \geq 1$ não é atendida para todo $i$ e existem erros de treinamento. Ou, mesmo sendo o conjunto linearmente separável, o hiperplano que separa corretamente todas as amostras pode não ser o que oferece maior generalização, como o conjunto apresentado na Figura \ref{fig:svm-margin-ex}. 
+O aprendizado consiste em encontrar $w$ e $b$ que maximizem a a margem sujeitos à restrição $y_i(w^T x_i+b) \geq 1$. Esse é um problema de otimização convexa, em que qualquer mínimo local é também global. No entanto, o conjunto pode não ser linearmente separável, portanto a condição $y_i(w^T x_i+b) \geq 1$ não é atendida para todo $i$ e existem erros de treinamento. Ou, mesmo sendo o conjunto linearmente separável, o hiperplano que separa corretamente todas as amostras pode não ser o que oferece maior generalização, como o conjunto apresentado na Figura \ref{fig:svm-margin-ex}. 
 
 Dessa forma, para maior flexibilidade, minimiza-se a função custo \cite{bishop2007}
 \begin{equation}
@@ -156,12 +156,12 @@ Essa formulação é interessante pois dá flexibilidade do rigor da classifica�
 \section{Implementação}
 Para os algoritmos de processamento de imagens e extração de características, fez-se uso da biblioteca \textit{OpenCV} que implementa grande quantidade de operações básicas em imagens e fornece um ambiente rico de trabalho para criar novas funcionalidades.
 
-No que se refere a aprendizado de máquina, utilizou-se a biblioteca \textit{Scikit-learn} \cite{scikit-learn} que implementa o algoritmo de treinamento SVM. Além de fornecer as amostras, no caso, a descrição dos candidatos, é necessário configurar os parâmetros $C$, para penalidade dos erros de treinamento e o parâmetro $\sigma$ do \textit{kernel RBF}. 
+No que se refere a aprendizado de máquina, utilizou-se a biblioteca \textit{Scikit-learn} \cite{scikit-learn} que implementa o algoritmo de treinamento SVM. Além de fornecer as amostras (neste caso, a descrição dos candidatos), é necessário configurar os parâmetros $C$, para penalidade dos erros de treinamento e o parâmetro $\sigma$ do \textit{kernel RBF}. 
 
-A abordagem utilizada foi o método de treinamento automático fornecido pela biblioteca: indica-se um conjunto de elementos para cada um dos parâmetros. Para cada escolha de $C$ e $\sigma$ a avaliação de desempenho é medida através de um processo de validação cruzada. Nesse processo, divide-se o conjunto de treinamento em 5 conjuntos. Numa próxima etapa, 4 desses cojuntos são utilizados para o treinamento e um para validação. Essa etapa se repete até cada um dos 5 conjuntos ter sido escolhido para validação. Ao terminar essa etapa, faz-se a média do desempenho dos cinco testes, que é o resultado para uma escolha dos parâmetros.
+A abordagem utilizada foi o método de treinamento automático fornecido pela biblioteca: indica-se um conjunto de elementos para cada um dos parâmetros. Para cada escolha de $C$ e $\sigma$ a avaliação de desempenho é medida através de um processo de validação cruzada. Nesse processo, divide-se o conjunto de treinamento em 5 conjuntos. Numa próxima etapa, 4 desses cojuntos são utilizados para o treinamento e um para validação. Essa etapa se repete até cada um dos 5 conjuntos ter sido escolhido para validação. Ao término, faz-se a média do desempenho dos cinco testes, que é o resultado para uma escolha dos parâmetros.
 
 Ao final do procedimento de treinamento automático as estatísticas de cada escolha dos parâmetros é exibida e a que tiver melhor desempenho, segundo métrica estabelecida, é escolhida. Tendo obtido esses parâmetros um novo processo de treinamento é efetuado, agora utilizando todo o conjunto de treinamento, sem validação.
 
-Nota-se ainda que é possível utilizar de todos os núcleos do processador com essa biblioteca, o que traz um impacto bastante positivo na performance temporal do algoritmo.
+Nota-se ainda que o uso dessa biblioteca possibilitou paralelizar o processo de treinamento através da utilização de todos os núcleos do processador, o que traz um impacto bastante positivo na performance temporal do algoritmo.
 
 Tendo treinado o modelo é possível obter o resultado da classificação para cada candidato e remover os que não forem reconhecidos como cabeças. O resultado final do processo é um vetor de quadrados contendo todas as cabeças encontradas no quadro.

@@ -1,10 +1,10 @@
 \chapter{Resultados} \label{chap:resultados}
-Nesse capítulo os resultados das diferentes soluções propostas no trabalho são apresentados. Primeiramente introduzem-se as medidas de avaliação que serão utilizadas. Em seguida compara-se as etapas de classificação do método tradicional e híbrido, cujo processo de seleção de candidatos é idêntico, portanto a diferença em desempenho se dá apenas no estágio de classificação. Por fim avalia-se o desempenho do sistema completo das diferentes soluções apresentadas.
+Neste capítulo, os resultados das diferentes soluções propostas no trabalho são apresentados. Primeiramente introduzem-se as medidas de avaliação que serão utilizadas. Em seguida compara-se as etapas de classificação do método tradicional e híbrido, cujo processo de seleção de candidatos é idêntico, portanto a diferença em desempenho se dá apenas no estágio de classificação. Por fim avalia-se o desempenho do sistema completo das diferentes soluções apresentadas.
 
 \section{Medidas de avaliação}
-Para avaliar o desempenho das diferentes soluções apresentadas nesse trabalho se faz necessário a utilização de medidas que permitam comparar os resultados objetivamente e indicar facilmente os aspectos positivos e negativos relevantes de cada método. Nesse trabalho tratamos de classificação binária, em que amostras são positivas (representando cabeças e também indicadas por 1) ou negativas (representando não-cabeças e também indicadas por 0). 
+Para avaliar o desempenho das diferentes soluções apresentadas neste trabalho, faz-se necessário a utilização de medidas que permitam comparar os resultados objetivamente e indicar facilmente os aspectos positivos e negativos relevantes de cada método. Neste trabalho tratamos de classificação binária, em que amostras são positivas (representando cabeças e também indicadas por 1) ou negativas (representando não-cabeças e também indicadas por 0). 
 
-Em geral, num problema de classificação o indicador mais comum é a acurácia (\textit{accuracy}), definida \cite{evaluationMetrics} como a razão das classificações corretas pelo total de classificações. É fundamental notar, entretanto, que essa medida sozinha não é suficiente para avaliar um classificador, especialmente se o dataset for desbalanceado. Por exemplo, ao considerar um dataset com duas amostras negativas entre 20 e utilizar um classificador trivial que classifica qualquer amostra como sendo positiva, obtem-se uma acurácia de 90\%, demonstrando o problema dessa métrica.
+Em geral, em um problema de classificação, o indicador mais comum é a acurácia (\textit{accuracy}), definida \cite{evaluationMetrics} como a razão das classificações corretas pelo total de classificações. É fundamental notar, entretanto, que essa medida sozinha não é suficiente para avaliar um classificador, especialmente se o dataset for desbalanceado. Por exemplo, ao considerar um dataset com duas amostras negativas entre 20 e utilizar um classificador trivial que classifica qualquer amostra como sendo positiva, obtém-se uma acurácia de 90\%, demonstrando o problema dessa métrica.
 
 Uma maneira compacta de representar o desempenho de um classificador é a \textbf{matriz de confusão} \cite{evaluationMetrics}, apresentada na tabela \ref{tab:matriz-confusão}. Para uma classificação binária é uma matriz 2x2 em que a primeira linha indica as amostras negativas e a segunda as amostras positivas. De forma semelhante, a primeira coluna indica amostras que foram classificadas como negativas e a segunda que foram classificadas como positivas. Combinando-se essas linhas e colunas, obtém-se o número de verdadeiros negativos TN, falsos positivos FP, falsos negativos FN e verdadeiros positivos TP, respectivamente. Essa estrutura supera os problemas da acurácia pois fornece a distribuição de acertos e erros de classificação. Adota-se a descrição dos valores em percentuais relativos ao conjunto de análise.
 
@@ -21,7 +21,7 @@ Uma maneira compacta de representar o desempenho de um classificador é a \textb
 \end{tabular}
 \end{table}
 
-Outro aspecto a destacar na avaliação de classificadores é que não basta avaliar os indicadores apresentados apenas no conjunto de treinamento. Embora essas medidas forneçam um limite máximo para o desempenho do classificador e permitam detectar \textit{underfitting}, quando o modelo não tem capacidade de modelar o conjunto de treinamento, não se pode avaliar o desempenho do classificador em um caso geral, isto é, não incluso no conjunto de treinamento. Por outro lado, se o modelo for demasiadamente complexo ele pode ter se tornado muito específico para algumas características do conjunto de treinamento, situação conhecida como \textit{overfitting}. Assim, para medir o desempenho do classificador em uma situação real utiliza-se de outro conjunto de dados supervisionados chamado de conjunto de teste (\textit{test set}), independente do conjunto de treinamento. Afirma-se que o modelo generaliza bem se o desempenho no conjunto de treinamento se equiparar ao de teste.
+Outro aspecto a destacar na avaliação de classificadores é que não basta avaliar os indicadores apresentados apenas no conjunto de treinamento. Embora essas medidas forneçam um limite máximo para o desempenho do classificador e permitam detectar \textit{underfitting}, quando o modelo não tem capacidade de modelar o conjunto de treinamento, não se pode avaliar o desempenho do classificador em um caso geral, isto é, não incluso no conjunto de treinamento. Por outro lado, se o modelo for demasiadamente complexo, ele pode ter se tornado muito específico para algumas características do conjunto de treinamento, situação conhecida como \textit{overfitting}. Assim, para medir o desempenho do classificador em uma situação real, utiliza-se outro conjunto de dados supervisionados chamado de conjunto de teste (\textit{test set}), independente do conjunto de treinamento. Afirma-se que o modelo tem boa generalização bem se o desempenho no conjunto de treinamento se equiparar ao de teste.
 
 Graficamente pode-se avaliar classificadores através do gráfico ROC (\textit{Receiver Operating Characteristic}) \cite{evaluationMetrics}, que relaciona a taxa de verdadeiros positivos
 \begin{equation}
@@ -41,11 +41,11 @@ Um requerimento específico para a aplicação em questão é que a linha de pro
 
 \section{Desempenho dos Classificadores}
 \label{sec:resultados-classificadores}
-O classificador SVM originalmente possui saída categórica, porém pode ser adaptado para fornecer uma saída probabilística que indica a probabilidade da amostra ser positiva conforme visto na seção \ref{sec:svm-probabilistic}. Nota-se entretanto que internamente a formulação é ainda categórica. Já os métodos profundos possuem saídas probabilísticas por definição. Essa estrutura da saída como probabilidade é vantajosa pois permite ajustar o compromisso entre falso positivos e falso negativos do classificador, após treinamento, através da escolha do limiar de probabilidade $T$ acima do qual uma amostra é considerada positiva. Escolher um limiar mais alto significa exigir mais segurança do classificador e, portanto, reduzir o número de falsos positivos ao preço de aumentar o número de falsos negativos.
+O classificador SVM originalmente possui saída categórica, porém pode ser adaptado para fornecer uma saída probabilística que indica a probabilidade da amostra ser positiva conforme visto na Seção \ref{sec:svm-probabilistic}. Nota-se entretanto que internamente a formulação é ainda categórica. Já os métodos profundos possuem saídas probabilísticas por definição. Essa estrutura da saída como probabilidade é vantajosa pois permite ajustar o compromisso entre falso positivos e falso negativos do classificador, após treinamento, através da escolha do limiar de probabilidade $T$ acima do qual uma amostra é considerada positiva. Escolher um limiar mais alto significa exigir mais segurança do classificador e, portanto, reduzir o número de falsos positivos ao preço de aumentar o número de falsos negativos.
 
 No caso de saídas probabilísticas, para representar a matriz de confusão se faz necessário escolher valores para $T$. Nesse trabalho escolhem-se dois valores (0.5 e 0.9) para esse parâmetro de maneira a demonstrar sua influência sob a distribuição das amostras na classificação. Nota-se que a estrutura de classificação é a mesma, apenas o limiar é trocado.
 
-Para realizar o treinamento dos classificadores foi gerado um conjunto de dados a partir de gravações realizadas no ambiente indústrial onde o sistema deverá ser instalado. A câmera foi posicionada num ponto próximo de onde deve ocorrer a sua instalação final. Diversos vídeos foram gravados e posteriormente analisados. Utilizando o algoritmo de detecção de candidatos visto em \ref{sec:tradicional-candidatos}, selecionou-se manualmente em cada quadro quais dos candidatos eram verdadeiramente cabeças.
+Para realizar o treinamento dos classificadores foi gerado um conjunto de dados a partir de gravações realizadas no ambiente indústrial onde o sistema deverá ser instalado. A câmera foi posicionada num ponto próximo de onde deve ocorrer a sua instalação final. Diversos vídeos foram gravados e posteriormente analisados. Utilizando o algoritmo de detecção de candidatos visto na Seção \ref{sec:tradicional-candidatos}, selecionou-se manualmente em cada quadro quais dos candidatos eram verdadeiramente cabeças.
 
 Repetindo esse processo em cada quadro formou-se um conjunto de treinamento, cuja amostra é o recorte do candidato, reduzido de 2459 amostras negativas (não cabeças) e 667 positivas (cabeças). Em seguida estendeu-se esse conjunto reduzido para 9894 amostras negativas e 1222 positivas, formando o conjunto de treinamento completo. Para averiguar o desempenho estendeu-se esse conjunto para 16898 amostras das quais 14966 são negativas. Criou-se, ainda, um conjunto de teste independente de 2738 amostras negativas e 235 amostras positivas.
 
@@ -71,14 +71,14 @@ Primeiramente avaliou-se qual a dimensão do descritor de anéis concêntricos q
 \label{fig:roc-rings}
 \end{figure}
 
-Tendo visto que o classificador de 18 dimensões domina sob os outros na região de operação com menor TFP, decidiu-se selecionar esse descritor para seguir com a análise. Para tanto utilizou-se o conjunto de treinamento completo para o treinamento e posterior avaliação através do conjunto de teste, como visto nas tabelas \ref{cm:aneis18Tr} e \ref{cm:aneis18Te}.
+Tendo visto que o classificador de 18 dimensões domina sob os outros na região de operação com menor TFP, decidiu-se selecionar esse descritor para seguir com a análise. Para tanto utilizou-se o conjunto de treinamento completo para o treinamento e posterior avaliação através do conjunto de teste, como visto nas Tabelas \ref{cm:aneis18Tr} e \ref{cm:aneis18Te}.
 
 \begin{table}
 \cfmat{Anéis concêntricos com 18 dimensões, conjunto treinamento}{9890}{4}{79}{1143}{cm:aneis18Tr}
 \cfmat{Anéis concêntricos com 18 dimensões, conjunto teste}{2564}{174}{158}{77}{cm:aneis18Te}
 \end{table}
 
-Outro descritor que também foi avaliado foi o de grades simples com dimensão 7x7, como demonstra as tabelas \ref{cm:gradesTr} e \ref{cm:gradesTe}.
+Outro descritor que também foi avaliado foi o de grades simples com dimensão 7x7, como demonstrado nas Tabelas \ref{cm:gradesTr} e \ref{cm:gradesTe}.
 
 \begin{table}
 \cfmat{Grades simples, conjunto treinamento}{9881}{13}{36}{1186}{cm:gradesTr}
@@ -86,7 +86,7 @@ Outro descritor que também foi avaliado foi o de grades simples com dimensão 7
 \end{table}
 
 \subsection{MLP}
-Na estrutura MLP foram realizados testes com duas e três camadas intermediárias, com ativação RELU e um único perceptron de saída com ativação sigmoide indicando a probabilidade da amostra ser uma cabeça. Na configuração de duas camadas foram utilizados 512 e 256 perceptrons, respectivamente. Os resultados obtidos para o conjunto de treinamento são apresentados nas tabelas \ref{cm:MLP:Tr:5} e \ref{cm:MLP:Tr:9}. O resultado do conjunto de teste são apresentados nas tabela \ref{cm:MLP:Te:5} e \ref{cm:MLP:Te:9}.
+Na estrutura MLP foram realizados testes com duas e três camadas intermediárias, com ativação RELU e um único perceptron de saída com ativação sigmoide indicando a probabilidade da amostra ser uma cabeça. Na configuração de duas camadas foram utilizados 512 e 256 perceptrons, respectivamente. Os resultados obtidos para o conjunto de treinamento são apresentados nas Tabelas \ref{cm:MLP:Tr:5} e \ref{cm:MLP:Tr:9}. O resultado do conjunto de teste são apresentados nas Tabela \ref{cm:MLP:Te:5} e \ref{cm:MLP:Te:9}.
 
 \begin{table}
 \cfmat{MLP, conjunto treinamento extendido $T=0.5$}{14533}{433}{104}{1828}{cm:MLP:Tr:5}
@@ -99,7 +99,7 @@ Na estrutura MLP foram realizados testes com duas e três camadas intermediária
 Para três camadas foram utilizados 1024, 512 e 256 perceptrons respectivamente, entretanto os resultados foram semelhantes aos obtidos com duas camadas, portanto o aumento em complexidade não é justificado visto que o desempenho permaneceu o mesmo.
 
 \subsection{CNN}
-Para redes convolucionais utilizou-se uma única camada convolucional RELU com 16 núcleos 3x3 seguida por max-pooling (3x3) e uma camada densamente conectada de 128 percepetrons RELU e finalmente saída única com ativação sigmoide. Essa topologia foi a que teve o melhor desempenho, obtendo 99\% de acurácia no conjunto de treinamento, demonstrados nas tabelas \ref{cm:CNN:Tr:5} e \ref{cm:CNN:Tr:9}. Também teve 96\% de acurácia no conjunto de teste, como observado nas tabelas \ref{cm:CNN:Te:5} e \ref{cm:CNN:Te:9}.
+Para redes convolucionais utilizou-se uma única camada convolucional RELU com 16 núcleos 3x3 seguida por max-pooling (3x3) e uma camada densamente conectada de 128 percepetrons RELU e finalmente saída única com ativação sigmoide. Essa topologia foi a que teve o melhor desempenho, obtendo 99\% de acurácia no conjunto de treinamento, demonstrados nas Tabelas \ref{cm:CNN:Tr:5} e \ref{cm:CNN:Tr:9}. Também teve 96\% de acurácia no conjunto de teste, como observado nas Tabelas \ref{cm:CNN:Te:5} e \ref{cm:CNN:Te:9}.
 
 \begin{table}
 \cfmat{CNN, $T=0.5$, conjunto treinamento extendido}{14934}{32}{23}{1909}{cm:CNN:Tr:5}
@@ -159,7 +159,7 @@ Avalia-se também o efeito da variação dos parâmetros do algoritmo de extraç
 
 Ter uma janela menor para localização dos máximos locais permite maior segurança em encontrar cabeças, pois diminui o risco de máquinas maiores, comuns no ambiente, mascararem a presença de pessoas. Por outro lado, elas introduzem um número maior de candidatos por quadro no sistema, o que pode ser desafiador tanto em performance temporal como no desempenho do classificador, que deve conseguir descartar candidatos que não são cabeças.
 
-O sistema resulta, no fim, uma probabilidade do quadro conter uma ou mais cabeças. É possível escolher um limiar ótimo para garantir uma TFP ou TVP especificada. O resultado é exibido na Figura \ref{fig:ROC-system} e compara as curvas ROC correspondentes à cada escolha dos parâmetros e classificadores num trecho de vídeo de teste.
+O sistema resulta, no fim, em uma probabilidade do quadro conter uma ou mais cabeças. É possível escolher um limiar ótimo para garantir uma TFP ou TVP especificada. O resultado é exibido na Figura \ref{fig:ROC-system} e compara as curvas ROC correspondentes à cada escolha dos parâmetros e classificadores num trecho de vídeo de teste.
 
 \begin{figure}
 \centering
@@ -185,7 +185,7 @@ O sistema resulta, no fim, uma probabilidade do quadro conter uma ou mais cabeç
 \end{figure}
 
 Primeiramente nota-se que o classificador CNN domina o MLP na maior parte das regiões quando se comparara a mesma escala de extração de candidatos. Pode-se verificar também na Figura \ref{fig:ROC-system:zoom} que existem múltiplas possibilidades de TVP para uma mesma TFP. 
-Esperaria-se que com o aumento do limiar de probabilidade $T$, acima do qual considera-se que o quadro possui cabeças, a TFP diminuisse. Entretanto, isso não ocorre pelo fato de existirem poucos quadros quadros sem cabeças.
+Esperaria-se que com o aumento do limiar de probabilidade $T$, acima do qual considera-se que o quadro possui cabeças, a TFP diminuisse. Entretanto, isso não ocorre pelo fato de existirem poucos quadros sem cabeças.
 
 De fato, o vídeo em questão apresenta forte desbalanceamento: mais de 90\% dos quadros apresentam cabeças, portanto são poucas as possibilidades de ocorrências de falsos positivos. Para facilitar a comparação, na Figura \ref{fig:ROC-system:zoom_best} filtrou-se os pontos de forma que para os pontos com mesma TFP apenas o com maior TVP é mantido.
 

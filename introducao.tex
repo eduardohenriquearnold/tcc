@@ -1,49 +1,49 @@
 \chapter{Introdução}
 
-Na atualidade a segurança e bem estar das pessoas é um aspecto fundamental a ser garantido, ainda mais para trabalhadores em ambientes industriais, onde os riscos são mais severos. Diversas normas e regras existem no sentido de garantir que essa condição seja atendida. Com a progressão dos meios tecnológicos novas ferramentas surgiram para facilitar as medidas de controle e proteger as pessoas.
+Na atualidade, a segurança e bem estar das pessoas é um aspecto fundamental a ser garantido, ainda mais para trabalhadores em ambientes industriais, onde os riscos são mais severos. Diversas normas e regras existem no sentido de garantir que essa condição seja atendida. Com a progressão dos meios tecnológicos novas ferramentas surgiram para facilitar as medidas de controle e proteger as pessoas.
 
-Um caso concreto para aplicação dessas ferramentas ocorre na Wanke, indústria de eletrodomésticos de Indaial-SC, que conta com pontes rolantes, um sistema de transporte que facilita a movimentação de peças no meio industrial. Esse instrumento permite carregar moldes de até centenas de kilogramas entre estações de trabalho. É um fator de preocupação que um desses moldes se solte ou contenha peças livres que caiam e firam algum funcionário. 
+Um caso concreto para aplicação dessas ferramentas ocorre na Wanke, indústria de eletrodomésticos de Indaial-SC, que conta com pontes rolantes, que facilitam a movimentação de peças no meio industrial. Esse instrumento permite carregar moldes de até centenas de kilogramas entre estações de trabalho. É um fator de preocupação que um desses moldes se solte ou contenha peças livres que caiam e firam algum funcionário. 
 
-Esse trabalho pretende elaborar um sistema automático de detecção de pessoas que possibilite impedir que a ponte rolante se movimente enquanto houver colaboradores sob sua área de movimentação. Essa detecção é feita com base em imagens de profundidade e algoritmos de aprendizado de máquina. As imagens são obtidas através de uma câmera stereo de maneira que o valor de cada pixel representa a distância entre a câmera e o objeto. 
+Este trabalho pretende elaborar um sistema automático de detecção de pessoas que possibilite impedir que a ponte rolante se movimente enquanto houver colaboradores sob sua área de movimentação. Essa detecção é feita com base em imagens de profundidade e algoritmos de aprendizado de máquina. As imagens são obtidas através de uma câmera stereo de maneira que o valor de cada pixel representa a distância entre a câmera e o objeto. 
 
 Os aspectos fundamentais e um comparativo entre técnicas tradicionais e de aprendizado profundo, conjunto de métodos de aprendizado de máquina no estado da arte, é apresentado. O resultado das diferentes abordagens em figuras de mérito específicas para classificação é destacado.
 
 \section{Aprendizado de máquina}
 Segundo Arthur Samuel \cite{Samuel59somestudies}, aprendizado de máquina é o ramo da inteligência artificial que estuda técnicas que possibilitam um computador realizar uma tarefa sem ser explicitamente programado para desempenhá-la. 
 
-Mitchell \cite{Mitchell:ML} define: ``Se diz que um computador aprende com uma experiência $E$ com respeito a uma tarefa $T$ e medida de desempenho $P$ a medida que o desempenho verificado por $P$ diante de uma tarefa $T$ progride com a experiência $E$''. 
+Mitchell \cite{Mitchell:ML} define: ``Se diz que um computador aprende com uma experiência $E$ com respeito a uma tarefa $T$ e medida de desempenho $P$ à medida que o desempenho verificado por $P$ diante de uma tarefa $T$ progride com a experiência $E$''. 
 
 Entre as tarefas pode-se citar classificação, em que uma amostra deve ser atribuída a uma das classes apresentadas; regressão, em que uma amostra deve ser mapeada em um valor real; síntese, onde o algoritmo deve gerar novas amostras que sejam similares às de entrada.
 
 As medidas de desempenho são específicas da tarefa em questão e seu uso deve variar com a aplicação. Para conjuntos de dados simples e balanceados (distribuição uniforme de classes) uma medida comum a classificadores é acurácia, razão do número correto de classificações pelo número total. Porém outras medidas são necessárias para avaliar conjuntos de dados desbalanceados. Para problemas de regressão podem ser adotadas as medidas de erro médio quadrático.
 
-Uma experiência, também chamada de exemplo ou amostra, é uma coleção de descrições, obtida através de um descritor de características, ilustrado na Figura \ref{fig:features}. Essa descrição é obtida através de um processo que pode mensurar alguma grandeza específica de algum objeto ou evento. Para o campo de imagens são comuns descritores de borda e histograma de cores. Em geral, um descritor busca obter uma representação compacta, reduzindo dimensionalidade, e discrimantiva entre as amostras de maneira a facilitar a etapa de classificação. A etapa de extração de características pode ser vista como um pré-processamento ou transformação para um domínio de maior relevância.
+Uma experiência, também chamada de exemplo ou amostra, é uma coleção de descrições obtidas através de um descritor de características, conforme ilustrado na Figura \ref{fig:features}. Essa descrição é obtida através de um processo que pode mensurar alguma grandeza específica de algum objeto ou evento. Para o campo de imagens são comuns descritores de borda e histograma de cores. Em geral, um descritor busca obter uma representação compacta, reduzindo dimensionalidade, e discrimantiva entre as amostras de maneira a facilitar a etapa de classificação. A etapa de extração de características pode ser vista como um pré-processamento ou transformação para um domínio de maior relevância.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{features}
-\caption{Exemplo de descritores: histograma de bordas e cores}
+\caption{Exemplo de descritores: histograma de bordas e cores.}
 \label{fig:features}
 \end{figure}
 
 As experiências formam o conjunto de dados que o algoritmo utiliza para aprender, aqui também chamado de \textit{dataset}. Esse conjunto de dados é dito supervisionado quando possui um indicador da classe que cada amostra pertence ou o valor esperado para aquela amostra, no caso de regressão. Para um conjunto não supervisionado, espera-se aprender mais sobre a distribuição dos dados. Isso permite, por exemplo, detectar amostras anômalas e dividir o conjunto de dados em grupos (\textit{clusters}) que apresentem alguma similaridade estrutural.
 
-Nesse trabalho deseja-se realizar a detecção de objetos, mais especificamente, pessoas. Essa tarefa é um caso particular de classificação e fará uso de um conjunto de dados supervisionados.
+Neste trabalho, deseja-se realizar a detecção de objetos, mais especificamente, pessoas. Essa tarefa é um caso particular de classificação e fará uso de um conjunto de dados supervisionados.
 
 \section{Métodos clássicos de detecção de objetos}
-O problema de detecção de objetos é um clássico no campo de visão computacional e requer aprendizado de máquina. Uma abordagem tradicional \cite{traditional-objdetect} consiste nos seguintes passos.
+O problema de detecção de objetos é um clássico no campo de visão computacional e, em geral, requer aprendizado de máquina. Uma abordagem tradicional \cite{traditional-objdetect} consiste nos seguintes passos.
 	\begin{enumerate}
 	\item Identificar uma região de interesse no caso de uma imagem com múltiplos objetos.
 	\item Utilizar um extrator de características para descrição do objeto.
 	\item Introduzir a amostra, proveniente do descritor, em um classificador simples, obtendo a classe correspondente.
 	\end{enumerate}
 
-Métodos tradicionais são superficiais a medida que requerem que um extrator de características seja utilizado antes da classificação. Isso se deve à necessidade de reduzir a dimensionalidade das amostras e discriminar classes diferentes, o que possibilita ganhos de desempenho com baixa complexidade do classificador.
+Métodos tradicionais requerem que um extrator de características seja utilizado antes da classificação. Isso se deve à necessidade de reduzir a dimensionalidade das amostras e discriminar classes diferentes, o que possibilita ganhos de desempenho com baixa complexidade do classificador.
 
 A escolha do descritor está diretamente ligada com a qualidade do processo de classificação. Um descritor é criado especificamente para uma aplicação e dificilmente pode ser utilizado em outros campos: um descritor para imagens é incompatível com um sinal de áudio. Assim, sua concepção demanda conhecimento e prática de especialistas da área de aplicação. Para um problema de classificação entre imagens de bananas e maçãs, por exemplo, um descritor relacionado a cor teria maior relevância do que a de bordas.
 
 % SVM
-Após ter uma representação adequada das experiências escolhe-se o tipo do classificador. O modelo de Máquina de Vetores Suporte (\textit{Support Vector Machines} -- SVM), é utilizado pois possui representação e uso simplificado e demonstrou bons resultados \cite{smith2001svm} ao tratar amostras de dimensões medianas (ordem de centenas) com um conjunto de treinamento pequeno (ordem de milhares de amostras) sem ajuste fino. Seu modelo consiste em encontrar um hiperplano de separação entre classes ótimo, no sentido de maximizar a distância entre as amostras e o hiperplano. As amostras mais próximas do hiperplano são chamadas vetores suportes, como mostrado na Figura \ref{fig:svm-hyperplane}.
+Após ter uma representação adequada das experiências escolhe-se o tipo do classificador. O modelo de Máquina de Vetores Suporte (\textit{Support Vector Machines} -- SVM), é utilizado pois possui representação e uso simplificado e demonstrou bons resultados \cite{smith2001svm} ao tratar amostras de dimensões medianas (ordem de centenas) com um conjunto de treinamento pequeno (ordem de milhares de amostras) sem ajuste fino. Seu modelo consiste em encontrar um hiperplano ótimo de separação entre classes, no sentido de maximizar a distância entre as amostras e o hiperplano. As amostras mais próximas do hiperplano são chamadas vetores suportes, como mostrado na Figura \ref{fig:svm-hyperplane}.
 
 \begin{figure}
 \centering
@@ -52,11 +52,11 @@ Após ter uma representação adequada das experiências escolhe-se o tipo do cl
 \label{fig:svm-hyperplane}
 \end{figure}
 
-Para amostras com distribuição complexa a possibilidade de não existir um hiperplano que consiga separar o conjunto satisfatóriamente é grande. Para resolver esse problema emprega-se uma função que mapeia essas amostras para um espaço de maior dimensionalidade em que as classes sejam linearmente separáveis.
+Para amostras com distribuição mais complexa a possibilidade de não existir um hiperplano que consiga separar o conjunto satisfatóriamente é grande. Para resolver esse problema emprega-se uma função que mapeia essas amostras para um espaço de maior dimensionalidade em que as classes sejam linearmente separáveis.
 
 \section{Aprendizado profundo}
 \label{introducao:perceptron}
-Outra técnica de aprendizado de destaque são as redes neurais artificiais. Essas foram inspiradas no entendimento rudimentar dos neurônios biológicos ainda na década de 1950 \cite{perceptron1957}, porém deixou o foco biológico para fornecer modelos robustos de aprendizado de máquina. Suas estruturas eram então compostas por um único elemento chamado de \textit{perceptron}, neurônio artificial ou unidade, um modelo matemático descrito por
+Outro modelo de aprendizado de destaque são as redes neurais artificiais. Essas foram inspiradas no entendimento rudimentar dos neurônios biológicos ainda na década de 1950 \cite{perceptron1957}, porém deixou o foco biológico para fornecer modelos robustos de aprendizado de máquina. Suas estruturas eram então compostas por um único elemento chamado de \textit{perceptron}, neurônio artificial ou unidade, um modelo matemático descrito por
 \begin{equation}
 \label{eq:perceptron}
 o(x) = \phi\left(\sum_{i=1}^n x_i w_i+b\right) = \phi\left(w^T x+b\right)
@@ -70,16 +70,16 @@ onde $w$ é o vetor de pesos, $b$ de \textit{bias} (valor constante adicionado a
 \label{fig:perceptron}
 \end{figure}
 
-A estrutura do perceptron, ilustrada na Figura \ref{fig:perceptron}, permite um algoritmo de aprendizado simples e rápido. Entretanto alguns problemas impediram os avanços desse classificador, a destacar: a incapacidade de aprender uma tarefa comum como o ou-exclusivo (dado que as amostras não são linearmente separáveis) e o baixo poder de processamento dos computadores da época.
+A estrutura do perceptron, ilustrada na Figura \ref{fig:perceptron}, permite utilizar um algoritmo de aprendizado simples e rápido. Entretanto alguns problemas impediram os avanços desse classificador, a destacar: a incapacidade de aprender uma tarefa comum como o ou-exclusivo (dado que as amostras não são linearmente separáveis) e o baixo poder de processamento dos computadores da época.
 
-A partir da década de 1970 com o aumento drástico da capacidade computacional essa estrutura ganhou complexidade e passou a ser integrada por múltiplos \textit{perceptrons} organizados em camadas, o que possibilitou aprender datasets mais desafiadores. Foi esse evento que iniciou a jornada para o advento das técnicas de aprendizado profundo.
+A partir da década de 1970 com o aumento drástico da capacidade computacional essa estrutura ganhou complexidade e passou a ser integrada por múltiplos \textit{perceptrons} organizados em camadas, o que possibilitou um aprendizado a partir de datasets mais desafiadores. Foi esse evento que iniciou a jornada para o advento das técnicas de aprendizado profundo.
 
 \subsection{Perceptron multicamadas (MLP)}
-A evolução do único perceptron para uma rede de camadas desse elemento aumentou a capacidade de aprendizado do modelo. Essa estrutura pode ser subdividida em: camada de entrada, camadas intermediárias e camada de saída, como visto na Figura \ref{fig:mlp}. As camadas de entrada e de saída são compostas por um \textit{perceptron} para cada dimensão da entrada/saída. As camadas intermediárias são fundamentais pois permitem justamente a elaboração automática de um descritor.
+A evolução do único perceptron para uma rede de camadas desse elemento aumentou a capacidade de aprendizado do modelo. Essa estrutura pode ser subdividida em: camada de entrada, camadas intermediárias e camada de saída, como ilustrado na Figura \ref{fig:mlp}. As camadas de entrada e de saída são compostas por um \textit{perceptron} para cada dimensão da entrada/saída. As camadas intermediárias são fundamentais pois correspondem justamente à extrair uma descrição da amostra inserida na camada de entrada.
 
-Esse processo evolutivo só foi possível com o advento de algoritmos de aprendizado por propagação reversa (\textit{backpropagation learning}) \cite{backpropagation}. Ele  permite ajustar os parâmetros de cada unidade automaticamente baseado na influência que essa unidade exerce sobre o erro das saídas e assim minimizar o erro total. Isso é feito utilizando esse algoritmo para calcular o gradiente da função custo, que indica o erro, em função dos parâmetros das diferentes unidades. Ajusta-se os parâmetros proporcionalmente a esse gradiente através de um método de otimização chamado de \textit{Stochastic Gradient Descent} \cite{DLbook} até satisfazer alguma condição de erro mínimo num processo conhecido como treinamento.
+Esse processo evolutivo só foi possível com o advento de algoritmos de aprendizado por propagação reversa (\textit{backpropagation learning}) \cite{backpropagation}. Tal algoritmo permite ajustar os parâmetros de cada unidade automaticamente baseado na influência que essa unidade exerce sobre o erro das saídas e assim minimizar o erro total. O ajuste dos parâmetros é realizado utilizando o algoritmo para calcular o gradiente da função custo, que indica o erro, em função dos parâmetros das diferentes unidades. Ajusta-se os parâmetros proporcionalmente a esse gradiente através de um método de otimização chamado de \textit{Stochastic Gradient Descent} \cite{DLbook} até satisfazer alguma condição de erro mínimo num processo conhecido como treinamento.
 
-Essa estrutura já era utilizada na decada de 80, porém era limitada pelo número de camadas intermediárias, dado o chamado problema do gradiente enfraquecido. Esse problema se resume na impossibilidade de alterar os parâmetros das camadas iniciais visto que o gradiente da função custo se enfraquece ao se propagar reversamente pela rede. Esse enfraquecimento advém da função de ativação utilizada até então, a sigmoide, conforme será visto na seção \ref{sec:funcao-ativacao}, que satura facilmente e causa uma derivada quase nula. Uma solução proposta em \cite{nair2010relu} prevê uma nova função de ativação, conhecida como RELU, descrita posteriormente na seção \ref{sec:funcao-ativacao}, que resolve o problema do gradiente enfraquecido e permite criar redes com muitas camadas.
+Essa estrutura já era utilizada na decada de 1980, porém era limitada pelo número de camadas intermediárias, dado o chamado problema do gradiente enfraquecido. Esse problema se resume na impossibilidade de alterar os parâmetros das camadas iniciais visto que o gradiente da função custo se enfraquece ao se propagar reversamente pela rede. Esse enfraquecimento advém da função de ativação utilizada até então, a sigmoide, conforme será visto na seção \ref{sec:funcao-ativacao}, que satura facilmente e causa uma derivada quase nula. Uma solução proposta em \cite{nair2010relu} prevê uma nova função de ativação, conhecida como RELU, descrita posteriormente na seção \ref{sec:funcao-ativacao}, que resolve o problema do gradiente enfraquecido e permite criar redes com muitas camadas.
 
 Uma rede é considerada profunda quando possui um grande número de camadas intermediárias. Essa característica, em contraposição com métodos de aprendizado superficial, permite que a amostra seja alimentada ao classificador sem pré-processamento. Isso é possível pois internamente o sistema gera um descritor ótimo para discriminação das amostras. Ou seja, o próprio classificador encontra a melhor maneira de representar as amostras para obter um bom resultado, economizando tempo e reduzindo a necessidade de especialistas em criar esses descritores.
 
@@ -95,7 +95,7 @@ A evolução natural da rede MLP se deu ainda década de 1970 através das redes
 
 Com o aumento drástico do poder de processamento essas redes ultrapassaram seus predecessores e ganharam destaque novamente após o trabalho de Hinton \cite{hintonCONVNET} em 2006, que estabeleceu uma base sólida para o treinamento de grandes redes convolucionais. Essa contribuição mudou o paradigma do aprendizado de máquina no que se refere à extração de características e se mostra ainda hoje como estado da arte. 
 
-Nessas estruturas definem-se filtros, na forma de matrizes, que são convoluídas com uma matriz (proveniente da camada anterior) e resultam em outra matriz, com algum aspecto realçado. Em geral, muitos filtros são definidos e há, portanto, muitas matrizes de saída para cada nível de convolução, o que aumenta drasticamente a dimensionalidade da rede. Nesses casos é comum utilizar um processo de \textit{max pooling}, descrito na seção \ref{sec:convnets}.
+Nessas estruturas definem-se filtros, na forma de matrizes, que são convolvidas com uma matriz (proveniente da camada anterior) e resultam em outra matriz, com algum aspecto realçado. Em geral, muitos filtros são definidos e há, portanto, muitas matrizes de saída para cada nível de convolução, o que aumenta drasticamente a dimensionalidade da rede. Nesses casos é comum utilizar um processo de \textit{max pooling}, descrito na Seção \ref{sec:convnets}.
 
 A abordagem mais tradicional desse tipo de rede utiliza um número de camadas convolucionais para extrair características mais relevantes das imagens e em seguida utiliza uma rede MLP para realizar alguma operação de classificação ou regressão sobre essas descrições.
 
@@ -106,12 +106,12 @@ Além disso, existe a vantagem da invariância à translação: em uma rede MLP,
 \begin{figure}
 \centering
 \includegraphics[width=0.8\textwidth]{deep/convnet}
-\caption{Exemplo de rede convolucional duas camadas convolucionais e de max-pooling}
+\caption{Exemplo de rede convolucional com max-pooling}
 \label{fig:convnet}
 \end{figure}
 
 \section{Estrutura do trabalho}
-Esse trabalho apresenta duas soluções para o problema de detecção de pessoas, cada uma descrita em um capítulo. A primeira é fundamentada nos métodos tradicionais de visão computacional e aprendizado superficial. Divide-se o algoritmo em localização de candidatos à pessoas e posterior extração de características, desenvolvida manualmente, e classificação através de SVM.
+Esse trabalho apresenta duas soluções para o problema de detecção de pessoas, cada uma descrita em um capítulo diferente. A primeira é fundamentada nos métodos tradicionais de visão computacional e aprendizado superficial. Divide-se o algoritmo em localização de candidatos à pessoas e posterior extração de características, desenvolvida manualmente, e classificação através de SVM.
 
 Em seguida, propõe-se um método que emprega o mesmo algoritmo tradicional de localização de candidatos porém utiliza métodos de aprendizado profundo para a etapa de classificação. Compreende-se que o classificador encontra de maneira automática um descritor de caracterísitcas específico para o conjunto de dados do problema nas camadas de convolução. A classificação própriamente dita se dá nas camadas finais da rede profunda.
 
