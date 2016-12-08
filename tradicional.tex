@@ -27,7 +27,7 @@ O tamanho dos quadrados que dividem a imagem é fundamental nessa etapa: se fore
 	\label{eq:cam-proj}
 	s_w = \frac{f}{d} \cdot s_r
 \end{equation}
- onde $f$ é a distância focal da câmera, a $d$ a distância média entre a câmera e as pessoas e o $s_r$ o tamanho padrão de cabeças.
+ onde $f$ é a distância focal da câmera, $d$ a distância média entre a câmera e as pessoas e $s_r$ o tamanho padrão de cabeças.
 
 Em seguida, é necessário determinar um quadrado que delimite a cabeça de forma centralizada. Para obter o tamanho do quadrado, novamente utiliza-se a equação \eqref{eq:cam-proj}, porém dessa vez utilizando o valor do pixel encontrado para aquele candidato como altura. Tem-se então um quadrado de tamanho apropriado com o pixel máximo no centro, porém em poucos casos esse quadrado centraliza a cabeça.
 
@@ -129,7 +129,7 @@ O modelo de SVM apresentado até aqui é conhecido como linear. Mesmo com o mét
 \label{fig:svm-kernel}
 \end{figure}
 
-Formalmente \cite{bishop2007} tem-se a função decisão modificada como
+Formalmente tem-se a função decisão modificada como
 \begin{equation*}
 f(x)=w^T \Phi(x) +b.
 \end{equation*}

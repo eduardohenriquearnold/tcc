@@ -82,7 +82,7 @@ C(\theta) = \sum_i^N C_i(\theta)
 \end{equation}
 de forma que se pode calcular o custo de cada amostra de treinamento individualmente, correspondente ao erro equivalente àquela amostra.
 
-Introduz-se a função custo de entropia cruzada binária (\textit{binary cross entropy}), utilizada no presente trabalho e descrita por
+Introduz-se a função custo de entropia cruzada binária (\textit{binary cross entropy}) \cite{bishop2007}, utilizada no presente trabalho e descrita por
 \begin{equation}
 \label{eq:bcr}
 C(\theta) = -\frac{1}{N} \sum_i^N \left[y_i \ln f(x_i,\theta) + (1-y_i) \ln (1-f(x_i,\theta))\right]
@@ -116,7 +116,7 @@ Em geral, redes profundas necessitam de um grande número de amostras para serem
 \begin{equation}
 \nabla C \approx \sum_{i \in I_m} \nabla C_i
 \end{equation}
-ou seja, avaliando o gradiente gradiente apenas nas amostras percentences ao $m$-ésimo \textit{mini batch} a cada iteração do método, o que reduz drasticamente o tempo de execução do algoritmo.
+ou seja, avaliando o gradiente apenas nas amostras percentences ao $m$-ésimo \textit{mini batch} a cada iteração do método, o que reduz drasticamente o tempo de execução do algoritmo.
 
 Nota-se ainda que a nomenclatura \textit{Stochastic Gradient Descent} se refere ao caso particular quando $M=1$, porém será utilizada nesse trabalho mesmo para valores de $M$ maiores que um.
 
@@ -182,7 +182,7 @@ O processo de treinamento é similar ao das MLPs, porém com pequenas modificaç
 
 \begin{figure}
 \centering
-\includegraphics[width=0.6\textwidth]{diagram/diag-cnn}
+\includegraphics[width=0.8\textwidth]{diagram/diag-cnn}
 \caption{Estrutura proposta para rede CNN.}
 \label{fig:diag-cnn}
 \end{figure}
@@ -199,5 +199,5 @@ Ambas as bibliotecas são desenvolvidas para \textsc{Python} e portanto houve a 
 
 Outro problema enfrentado ocorreu durante a etapa de treinamento. O conjunto de dados utilizado é fortemente desbalanceado, onde mais de 89\% das amostras pertence à classe negativa. Após a primeira etapa de treinamento observou-se uma acurácia de aproximadamente 89\%, o que era aparentemente um ótimo resultado. Entretanto faltou a consideração da distribuição desses resultados: o classificador indicava todas as amostras como sendo negativas, pois o conjunto de dados é altamente enviesado. Para corrigir esse problema listou-se duas opções: equilibrar o conjunto de dados ou modificar a função custo para ponderar os pesos para as classes. Verificou-se que a distribuição de classes pôde ser artificialmente equilibrada replicando as amostras positivas até seu número se equiparar ao das negativas, o que de fato demonstrou um resultado positivo na prática.
 
-Encontrou-se também uma dificuldade para convergência do método utilizando apenas o otimizador SGD. A solução foi utilizar uma variante chamada Adam cuja formulação inclui considerações sobre momento, que consiste em adaptativamente corrigir a taxa de aprendizado $\eta$, o que impacta positivamente sobre a convergência da otimização.
+Encontrou-se também uma dificuldade para convergência do método utilizando apenas o otimizador SGD. A solução foi utilizar uma variante chamada Adam \cite{kingma2014adam} cuja formulação inclui considerações sobre momento, que consiste em adaptativamente corrigir a taxa de aprendizado $\eta$, o que impacta positivamente sobre a convergência da otimização.
 

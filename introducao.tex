@@ -40,7 +40,7 @@ O problema de detecção de objetos é um clássico no campo de visão computaci
 
 Métodos tradicionais requerem que um extrator de características seja utilizado antes da classificação. Isso se deve à necessidade de reduzir a dimensionalidade das amostras e discriminar classes diferentes, o que possibilita ganhos de desempenho com baixa complexidade do classificador.
 
-A escolha do descritor está diretamente ligada com a qualidade do processo de classificação. Um descritor é criado especificamente para uma aplicação e dificilmente pode ser utilizado em outros campos: um descritor para imagens é incompatível com um sinal de áudio. Assim, sua concepção demanda conhecimento e prática de especialistas da área de aplicação. Para um problema de classificação entre imagens de bananas e maçãs, por exemplo, um descritor relacionado a cor teria maior relevância do que a de bordas.
+A escolha do descritor está diretamente ligada com a qualidade do processo de classificação. Um descritor é criado especificamente para uma aplicação e dificilmente pode ser utilizado em outros campos: um descritor para imagens é incompatível com um sinal de áudio. Assim, sua concepção demanda conhecimento e prática de especialistas da área de aplicação. Para um problema de classificação entre imagens de bananas e maçãs, por exemplo, um descritor relacionado a cor teria maior relevância do que um de bordas.
 
 % SVM
 Após ter uma representação adequada das experiências escolhe-se o tipo do classificador. O modelo de Máquina de Vetores Suporte (\textit{Support Vector Machines} -- SVM), é utilizado pois possui representação e uso simplificado e demonstrou bons resultados \cite{smith2001svm} ao tratar amostras de dimensões medianas (ordem de centenas) com um conjunto de treinamento pequeno (ordem de milhares de amostras) sem ajuste fino. Seu modelo consiste em encontrar um hiperplano ótimo de separação entre classes, no sentido de maximizar a distância entre as amostras e o hiperplano. As amostras mais próximas do hiperplano são chamadas vetores suportes, como mostrado na Figura \ref{fig:svm-hyperplane}.
@@ -115,7 +115,7 @@ Esse trabalho apresenta duas soluções para o problema de detecção de pessoas
 
 Em seguida, propõe-se um método que emprega o mesmo algoritmo tradicional de localização de candidatos porém utiliza métodos de aprendizado profundo para a etapa de classificação. Compreende-se que o classificador encontra de maneira automática um descritor de caracterísitcas específico para o conjunto de dados do problema nas camadas de convolução. A classificação própriamente dita se dá nas camadas finais da rede profunda.
 
-Após a apresentação teórica das soluções, são exibidos os resultados e as figuras de mérito que permitem a comparar o desempenho das propostas e determinar a melhor solução.
+Após a apresentação teórica das soluções, são exibidos os resultados e as figuras de mérito que permitem comparar o desempenho das propostas e determinar a melhor solução.
 
 Finalmente, a conclusão discute os resultados e o impacto da utilização das redes profundas. São descritas as contribuições do trabalho assim como sugestões de trabalhos futuros.
 
