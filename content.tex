@@ -1,14 +1,40 @@
 \section{Introduction}
-Workers safety must be a priority in any industrial facility. There are certain areas that offer higher risk and thus should not be occupied during regular operation. An example is given by a home appliance factory that uses an overhead crane to shift iron molds towards the plastic extruding machines. These molds can be very heavy, offering risks to anyone working underneath the moving crane.
+  Workers safety must be a priority in any industrial facility. There are certain areas that offer higher risk and thus should not be occupied during regular operation. An example is given by a home appliance factory that uses an overhead crane to shift iron molds towards the plastic extruding machines. These molds can be very heavy, offering risks to anyone working underneath the moving crane.
 
-In this context it is helpful to have an automatic security system that detects humans on the path of the moving machine and causes it to halt in the event it finds a person. A video based solution would be ideal in this case, even considering that the factory environment is crowded with machines, molds and workers. Since the crane will be moving, the camera should be placed underneath it facing the factory floor from a height of 6m. This poses a challenge as background subtraction methods cannot be applied, requiring a more sophisticated detection algorithm.
+  In this context it is helpful to have an automatic security system that detects humans on the path of the moving machine and causes it to halt in the event it finds a person. A video based solution would be ideal in this case, even considering that the factory environment is crowded with machines, molds and workers. Since the crane will be moving, the camera should be placed underneath it facing the factory floor from a height of 6m. This poses a challenge as background subtraction methods cannot be applied, requiring a more sophisticated detection algorithm.
 
-Another challenge is that workers uniforms are not regular in color, and they do not always wear helmets, in which case only color images could not give enough information for detection. To overcome this, we use a stereo camera that provides depth image frames of objects up to 20m from the lens. This image will then be used for human detection since it provides more reliable shape information and higher invariance to luminosity.
+  Another challenge is that workers uniforms are not regular in color, and they do not always wear helmets, in which case only color images could not give enough information for detection. To overcome this, we use a stereo camera that provides depth image frames of objects up to 20m from the lens. This image will then be used for human detection since it provides more reliable shape information and higher invariance to luminosity.
 
-This paper makes a comparison between two approaches to the human detection problem. Both uses computer vision techniques to detect candidates in the image. The first one, based on traditional computer vision with hand-engineered feature extraction and a binary SVM classifier, is presented in Section \ref{sec:classical}. The latter uses a deep learning based classifier and is presented in \ref{sec:deep}. Quantitative evaluation of both methods is presented in Section \ref{sec:results}, and finally, conclusions and future work are presented in Section \ref{sec:conclusion}.
+  This paper makes a comparison between two approaches to the human detection problem. Both uses computer vision techniques to detect candidates in the image, described in Section \ref{sec:candidates}. The first solution, presented in Section \ref{sec:classical}, performs hand-engineered feature extraction and then classification using a binary SVM, as indicated in Figure \ref{fig:system-diagram}. The latter uses a deep learning based classifier and is described in Section \ref{sec:deep}. Quantitative evaluation of both methods is shown in Section \ref{sec:results}, and finally, conclusions and future work are presented in Section \ref{sec:conclusion}.
+
+  \begin{figure*}[!t]
+  \centering
+  \includegraphics[width=\linewidth]{figs/system-diagram.png}
+  \caption{System diagram, traditional CV approach}
+  \label{fig:system-diagram}
+  \end{figure*}
+
+\section{Candidates detection}
+\label{sec:candidates}
+
+    In a traditional object detection approach \cite{traditional-objdetect} the first step is to localize candidates, which will be later validated using a feature-extractor followed by a classifier. In the case of a color image a sliding window method with varying size could be used to obtain such candidates.
+
+    However, when using depth images from a top view scene, \cite{rauter} suggests a more efficient algorithm that assumes that humans will be among the highest objects in the scene. Although this hypothesis cannot always be guaranteed, it reduces the amount of candidates significantly when compared to the sliding windows method and so will be used in this work and described next.
+
+    Primarily, a local maxima operation is performed. It divides the image in a grid of specified sized blocks and for each block returns the pixel with highest intensity, representing the tallest point in that block. Next, for each local maxima a squared window representing the candidate should be obtained. Its size is calculated as
+    \begin{equation}
+      s_w = \frac{f}{d} \cdot s_r
+    \end{equation}
+    where $f$ is the camera focal distance, $d$ the distance between the camera and the object and $s_r$ the mean head size. The window of size $s_w$ pixels is centered around the respective local maximum pixel.
+
+    The final step is to centralize the window over the candidate using an iterative \textit{mean shift} algorithm. Simply put, this algorithm displaces the window to the centroid of the pixels inside it, so high valued pixels will tend to be in the center of the candidate.
+
+    The output of this step is a list of squared windows representing candidates in the image. A releveant aspect to consider is the size of the blocks for the local maxima search. When using large blocks the probability of having a tall object, such as a machine, in the same block of a person is high, so the system would fail to detect a person. In contrast, if the block is too small it is guaranteed that all humans will be detected, but this comes at the expense of complexity and time performance, since all candidates will need further analysis.
 
 \section{Classical computer vision approach}
 \label{sec:classical}
+
+
 
 \section{Deep learning based solution}
 \label{sec:deep}
