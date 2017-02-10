@@ -1,11 +1,11 @@
 \section{Introduction}
   Workers safety must be a priority in any industrial facility. There are certain areas that offer higher risk and thus should not be occupied during regular operation. An example is given by a home appliance factory that uses an overhead crane to shift iron molds towards the plastic extruding machines. These molds can be very heavy, offering risks to anyone working underneath the moving crane.
 
-  In this context it is helpful to have an automatic security system that detects humans on the path of the moving machine and causes it to halt in the event it finds a person. A video based solution would be ideal in this case, even considering that the factory environment is crowded with machines, molds and workers. Since the crane will be moving, the camera should be placed underneath it facing the factory floor from a height of 6m. This poses a challenge as background subtraction methods cannot be applied, requiring a more sophisticated detection algorithm.
+  In this context it is helpful to have an automatic security system that detects humans on the path of the moving machine and causes it to halt in the event it finds a person. A video based solution would be ideal in this case, even considering that the factory environment is crowded with machines, molds and workers. Since the crane will be moving, the camera should be placed underneath it,  facing the factory floor from a height of 6m. This poses a challenge as background subtraction methods cannot be applied, requiring a more sophisticated detection algorithm.
 
   Another challenge is that workers uniforms are not regular in color, and they do not always wear helmets, in which case only color images could not give enough information for detection. To overcome this, we use a stereo camera that provides depth image frames of objects up to 20m from the lens. This image will then be used for human detection since it provides more reliable shape information and higher invariance to luminosity.
 
-  This paper makes a comparison between two approaches to the human detection problem. Both uses computer vision techniques to detect candidates in the image, described in Section \ref{sec:candidates}. The first solution, presented in Section \ref{sec:classical}, performs hand-engineered feature extraction and then classification using a binary SVM, as indicated in Figure \ref{fig:system-diagram}. The latter uses a deep learning based classifier and is described in Section \ref{sec:deep}. Quantitative evaluation of both methods is shown in Section \ref{sec:results}, and finally, conclusions and future work are presented in Section \ref{sec:conclusion}.
+  This paper makes a comparison between two approaches to the human detection problem. Both uses computer vision techniques to detect candidates in the image, described in Section \ref{sec:candidates}. The first solution, presented in Section \ref{sec:classical}, performs hand-engineered feature extraction and then classification using a Support Vector Machine (SVM), as indicated in Figure \ref{fig:system-diagram}. The latter uses a deep learning based classifier and is described in Section \ref{sec:deep}. Quantitative evaluation of both methods and their variations is shown in Section \ref{sec:results}. Finally, conclusions and future work are presented in Section \ref{sec:conclusion}.
 
   \begin{figure*}[!t]
   \centering
@@ -31,9 +31,28 @@
 
     The output of this step is a list of squared windows representing candidates in the image. A releveant aspect to consider is the size of the blocks for the local maxima search. When using large blocks the probability of having a tall object, such as a machine, in the same block of a person is high, so the system would fail to detect a person. In contrast, if the block is too small it is guaranteed that all humans will be detected, but this comes at the expense of complexity and time performance, since all candidates will need further analysis.
 
-\section{Classical computer vision approach}
+\section{Classical computer vision solution}
 \label{sec:classical}
 
+    Following the candidates detection a validation phase should take place to discard non-human detections. A classical computer vision approach \cite{rauter} uses hand-engineered features extracted from the candidates to feed a binary SVM classifier. Two feature extractors are used: a regular block grid proposed in \cite{rauter} and a concentric ring proposed by us. They are described next, followed by a more detailed description of the classification and training process.
+
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{tradicional/descritores}
+    \caption{Regular block grid (left) and concentric rings descriptors (right).}
+    \label{fig:descriptors}
+    \end{figure}
+
+    \subsection{Regular block grid feature extractor}
+      This descriptor divides the candidate window into 7x7 blocks, as illustrated in Figure \ref{fig:descriptors}. The mean value of pixels belonging to each block is calculated, generating a 7x7 matrix of mean pixel intensities. Next, the mean value of the central block is subtracted from the matrix. Finally, the resulting matrix histogram is calculated with 32 bins. The histogram vector, with 32 dimensions, is considered the feature vector, which sums up to 49 (number of blocks).
+
+    \subsection{Concentric rings feature extractor}
+      In order to increase rotation invariance we propose a concentric rings descriptor (see Figure \ref{fig:descriptors}), which is inspired in the previous one. First the candidate window is divided in 16 annulus, or rings, with equal distance between the inner and outer radius and whose center coincides with the window center. Then for each ring the mean of the pixels that belong to it is calculated, resulting in a 16 dimensional vector of mean pixel intensity. Next, the mean value of the inner ring (lower radius equals zero) is subtracted from this vector. Following, we perform a discrete differentiation of this vector (subtraction between adjacent dimensions) to enunciate the differences in rings mean values, resulting in a 15-dimensional feature vector.
+
+    \subsection{SVM classifier}
+      We use a binary SVM classifier with Radial Basis Function (RBF) kernel to validate the candidates. The kernel parameter $\sigma$ controls the importance of training samples similarity, thus controlling the performance on the training set and should be chosen with care. The lower this parameters, better the performance on the training set, however overfitting might start to occur as the performance on the test set degrades. Similarly, the $C$ parameter controls the trade-off between training performance and generalization, but in the opposite direction: higher C values penalize training set errors, while lower values offer a more general performance on the test set.
+
+      To choose the appropriate values of the hyperparameters $C$ and $\sigma$ we use a 5 fold cross-validation process, measure the best statistics and perform a complete training using the entire training dataset.
 
 
 \section{Deep learning based solution}
