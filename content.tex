@@ -101,5 +101,39 @@
 \section{Results}
 \label{sec:results}
 
+    The evaluation will use Receiver Operating Characteristic (ROC) curves to compare between solutions and parameters. These curves are generated from the probabilistic output of the classifiers used. In the case of SVM which under original formulations is a non-probabilistic classifier, we use a logistic regression formulation to enable a probabilistic output, as proposed in \cite{svmProbabilisticOutput}. The advantage of using such a probabilistic output classifier is the possibility of adjusting the false-positive false-negative tradeoff even after training, by choosing the probability threshold above which the sample is considered to be positive.
+
+    To evaluate the solutions proposed on Sections \ref{sec:classical} and \ref{sec:deep}, with their variations, we firstly consider the candidates already extracted from a video sequence, which will be called the test set, thus evaluating only the descriptor and classifier. Figure \ref{fig:result-classifiers} shows the performance of the classifiers under the test set and a AUC score (measured up to 10\% of false-positive rate). We can clearly see how deep based classifiers outperform the traditional hand-engineered feature extraction based approach. Although both MLP and CNN perform similarly, one of them can be chosen depending upon the desired region of operation (higher true-positive rate or lower false-positive rate).
+
+    \begin{figure*}[!t]
+    \centering
+    \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_all.pdf}}%
+    \label{fig:result-classifiers-all}
+    \hfil
+    \subfloat[10 \% interest zone]{\includegraphics[width=0.45\linewidth]{results/ROC_all_zoom.pdf}}%
+    \label{fig:result-classifiers-all-zoom}
+    \caption{Classifiers performance.}
+    \label{fig:result-classifiers}
+    \end{figure*}
+
+    In a second phase we will consider the overall system performance, including the candidate extraction step. It is important to note that the performance observed in Figure \ref{fig:result-classifiers} is an upper bound of the overall performance, since now there will be miss-detections from the candidate extraction step. Another consideration is that for the overall system the test set is composed of entire frames, so the probability of the frame contain at least one head could be calculated using
+    \begin{equation}
+    P[y=1] = 1 - \prod_i^n (1-p_i)
+    \end{equation}
+    where $n$ is the number of candidates and $p_i$ is the classifier output of candidate $i$. Figure \ref{fig:result-system} shows the overall system performance using this formulation with the combinations of MLP and CNN classifiers with coarse and fine scales of candidate extraction windows.
+
+    The results show that on a coarse scale detector, the MLP and CNN classifiers have similar performance, because the candidates that get extracted have similar outputs. However, on a fine scale detector, many more candidates are detected so there are more samples to explore the performances of the two classifiers, showing how the CNN model outperforms MLP.
+
+    \begin{figure*}[!t]
+    \centering
+    \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_system.pdf}}%
+    \label{fig:result-system-all}
+    \hfil
+    \subfloat[10 \% interest zone, best results]{\includegraphics[width=0.45\linewidth]{results/ROC_system_zoom_best.pdf}}%
+    \label{fig:result-system-all-zoom}
+    \caption{Overall system performance.}
+    \label{fig:result-system}
+    \end{figure*}
+
 \section{Conclusion}
 \label{sec:conclusion}
