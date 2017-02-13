@@ -23,7 +23,7 @@ This paper describes the development of an industrial security system that requi
 
     In a traditional object detection approach \cite{traditional-objdetect} the first step is to localize candidates, which will be later validated using a feature-extractor followed by a classifier. In the case of a color image a sliding window method with varying size could be used to obtain such candidates.
 
-    However, when using depth images from a top view scene, \cite{rauter} suggests a more efficient algorithm that assumes that humans will be among the highest objects in the scene. Although this hypothesis cannot always be guaranteed, it reduces the amount of candidates significantly when compared to the sliding windows method and so will be used in this work and described next.
+    However, when using depth images from a top view scene, \cite{rauter} suggests a more efficient algorithm that assumes that humans will be among the highest objects in the scene. Although this hypothesis cannot always be guaranteed, it reduces the amount of candidates significantly when compared to the sliding window method and so will be used in this work and described next.
 
     Primarily, a local maxima operation is performed. It divides the image in a grid of specified sized blocks and for each block returns the pixel with highest intensity, representing the tallest point in that block. Next, for each local maxima a squared window representing the candidate should be obtained. Its size is calculated as
     \begin{equation}
@@ -83,7 +83,7 @@ This paper describes the development of an industrial security system that requi
         \end{figure}
 
     \subsection{Convolutional neural network}
-         In images there are strong local correlation of pixels, so not it is not necessary that every unit in each layer is connected to every unit in the following layer, but just to a few local neighbours. This local connectivity is achieved through the convolution of a given layer with a bank of filters. In this sense, convolutional neural networks are a derivation of MLP and, in general, give a better model for images by reducing the number of parameters thus helping to generalize.
+         In images there are strong local correlation of pixels, so it is not necessary that every unit in each layer is connected to every unit in the following layer, but just to a few local neighbours. This local connectivity is achieved through the convolution of a given layer with a bank of filters. In this sense, convolutional neural networks are a derivation of MLP and, in general, give a better model for images by reducing the number of parameters thus helping to generalize.
 
         Our CNN structure, depicted in Figure \ref{fig:diag-cnn}, is composed by a 3x3 convolution layer with 16 feature maps (filters), followed by a 3x3 max pooling layer, then flattening resulting in 5776 (16x19x19) units followed by a 128-units dense layer to perform classification, and finally by a single output unit that gives a probabilistic output. Again, the hidden layers use RELU activation and the output unit uses sigmoid activation.
 
@@ -120,7 +120,7 @@ This paper describes the development of an industrial security system that requi
     \label{fig:result-classifiers}
     \end{figure*}
 
-    In a second phase we will consider the overall system performance, including the candidate extraction step. It is important to note that the performance observed in Figure \ref{fig:result-classifiers} is an upper bound of the overall performance, since now there will be miss-detections from the candidate extraction step. Another consideration is that for the overall system the test set is composed of entire frames, so the probability of the frame contain at least one head could be calculated using
+    In a second phase we will consider the overall system performance, including the candidate extraction step. It is important to note that the performance observed in Figure \ref{fig:result-classifiers} is an upper bound of the overall performance, since now there will be miss-detections from the candidate extraction step. Another consideration is that in this phase the test set is composed of entire frames, so the probability of the frame contain at least one head could be calculated using
     \begin{equation}
     P[y=1] = 1 - \prod_i^n (1-p_i)
     \end{equation}
@@ -142,6 +142,6 @@ This paper describes the development of an industrial security system that requi
 \section{Conclusion}
 \label{sec:conclusion}
 
-    This paper presented two solutions for the human detection problem, one based on traditional computer vision methods and another on deep learning techniques. The results presented in Section \ref{sec:results} shows that the last method outperforms traditional hand-engineered feature extraction and classification. Thus, corroborating to the tendency of general use of deep learning solutions as seen on the industry and machine learning community. Additionally, it was shown that such deep techniques are not restricted to very large datasets, as used by big companies, but can be empoloyed using a mid-range desktop with a dataset containing over 15k samples.
+    This paper presented two solutions for the human detection problem, one based on traditional computer vision methods and another on deep learning techniques. The results presented in Section \ref{sec:results} shows that the last method outperforms traditional hand-engineered feature extraction and classification. Thus, corroborating to the tendency of general use of deep learning solutions as seen on the industry and machine learning community. Additionally, it was shown that such deep techniques are not restricted to very large datasets, but can be empoloyed using a mid-range desktop with an unbalanced dataset containing over 15k samples.
 
-    Finally, we suggest that in future work a more general CNN structure could be used. Instead of receiving just the candidate window, it receives the whole depth frame as input and outputs the probability that frame contains a person. As we saw an improvement of the classification by letting the model choose the best representation of the data, we can wonder about the improvement on the overall performance by allowing the model to access the whole frame as opposed to only small windows possibly containing humans.
+    Finally, we suggest that a more general CNN structure should be used in future work. Instead of receiving just the candidate window, it receives the whole depth frame as input and outputs the probability that frame contains a person. As we saw an improvement of the classification by letting the model choose the best representation of the data, we can wonder about the improvement on the overall performance by allowing the model to access the whole frame as opposed to only small windows possibly containing humans.
