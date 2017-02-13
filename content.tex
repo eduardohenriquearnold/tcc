@@ -137,3 +137,7 @@
 
 \section{Conclusion}
 \label{sec:conclusion}
+
+    This paper presented two solutions for the human detection problem, one based on traditional computer vision methods and another on deep learning techniques. The results presented in Section \ref{sec:results} shows that the last method outperforms traditional hand-engineered feature extraction and classification. Thus, corroborating to the tendency of general use of deep learning solutions as seen on the industry and machine learning community. Additionally, it was shown that such deep techniques are not restricted to very large datasets, as used by big companies, but can be empoloyed using a mid-range desktop with a dataset containing over 15k samples.
+
+    Finally, we suggest that in future work a more general CNN structure could be used. Instead of receiving just the candidate window, it receives the whole depth frame as input and outputs the probability that frame contains a person. As we saw an improvement of the classification by letting the model choose the best representation of the data, we can wonder about the improvement on the overall performance by allowing the model to access the whole frame as opposed to only small windows possibly containing humans.
