@@ -3,29 +3,31 @@ This paper describes the development of an industrial security system that requi
 \end{abstract}
 
 \section{Introduction}
-  Workers safety must be a priority in any industrial facility. There are certain areas that offer higher risk and thus should not be occupied during regular operation. An example is given by a home appliance factory that uses an overhead crane to shift iron molds towards the plastic extruding machines. These molds can be very heavy, offering risks to anyone working underneath the moving crane.
+  In any industrial facility workers safety must be a priority. There are certain areas that offer higher risk and thus should not be occupied during regular operation. An example is given by a home appliance factory that uses an overhead crane to shift iron molds towards the plastic extruding machines. These molds can be very heavy, offering risks to anyone working underneath the moving crane.
 
-  In this context it is helpful to have an automatic security system that detects humans on the path of the moving machine and causes it to halt in the event it finds a person. A video based solution would be ideal in this case, even considering that the factory environment is crowded with machines, molds and workers. Since the crane will be moving, the camera should be placed underneath it,  facing the factory floor from a height of 6m. This poses a challenge as background subtraction methods cannot be applied, requiring a more sophisticated detection algorithm.
+  In this context it is helpful to have an automatic safety system that detects humans on the path of the moving machine and causes it to halt in the event it finds a person. A video based solution would be ideal in this case, especially considering that the factory environment is crowded with machines, molds and workers. Since the crane will be moving, the camera should be placed underneath it,  facing the factory floor. This poses a challenge as background subtraction methods cannot be applied, requiring a more sophisticated detection algorithm.
 
-  Another challenge is that workers uniforms are not regular in color, and they do not always wear helmets, in which case only color images could not give enough information for detection. To overcome this, we use a stereo camera that provides depth image frames of objects up to 20m from the lens. This image will then be used for human detection since it provides more reliable shape information and higher invariance to luminosity.
+  Another challenge is that workers clothes are not regular in color, and they do not always wear helmets, in which case only color images could not give enough information for detection. To overcome this, \cite{rauter} uses a stereo camera that provides depth image frames of objects, providing more reliable shape information and higher invariance to luminosity. The image is then used to locate human candidates, followed by a hand-engineered feature extraction and then classification using a Support Vector Machine (SVM). However, this approach may not provide a good solution given the differences in the environment since it assumes a clean standarized ambient, as opposed to a crowded industrial facility.
 
-  This paper makes a comparison between two approaches to the human detection problem. Both uses computer vision techniques to detect candidates in the image, described in Section \ref{sec:candidates}. The first solution, presented in Section \ref{sec:classical}, performs hand-engineered feature extraction and then classification using a Support Vector Machine (SVM), as indicated in Figure \ref{fig:system-diagram}. The latter uses a deep learning based classifier and is described in Section \ref{sec:deep}. Quantitative evaluation of both methods and their variations is shown in Section \ref{sec:results}. Finally, conclusions and future work are presented in Section \ref{sec:conclusion}.
+  Recently the increase of computational power, especially in GPUs, the availability of large image datasets and improvements upon existing training methods \cite{nair2010relu}, along with dense network structures \cite{NIPS2013_5207} made the fast development and usage of deep learning methods in most diverse domains, breaking previous state-of-the-art results \cite{hintonCONVNET}. The main advantage of deep learning methods is that it shifts the focus from feature-engineering to a data-driven approach, in the sense that the network structure itself will learn how to best represent the input data, as long as it has enough samples to learn from. Motivated by this, another approach to the human detection could be developed by using top-view depth images and deep classifiers.
+
+  This paper makes a comparison between two approaches to the human detection system, as illustrated in Figure \ref{fig:system-diagram}. Both uses computer vision techniques to detect candidates in the image, described in Section \ref{sec:candidates}. The first solution, based in \cite{rauter}, is presented in Section \ref{sec:classical}, while the latter, using deep classifiers, is described in Section \ref{sec:deep}. Quantitative evaluation of both methods and their variations is shown in Section \ref{sec:results}. Finally, conclusions and future work are presented in Section \ref{sec:conclusion}.
 
   \begin{figure*}[!t]
   \centering
   \includegraphics[width=\linewidth]{figs/system-diagram.png}
-  \caption{System diagram, traditional CV approach}
+  \caption{Human detection system diagram.}
   \label{fig:system-diagram}
   \end{figure*}
 
 \section{Candidates detection}
 \label{sec:candidates}
 
-    In a traditional object detection approach \cite{traditional-objdetect} the first step is to localize candidates, which will be later validated using a feature-extractor followed by a classifier. In the case of a color image a sliding window method with varying size could be used to obtain such candidates.
+    In a traditional object detection approach \cite{traditional-objdetect} the first step is to localize candidates, which are then validated using a feature-extractor followed by a classifier. In the case of a color image, a sliding window method with varying size could be used to obtain such candidates.
 
-    However, when using depth images from a top view scene, \cite{rauter} suggests a more efficient algorithm that assumes that humans will be among the highest objects in the scene. Although this hypothesis cannot always be guaranteed, it reduces the amount of candidates significantly when compared to the sliding window method and so will be used in this work and described next.
+    However, when using depth images from a top-view scene, \cite{rauter} suggests a more efficient algorithm that assumes that humans will be among the highest objects in the scene. Although this hypothesis cannot always be guaranteed, it reduces the amount of candidates significantly when compared to the sliding window method and so is used in this work and described next.
 
-    Primarily, a local maxima operation is performed. It divides the image in a grid of specified sized blocks and for each block returns the pixel with highest intensity, representing the tallest point in that block. Next, for each local maxima a squared window representing the candidate should be obtained. Its size is calculated as
+    First, a local maxima operation is performed. It divides the image in a grid of specified-sized blocks and for each block returns the pixel with highest intensity, representing the tallest point in that block. Next, for each local maxima a squared window representing the candidate should be obtained. Its size is calculated as
     \begin{equation}
       s_w = \frac{f}{d} \cdot s_r
     \end{equation}
@@ -33,7 +35,7 @@ This paper describes the development of an industrial security system that requi
 
     The final step is to centralize the window over the candidate using an iterative \textit{mean shift} algorithm. Simply put, this algorithm displaces the window to the centroid of the pixels inside it, so high valued pixels will tend to be in the center of the candidate.
 
-    The output of this step is a list of squared windows representing candidates in the image. A releveant aspect to consider is the size of the blocks for the local maxima search. When using large blocks the probability of having a tall object, such as a machine, in the same block of a person is high, so the system would fail to detect a person. In contrast, if the block is too small it is guaranteed that all humans will be detected, but this comes at the expense of complexity and time performance, since all candidates will need further analysis.
+    The output of this step is a list of squared windows representing candidates in the image. A relevant aspect to consider is the size of the blocks for the local maxima search. When using large blocks the probability of having a tall object, such as a machine, in the same block of a person is high, so the system would fail to detect a person. In contrast, if the block is too small, it is guaranteed that all humans will be detected, but this comes at the expense of complexity and time performance, since all candidates will need further analysis.
 
 \section{Classical computer vision solution}
 \label{sec:classical}
@@ -56,7 +58,7 @@ This paper describes the development of an industrial security system that requi
     \subsection{SVM classifier}
       We use a binary SVM classifier with Radial Basis Function (RBF) kernel to validate the candidates. The kernel parameter $\sigma$ controls the importance of training samples similarity, thus controlling the performance on the training set and should be chosen with care. The lower this parameters, better the performance on the training set, however overfitting might start to occur as the performance on the test set degrades. Similarly, the $C$ parameter controls the trade-off between training performance and generalization, but in the opposite direction: higher C values penalize training set errors, while lower values offer a more general performance on the test set.
 
-      To choose the appropriate values of the hyperparameters $C$ and $\sigma$ we use a 5 fold cross-validation process, measuring entries with highest \textit{precision}. Then a complete training using the entire training dataset, composed by 9894 negative samples and 1222 positive samples is performed. The dataset was generated from video samples collected at the factory during a experiment to test camera positions, each sample of the dataset is a window cut from a depth frame. These cuts are obtained with the candidate selection procedure presented in Section \ref{sec:candidates} and are manually labeled as positive (human) or negative (non human).
+      To choose the appropriate values of the hyperparameters $C$ and $\sigma$ we use a 5 fold cross-validation process, measuring entries with highest \textit{precision}. Then a complete training using the entire training dataset, composed by 9894 negative samples and 1222 positive samples is performed. The dataset was generated from video samples collected at the factory during a experiment to test camera positions (placed at a height of 6m), each sample of the dataset is a window cut from a depth frame. These cuts are obtained with the candidate selection procedure presented in Section \ref{sec:candidates} and are manually labeled as positive (human) or negative (non human).
 
       The SVM classifier was implemented in Python using the toolkit Scikit-learn \cite{scikit-learn}.
 
@@ -64,9 +66,7 @@ This paper describes the development of an industrial security system that requi
 \section{Deep learning based solution}
 \label{sec:deep}
 
-    Recently the increase of computational power specially in GPUs, the availability of large image datasets and improvements upon existing training methods \cite{nair2010relu} along with dense network structures \cite{NIPS2013_5207} made the fast development and usage of deep learning methods in most diverse domains, breaking previous state-of-the-art results \cite{hintonCONVNET}.
 
-    The main advantage of deep learning methods is that it shifts the focus from feature-engineering to a data-driven approach, in the sense that the network structure itself will learn how to best represent the input data, as long as it has enough samples to learn from.
 
     In this solution the candidate is resized to a 60x60 window and directly fed to the classifier, without any feature-extraction process. We can consider that the model itself will encode a feature set in the first layers of the network, with the final layer doing the classification process and outputing a single probability of that candidate being a human. The diagram would be the same as presented in Figure \ref{fig:system-diagram} without the feature extraction block and with a real valued output probability. We use and evaluate two deep structures: multilayer perceptron (MLP) and convolutional neural networks (CNN).
 
