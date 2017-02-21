@@ -91,7 +91,7 @@ obj/$(PROJECT).pdf: obj/$(PROJECT).aux $(if $(BIB_FILES), obj/$(PROJECT).bbl)
 ########My dropbox customization
 
 dbpush:
-	../dropbox/dropbox_uploader.sh -f ../dropbox/conf upload * "Eduardo Arnold/TCC/"
+	../dropbox/dropbox_uploader.sh -f ../dropbox/conf upload * "Eduardo Arnold/paper/"
 
 dbpull:
 	../dropbox/dropbox_uploader.sh -f ../dropbox/conf download "Eduardo Arnold/TCC/" .
