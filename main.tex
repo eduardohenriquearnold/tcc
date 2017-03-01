@@ -12,7 +12,7 @@
 % The testflow support page is at:
 % http://www.michaelshell.org/tex/testflow/
 
-\documentclass[10pt,conference]{IEEEtran}
+\documentclass{llncs}
 
 
 % Some very useful LaTeX packages include:
@@ -68,24 +68,14 @@
 
 % *** GRAPHICS RELATED PACKAGES ***
 %
-\ifCLASSINFOpdf
+
    \usepackage[pdftex]{graphicx}
   % declare the path(s) where your graphic files are
    \graphicspath{{figs/} {../doc/img/}}
   % and their extensions so you won't have to specify these with
   % every instance of \includegraphics
    \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
-\else
-  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
-  % will default to the driver specified in the system graphics.cfg if no
-  % driver is specified.
-   \usepackage[dvips]{graphicx}
-  % declare the path(s) where your graphic files are
-   \graphicspath{{../figs/}}
-  % and their extensions so you won't have to specify these with
-  % every instance of \includegraphics
-   \DeclareGraphicsExtensions{.eps}
-\fi
+
 % graphicx was written by David Carlisle and Sebastian Rahtz. It is
 % required if you want graphics, photos, etc. graphicx.sty is already
 % installed on most LaTeX systems. The latest version and documentation
@@ -123,8 +113,6 @@
 % does. amsmath.sty is already installed on most LaTeX systems. The latest
 % version and documentation can be obtained at:
 % http://www.ctan.org/pkg/amsmath
-\usepackage{amsthm}
-\newtheorem{definition}{Definition}
 
 
 
@@ -171,11 +159,9 @@
 
 
 % *** SUBFIGURE PACKAGES ***
-\ifCLASSOPTIONcompsoc
+
   \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
-\else
-  \usepackage[caption=false,font=footnotesize]{subfig}
-\fi
+
 % subfig.sty, written by Steven Douglas Cochran, is the modern replacement
 % for subfigure.sty, the latter of which is no longer maintained and is
 % incompatible with some LaTeX packages including fixltx2e. However,
@@ -275,54 +261,13 @@
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
 \title{Human detection in an industrial environment using top-view depth images and deep classifiers}
-
-%-------------------------------------------------------------------------
-% change the % on next lines to produce the final camera-ready version
-\newif\iffinal
-%\finalfalse
-\finaltrue
-\newcommand{\jemsid}{99999}
-%-------------------------------------------------------------------------
-
-% author names and affiliations
-% use a multiple column layout for up to two different
-% affiliations
-
-\iffinal
-
-% author names and affiliations
-% use a multiple column layout for up to three different
-% affiliations
-\author{\IEEEauthorblockN{Eduardo Henrique Arnold, Danilo Silva}
-\IEEEauthorblockA{Electrical Engineering Department \\
-Universidade Federal de Santa Catarina, Florianópolis, Brazil\\
-eduardoarnoldh@gmail.com and danilo@eel.ufsc.br }}
-
-% conference papers do not typically use \thanks and this command
-% is locked out in conference mode. If really needed, such as for
-% the acknowledgment of grants, issue a \IEEEoverridecommandlockouts
-% after \documentclass
-
-% for over three affiliations, or if they all won't fit within the width
-% of the page, use this alternative format:
 %
-%\author{\IEEEauthorblockN{Michael Shell\IEEEauthorrefmark{1},
-%Homer Simpson\IEEEauthorrefmark{2},
-%James Kirk\IEEEauthorrefmark{3},
-%Montgomery Scott\IEEEauthorrefmark{3} and
-%Eldon Tyrell\IEEEauthorrefmark{4}}
-%\IEEEauthorblockA{\IEEEauthorrefmark{1}School of Electrical and Computer Engineering\\
-%Georgia Institute of Technology,
-%Atlanta, Georgia 30332--0250\\ Email: see http://www.michaelshell.org/contact.html}
-%\IEEEauthorblockA{\IEEEauthorrefmark{2}Twentieth Century Fox, Springfield, USA\\
-%Email: homer@thesimpsons.com}
-%\IEEEauthorblockA{\IEEEauthorrefmark{3}Starfleet Academy, San Francisco, California 96678-2391\\
-%Telephone: (800) 555--1212, Fax: (888) 555--1212}
-%\IEEEauthorblockA{\IEEEauthorrefmark{4}Tyrell Inc., 123 Replicant Street, Los Angeles, California 90210--4321}}
+\titlerunning{Human detection in an industrial environment}  \author{Eduardo Henrique Arnold \and Danilo Silva}
 
-\else
-  \author{Sibgrapi paper ID: \jemsid \\ }
-\fi
+\institute{Electrical Engineering Department \\ Universidade Federal de Santa Catarina, Florianopolis, Brazil.
+\email{eduardoarnoldh@gmail.com}, \email{danilo@eel.ufsc.br}}
+
+
 
 
 % make the title area
@@ -341,9 +286,6 @@ eduardoarnoldh@gmail.com and danilo@eel.ufsc.br }}
 
 % For peerreview papers, this IEEEtran command inserts a page break and
 % creates the second title. It will be ignored for other modes.
-\IEEEpeerreviewmaketitle
-
-
 
 
 % An example of a floating figure using the graphicx package.
@@ -455,7 +397,7 @@ eduardoarnoldh@gmail.com and danilo@eel.ufsc.br }}
 % The IEEEtran BibTeX style support page is at:
 % http://www.michaelshell.org/tex/ieeetran/bibtex/
 \nocite{*}
-\bibliographystyle{IEEEtran}
+\bibliographystyle{splncs03}
 % argument is your BibTeX string definitions and bibliography database(s)
 \bibliography{main}
 %
