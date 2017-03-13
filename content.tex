@@ -49,30 +49,28 @@ This paper describes the development of an industrial safety system that require
 
     A saída desse passo é uma lista de janelas representando os candidatos à pessoas na imagem. Um aspecto relevante a se considerar é o parâmetro de tamanho dos blocos para efetuar a busca de máximos locais. Quando se utiliza blocos muito grandes a probabilidade de ter um objeto muito alto, como uma máquina, no mesmo bloco que uma pessoa é alta, portanto aumenta-se as chances de falha de detecção. Por outro lado, quando se utiliza um bloco muito pequeno, é garantido que todas as pessoas serão consideradas candidatas, porém ao mesmo tempo eleva-se muito o número de candidatos, o que ocasiona um problema de complexidade e de performance temporal, dado que esses candidatos precisam ainda passar por validação.
 
-\section{Classical computer vision solution}
+\section{Solução clássica baseada em extração de características manual}
 \label{sec:classical}
 
-    Following the candidates detection a validation phase should take place to discard non-human detections. A classical computer vision approach \cite{rauter} uses hand-engineered features extracted from the candidates to feed a binary SVM classifier, which output a class: ``human'' or ``not human''. A regular block grid proposed in \cite{rauter} is used. In order to increase rotation invariance, we also propose a concentric rings descriptor (see Figure \ref{fig:descriptors}). Both are described next, followed by a more detailed description of the classification and training process.
+    Após a detecção de candidatos uma fase de validação é necessária para descartar candidatos que não são pessoas. Uma solução clássica utilizando visão computacional \cite{rauter} utiliza características extraídas por um descritor, desenvolvido manualmente, para alimentar um classificador SVM binário, que retorna uma classe: ``pessoa'' ou ``não-pessoa''. Um descritor de blocos regulares proposto em \cite{rauter} é utilizado. Para aumentar a invariância à rotação, também propomos um descritor de anéis concêntricos (veja Figura \ref{fig:descriptors}). Ambos são descritos a seguir, seguidos por mais detalhes do processo de classificação e treinamento.
 
     \begin{figure}
     \centering
     \includegraphics[width=0.9\linewidth]{tradicional/descritores}
-    \caption{Regular block grid (left) and concentric rings descriptors (right).}
+    \caption{Descritor de grades regulares (esquerda) and anéis concêntricos (direita).}
     \label{fig:descriptors}
     \end{figure}
 
-    \subsection{Regular block grid feature extractor}
-      This descriptor divides the candidate window into 7x7 blocks, as illustrated in Figure \ref{fig:descriptors}. The mean value of pixels belonging to each block is calculated, generating a 7x7 matrix of mean pixel intensities. Next, the mean value of the central block is subtracted from the matrix. Finally, the resulting matrix histogram is calculated with 32 bins. The histogram vector, with 32 dimensions, is considered the feature vector, which sums up to 49 (number of blocks).
+    \subsection{Descritor de grades regulares}
+      Esse descritor divide a janela do candidato em 7x7 blocos, como ilustra a Figura \ref{fig:descriptors}. O valor médio dos pixels pertencentes à cada bloco é calculado, gerando uma matriz 7x7 de médias de intensidades de pixels. Em seguida, o valor do bloco central é subtraído da matriz. Finalmente, calcula-se o histograma da matriz resultante utilizando 32 intervalos. O vetor de histograma, com 32 dimensões, é considerado o vetor de descrição, cuja soma é 49 (número de blocos).
 
-    \subsection{Concentric rings feature extractor}
-       First the candidate window is divided in 18 annulus, or rings, with equal distance between the inner and outer radius and whose center coincides with the window center. Then for each ring the mean of the pixels that belong to it is calculated, resulting in a 18 dimensional vector of mean pixel intensity. Next, the mean value of the inner ring (lower radius equals zero) is subtracted from this vector. Following, we perform a discrete differentiation of this vector (subtraction between adjacent dimensions) to enunciate the differences in rings mean values, resulting in a 15-dimensional feature vector.
+    \subsection{Descritor de anéis concêntricos}
+       Primeiramente a janela do candidato é dividida em 18 coroas circulares (ou anéis) cujas distâncias entre os raios internos e externos é constante e cujo centro coincide com o da janela. Então calcula-se a média dos pixels pertences a cada coroa, resultando num vetor de 18 dimensões. Desse vetor subtrai-se o valor da média dos pixels da coroa mais interna (cujo raior menor é 0). Por fim, aplica-se a derivada discreta nesse vetor (subtração entre dimensões adjacentes) a fim de enunciar as diferenças entre as médias do pixels nos diferentes anéis, resultando num vetor de descrição com 17 dimensões.
 
-    \subsection{SVM classifier}
-      We use a binary SVM classifier with Radial Basis Function (RBF) kernel \cite{rbfkernel} to validate the candidates. Recall that the kernel parameter $\sigma$ along with the SVM hyper-parameter $C$ control the trade-off between training performance and generalization on unseen data. Higher $C$ values penalize training set errors, while lower values offer a more general performance on the test set, conversely, the $\sigma$ parameter penalizes in the inverse manner.
+    \subsection{Classificador SVM}
+      Utiliza-se um classificador SVM binário com kernel \textit{Radial Basis Function (RBF)} \cite{rbfkernel} para validar os candidatos. Note que o parâmetro $\sigma$ do kernel, em conjunto com o hiper-parâmetro $C$ do SVM controlam o compromisso entre o desempenho no treinamento e a generalização do modelo em novas amostras. Valores altos de $C$ penalizam erros no conjunto de treinamento, enquanto valores menores priorizam um desempenho melhor no conjunto de teste. O parâmetro $\sigma$ tem efeito similar, porém de maneira inversa.
 
-      To choose the appropriate values of the hyper-parameters $C$ and $\sigma$ we use a 5 fold cross-validation process, scoring the \textit{precision} metric \cite{evaluationMetrics}. Then a complete training using the entire training dataset, composed by 9894 negative samples and 1222 positive samples is performed. The dataset was generated from video samples collected at the factory during a experiment to test camera positions (placed at a height of 6m), each sample of the dataset is a window cut from a depth frame. These cuts are obtained with the candidate selection procedure presented in Section \ref{sec:candidates} and are manually labeled as positive (human) or negative (not human).
-
-      The SVM classifier was implemented in Python using the Scikit-learn \cite{scikit-learn} toolkit.
+      A escolha dos hiper-parâmetros $C$ e $\sigma$ é feita utilizando um processo de validação cruzada com 5 conjuntos, avaliando a métrica de precisão \cite{evaluationMetrics}. Depois desse processo uma etapa de treinamento utilizando todo o conjunto de treinamento, composto de 9894 amostras negativas e 1222 positivas, é realizado. O conjunto de dados foi gerado por amostras de vídeo coletadas na fábrica durante um experimento para testar posições da câmera (fixada em uma altura de 6m). Cada amostra nesse conjunto é um recorte da janela do candidato sob a imagem de profundidade. Esses recortes foram manualmente classificados como positivos (pessoa) ou negativos (não-pessoa). O classificador SVM foi implementado em Python utilizando o toolkit Scikit-learn \cite{scikit-learn}.
 
 
 \section{Deep learning based solution}
