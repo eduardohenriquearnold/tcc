@@ -1,9 +1,9 @@
 \begin{resumo}
-asd
+Esse trabalho descreve o desenvolvimento de um sistema de segurança industrial que requer detecção automática de pessoas. Duas soluções baseadas em imagens de profundidade de visão superior são apresentadas. A primeira é baseada em técnicas tradicionais de aprendizado utilizando extração de características e um classificador Support Vector Machine. A segunda utiliza métodos de aprendizado profundo para classificação. A análise de desempenho das soluções demonstrou que as técnicas profundas têm desempenho supeior às tradicionais para esta tarefa ao custo de necessitarem um conjunto de treinamento maior e oferecerem maior complexidade computacional.
 \end{resumo}
 
 \begin{chave}
-Chaves
+Detecção de pessoas, imagens de profundidade, aprendizado profundo, SVM, aprendizado de máquina, visão computacional.
 \end{chave}
 
 \begin{abstract}
@@ -73,83 +73,83 @@ This paper describes the development of an industrial safety system that require
       A escolha dos hiper-parâmetros $C$ e $\sigma$ é feita utilizando um processo de validação cruzada com 5 conjuntos, avaliando a métrica de precisão \cite{evaluationMetrics}. Depois desse processo uma etapa de treinamento utilizando todo o conjunto de treinamento, composto de 9894 amostras negativas e 1222 positivas, é realizado. O conjunto de dados foi gerado por amostras de vídeo coletadas na fábrica durante um experimento para testar posições da câmera (fixada em uma altura de 6m). Cada amostra nesse conjunto é um recorte da janela do candidato sob a imagem de profundidade. Esses recortes foram manualmente classificados como positivos (pessoa) ou negativos (não-pessoa). O classificador SVM foi implementado em Python utilizando o toolkit Scikit-learn \cite{scikit-learn}.
 
 
-\section{Deep learning based solution}
+\section{Solução utilizando classificadores profundos}
 \label{sec:deep}
 
-    Neural networks can be used to perform robust classification with complexity varying according to the network structure and depth. We use and evaluate two deep structures: multilayer perceptron (MLP) and convolutional neural networks (CNN). In our solution for both approaches, the candidate is resized to a 60x60 window and directly fed to the classifier, without any feature-extraction process. We can consider that the model itself will encode a feature set in the first layers of the network, with the final layer doing the classification process and outputing a single probability of that candidate being a human. The diagram would be the same as presented in Figure \ref{fig:system-diagram} without the feature extraction block and with a real valued output probability.
+    Redes neurais artificiais podem ser utilizadas para uma classificação robusta em diferentes níveis de complexidade, variando de acordo com a estrutura e profundidade da rede. Nós utilizamos e avaliamos duas estruturas de redes profundas: perceptron multicamadas \textit{multilayer perceptron} (MLP) e redes neurais convolucionais (CNN). Em nossa solução, para ambas abordagens, o candidato é redimensionado para uma janela de 60x60 pixels and introduzido diretamente ao classificador, sem nenhum processo de extração de características inicial. Podemos considerar que o modelo desenvolve uma representação da amostra a partir das primeiras camadas da rede, sendo que a última camada é responsável pelo processo de classificação e resulta uma única saída interpretada como a probabilidade de o candidato ser uma pessoa. O diagrama dessa abordagem é o mesmo apresentado na Figura \ref{fig:system-diagram} removendo-se o bloco de extração de características e com uma saída probabilística contínua.
 
-    \subsection{Multilayer perceptron}toolkit
-        The MLP structure is composed by units organized in layers. Every unit in a single layer is connected to every unit on the following layer. Each unit calculates its output by summing of its inputs, weigthed by the connections parameters, and then applying an activation function $\phi(x)$. Each output is forward propagated through the network from the input layers, through the hidden layers until the output layer.
+    \subsection{Perceptron multicamadas}
+        A estrutura do MLP é composta por unidades organizadas em camadas. Cada unidade pertencente a uma camada está conectada com as unidades da camada seguinte. A saída de cada unidade é obtida calculando a soma de suas entradas ponderadas por parâmetros de conexão, seguidas da aplicação de uma função de ativação $\phi(x)$. A informação de cada unidade é propagada de forma direta pela rede desde as camadas de entrada, passando pelas camadas intermediárias até finalmente chegar na camada de saída.
 
-        We use a structure with 3600 input units (60x60 pixels), 512 and 256 units in the hidden layers and a single unit in the output layer, as seen in Figure \ref{fig:diag-mlp}. The hidden layers, shown in yellow, use the RELU \cite{nair2010relu} activation function to avoid the vanishing gradient problem. The single output unit uses a sigmoid activation function to reproduce a probabilistic output.
+        Utilizamos uma estrutura de 3600 unidades de entrada (60x60 pixels), 512 e 256 unidades nas camadas intermediárias e uma única unidade de saída, como mostra a Figura \ref{fig:diag-mlp}. As camadas intermediárias, representadas em amarelo, utilizam ativação RELU \cite{nair2010relu} de maneira a evitar o problema de gradiente enfraquecido. A únidade de saída utiliza ativação sigmóide para reproduzir uma saída de natureza probabilística.
 
         \begin{figure}
         \centering
         \includegraphics[width=0.8\linewidth]{diagram/diag-mlp.png}
-        \caption{MLP network structure.}
+        \caption{Estrutura MLP.}
         \label{fig:diag-mlp}
         \end{figure}
 
-    \subsection{Convolutional neural network}
-         In images there are strong local correlation of pixels, so it is not necessary that every unit in each layer is connected to every unit in the following layer, but just to a few local neighbours. This local connectivity is achieved through the convolution of a given layer with a bank of filters. In this sense, convolutional neural networks are a derivation of MLP and, in general, give a better model for images by reducing the number of parameters thus helping to generalize.
+    \subsection{Rede neural convolucional}
+         No caso de imagens, existe uma forte correlação entre pixels de uma redondeza, de forma que não é necessário que cada unidade de uma camada esteja conectada com todas as unidades da próxima camada, mas apenas com alguns pixels vizinhos. Esse caráter de conectividade local pode ser atingido através da convolução de uma dada camada com um banco de filtros. Nesse sentido, redes neurais convolucionais podem ser entendidas como uma derivação da MLP e, em geral, fornecem um modelo melhor para imagens através da redução do número de parâmetros e portanto aumentando ajudando na generalização.
 
-        Our CNN structure, depicted in Figure \ref{fig:diag-cnn}, is composed by a 3x3 convolution layer with 16 feature maps (filters), followed by a 3x3 max pooling layer, then flattening resulting in 5776 (16x19x19) units followed by a 128-units dense layer to perform classification, and finally by a single output unit that gives a probabilistic output. Again, the hidden layers use RELU activation and the output unit uses sigmoid activation.
+         Nossa estrutura convolucional, ilustrada na Figura \ref{fig:diag-cnn}, é composta por uma camada convolucional 3x3 com 16 filtros, seguida por uma camada de \textit{max pooling}, e então concatenação resultando em 5776 (16x19x19) unidades seguidas por uma camada densamente ligada de 128 unidades, responsável pela classificação, e única unidade de saída que fornece uma grandeza probabilística. Novamente, as camadas intermediárias utilizam ativação RELU e a de saída utiliza sigmóide.
 
         \begin{figure}
         \centering
         \includegraphics[width=0.9\linewidth]{diagram/diag-cnn.png}
-        \caption{CNN network structure.}
+        \caption{Estrutura convolucional.}
         \label{fig:diag-cnn}
         \end{figure}
 
-    \subsection{Implementation}
-        The training process consists of minimizing an objective function, in this case, the binary cross-entropy function \cite{DLbook}, also known as logloss. Its use is justified by the probabilistic nature of the output layer. The optimization method used is a variation of Batch Stochastic Gradient Descent (B-SGD) called Adam \cite{kingma2014adam}, which uses an adaptive learning rate based on momentum considerations (gradient based) for each parameter.
-
-        Since deep models require a larger training set, we extended the SVM training set to 16898 samples, from which 14966 are negative. A challenge faced during the training phase was the impossibility of getting a coherent model due to the unbalanced distribution of the dataset: more than 88\% of the samples belonged to the negative class, so the model would classify all the samples as negative and still get a relative high accuracy. To overcome this, we artificially balanced our training set by replicating positive samples until their frequency was the same as the negative class.
-
-        The computer vision task, candidate extraction, resizing, was done in C++ with the OpenCV library. The deep classifier was implemented using Keras \cite{keras} on top of Theano \cite{theano}, allowing GPU acceleration and enabling a fast training process (an epoch per minute).
+    \subsection{Implementação}
+        O processo de treinamento consiste na minimização de uma função objetivo, nesse caso, a função de entropia cruzada binária \cite{DLbook}, também conhecida como \textit{logloss}. Seu uso é justificado pela natureza probabilística da camada de saída. O método de otimização é uma variação de \textit{Batch Stochastic Gradient Descent} (B-SGD) chamada Adam \cite{kingma2014adam}, que utiliza uma taxa de aprendizado adaptativa baseada em considerações de momento (do gradiente) para cada parâmetro de otimização.
 
 
-\section{Results}
+        Como modelos de aprendizado profundo possuem muitos parâmetros e portanto requerem um conjunto de treinamento maior, extendemos o conjunto utilizado para o SVM para 16898 amostras, das quais 14966 são negativas. Um dos desafios encontrados nessa fase foi a impossibilidade de obter um modelo coerente dado a distribuição acentuadamente desbalanceada do conjunto: mais de 88\% das amostras pertencem à classe negativa, portanto o modelo classifica todas as amostras como negativas e ainda obtém uma acurácia relativamente alta. Para atacar esse problema nós artificialmente balanceamos o conjunto de treinamento replicando as amostras positivas até que a frequência dessa classe se equiparou à da classe negativa.
+
+        As tarefas que envolvem visão computacional, extração de candidato e redimensionamento foram realizadas utilizando a biblioteca OpenCV. Ambas as estruturas de classificação profunda foram implementadas utilizando Keras \cite{keras} sob Theano \cite{theano}, que permite utilizar recursos da GPU para efetuar um treinamento rápido (aproximadamente uma época por minuto).
+
+\section{Resultados}
 \label{sec:results}
 
-    The evaluation uses Receiver Operating Characteristic (ROC) curves \cite{evaluationMetrics} to compare between solutions and parameters. These curves are generated from the probabilistic output of the classifiers used. In the case of SVM which under original formulations is a non-probabilistic classifier, we use a logistic regression formulation \cite{svmProbabilisticOutput} to enable a probabilistic output. The advantage of using such a probabilistic output classifier is the possibility of adjusting the true-positive vs false-positive tradeoff even after training, by choosing the probability threshold above which the sample is considered to be positive.
+    A avaliação utiliza as curvas \textit{Receiver Operating Characteristic} (ROC) \cite{evaluationMetrics} para comparar os resultados entre soluções e parâmetros. Essas curvas são geradas através da saída probabilística dos classificadores utilizados. No caso do SVM, que sob formulação original é um classificador não-probabilístico, utilizamos uma formulação de regressão logística \cite{svmProbabilisticOutput} para obter uma saída probabilística. A grande vantagem na natureza probabilística do classificador é a possibilidade de ajustar o compromisso entre as taxas de verdadeiro positivo e falso positivo de maneira offline, após treinamento. Isso é feito através da escolha do limiar de probabilidade acima do qual a amostra é considerada positiva (pessoa).
 
-    To evaluate the solutions proposed on Sections \ref{sec:classical} and \ref{sec:deep}, with their variations, we firstly consider the candidates already extracted from a video sequence, which will be called the test set, thus evaluating only the descriptor and classifier. Figure \ref{fig:result-classifiers} shows the performance of the classifiers under the test set and a Area Under Curve (AUC) score \cite{evaluationMetrics} (measured up to 10\% of false-positive rate). We can clearly see that deep based classifiers outperform the traditional hand-engineered feature extraction based approach. Although both MLP and CNN perform similarly, one of them can be chosen depending upon the desired region of operation (higher true-positive rate or lower false-positive rate).
+    Para avaliar as soluções propostas nas Seções \ref{sec:classical} e \ref{sec:deep}, juntamente com suas variações, primeiramente consideramos que os candidatos já foram extraídos de uma sequência de vídeo, formando o conjunto que chamamos de teste, então avaliando apenas o descritor e o classificador. A Figura \ref{fig:result-classifiers} mostra o desempenho dos classificadores sob o conjunto de teste e a métrica \textit{Area Under Curve} (AUC) \cite{evaluationMetrics}, medida até 10\% da taxa de falso-positivo. Pode-se observar claramente que os classificadores profundos superam as técnicas de extração de características criadas de maneira manual. Apesar as estruturas MLP e CNN terem desempenho similares, um deles pode ser escolhido dependendo da região de operação que se deseja operar (maior taxa de verdadeiros-positivos ou menor taxa de falsos-positivos).
 
     \begin{figure*}[!t]
     \centering
     \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_all.pdf}}%
     \label{fig:result-classifiers-all}
     \hfil
-    \subfloat[10 \% interest zone]{\includegraphics[width=0.45\linewidth]{results/ROC_all_zoom.pdf}}%
+    \subfloat[10 \% zona interesse]{\includegraphics[width=0.45\linewidth]{results/ROC_all_zoom.pdf}}%
     \label{fig:result-classifiers-all-zoom}
-    \caption{Classifiers performance.}
+    \caption{Desempenho dos classificadores.}
     \label{fig:result-classifiers}
     \end{figure*}
 
-    In a second phase we consider the overall system performance, including the candidate extraction step. It is important to note that the performance observed in Figure \ref{fig:result-classifiers} is an upper bound of the overall performance, since now there will be miss-detections from the candidate extraction step. Another consideration is that in this phase the test set is composed of entire frames, so the probability of the frame contain at least one head could be calculated using
+    Em uma segunda etapa consideramos o desempenho global do sistema, incluindo o processo de extração de candidatos. É importante notar que o desempenho observado na Figura \ref{fig:result-classifiers} é um limite superior para o desempenho global, visto que agora existirão falhas na detecção provenientes da extração de candidatos. Outra consideração é que nessa fase o conjunto de teste é composto por quadros inteiros, portanto, a probabilidade de um quadro conter pelo menos uma pessoa pode ser calculada utilizando
     \begin{equation}
     P[y=1] = 1 - \prod_i^n (1-p_i)
     \end{equation}
-    where $y$ is a random variable valued 1 if there are humans in the scene or 0 otherwise, $n$ is the number of candidates and $p_i$ is the classifier output of candidate $i$. Figure \ref{fig:result-system} shows the overall system performance using this formulation with the combinations of MLP and CNN classifiers with coarse and fine scales of candidate extraction windows.
+    onde $y$ é uma variável aleatória que assume 1 se existirem pessoas na cena ou 0 caso contrário, $n$ é o número de candidatos e $p_i$ é a saída do classificador para o candidato $i$. A Figura \ref{fig:result-system} apresenta o desempenho global do sistema utilizando essa formulação com as combinações de classificadores MLP, CNN e diferentes escalas de janelas do processo de extração de candidatos.
 
-    The results show that on a coarse scale detector, the MLP and CNN classifiers have similar performance, because the candidates that get extracted have similar outputs. However, on a fine scale detector, many more candidates are detected so there are more samples to explore the performances of the two classifiers, showing how the CNN model outperforms MLP.
+    Os resultados mostram que um para detector grosso (janela grande), o desempenho dos classificadores MLP e CNN são similares, porque os candidatos que são extraídos têm saídas similares. Entretanto, ao utilizar um detector fino (janela menor), muito mais candidatos são detectados, e portanto existe um número maior de amostras para explorar o desempenho desses classificadores, demonstrando que o modelo CNN tem desempenho superior ao do MLP.
 
     \begin{figure*}[!t]
     \centering
     \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_system.pdf}}%
     \label{fig:result-system-all}
     \hfil
-    \subfloat[10 \% interest zone, best results]{\includegraphics[width=0.45\linewidth]{results/ROC_system_zoom_best.pdf}}%
+    \subfloat[Zona de interesse de10 \%, melhores resultados]{\includegraphics[width=0.45\linewidth]{results/ROC_system_zoom_best.pdf}}%
     \label{fig:result-system-all-zoom}
-    \caption{Overall system performance.}
+    \caption{Desempenho global do sistema.}
     \label{fig:result-system}
     \end{figure*}
 
-\section{Conclusion}
+\section{Conclusão}
 \label{sec:conclusion}
 
-    This paper investigates two solutions for the human detection problem, one based on traditional computer vision methods and another on deep learning techniques. The results presented in Section \ref{sec:results} show that the last method outperforms traditional hand-engineered feature extraction and classification, although they require a larger training set and have higher complexity, thus requiring more processing power. While deep learning techniques are widely regarded as useful for big datasets, we were still able to achieve good performance, even under a moderate-sized unbalanced dataset.
+    Esse trabalho investiga duas soluções para o problema de detecção de pessoas, uma baseada nas técnicas tradicionais de visão computacional e extração de características manual e outra em métodos de aprendizado profundo. Os resultados apresentados na Seção \ref{sec:results} mostram que a última solução tem desempenho superior à primeira, apesar de exigir um conjunto de treinamento maior e oferecer maior complexidade computacional, portanto requerendo mais poder de processamento. Embora as técnicas de aprendizado profundo sejam consideradas especialmente úteis para grandes datasets, nós conseguimos obter um bom resultado mesmo utilizando um conjunto de treinamento moderado e desbalanceado.
 
-    One possible direction of future work is investigating a more general CNN structure. Instead of receiving just the candidate window, it would receive the whole depth frame as input and output the probability that frame contains a human. As we saw an improvement of the classification by letting the model choose the best representation of the data, we suspect that allowing the model to access the whole frame as opposed to only small windows possibly containing humans will improve the overall system performance.
+    Uma possível direção de trabalho futuro é a investigação de um modelo convolucional mais genérico. Ao invés de receber apenas a janela do candidato, essa estrutura teria acesso à imagem de profundidade completa como entrada e a saída seria a probabilidade de existir uma pessoa na cena. Assim como percebemos uma melhoria no processo de classificação permitindo ao modelo escolher a melhor representação para os dados, suspeitamos que permitir o acesso ao todo quadro, em contraposição à pequenas janelas possivelmente contendo humanos, terá um efeito positivo para o desempenho global do sistema.
