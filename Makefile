@@ -78,14 +78,14 @@ obj/:
 	mkdir -p obj/
 
 obj/$(PROJECT).aux: $(TEX_FILES) $(IMG_FILES) | obj/
-	pdflatex $(PDFLATEX_FLAGS) $(PROJECT)
+	xelatex $(PDFLATEX_FLAGS) $(PROJECT)
 
 obj/$(PROJECT).bbl: $(BIB_FILES) | obj/$(PROJECT).aux
 	bibtex obj/$(PROJECT)
-	pdflatex $(PDFLATEX_FLAGS) $(PROJECT)
-	
+	xelatex $(PDFLATEX_FLAGS) $(PROJECT)
+
 obj/$(PROJECT).pdf: obj/$(PROJECT).aux $(if $(BIB_FILES), obj/$(PROJECT).bbl)
-	pdflatex $(PDFLATEX_FLAGS) $(PROJECT)
+	xelatex $(PDFLATEX_FLAGS) $(PROJECT)
 
 #############################
 ########My dropbox customization
@@ -95,4 +95,3 @@ dbpush:
 
 dbpull:
 	../dropbox/dropbox_uploader.sh -f ../dropbox/conf download "Eduardo Arnold/TCC/" .
-
