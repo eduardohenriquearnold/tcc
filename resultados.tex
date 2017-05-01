@@ -19,9 +19,9 @@
 				\label{tab:matriz-confusão}
 				\begin{tabular}{ll|l|l|}
 				\cline{3-4}
-									    &   & \multicolumn{2}{l|}{Classificado} \\ \cline{3-4} 
+									    &   & \multicolumn{2}{l|}{Classificado} \\ \cline{3-4}
 									    &   & 0               & 1               \\ \hline
-				\multicolumn{1}{|l|}{\multirow{2}{*}{Real}} & 0 & \text{TN}              & \text{FP}              \\ \cline{2-4} 
+				\multicolumn{1}{|l|}{\multirow{2}{*}{Real}} & 0 & \text{TN}              & \text{FP}              \\ \cline{2-4}
 				\multicolumn{1}{|l|}{}                      & 1 & \text{FN}              & \text{TP}              \\ \hline
 				\end{tabular}
 				\caption*{Matriz de confusão}
@@ -40,16 +40,12 @@
 				\end{equation*}
 			}
 		\end{columns}
-	
+
 	\end{frame}
 
 
 \subsection{Classificadores}
-	\begin{frame}{Avaliação do descritor de anéis concêntricos}
-		\fig{results/ROC_rings}{}[1][1]
-	\end{frame}
-
-	\begin{frame}{Todos os classificadores} 
+	\begin{frame}{Todos os classificadores}
 		\only<1>{\fig{results/ROC_all}{}[1][1]}
 		\only<2>{\fig{results/ROC_all_zoom}{}[1][1]}
 	\end{frame}
@@ -57,11 +53,5 @@
 \subsection{Sistema completo}
 	\begin{frame}{\insertsubsection}
 		\only<1>{\fig{results/ROC_system}{}[1][0.9]}
-		\only<2>{\fig{results/ROC_system_zoom}{}[1][0.9]}
 		\only<3>{\fig{results/ROC_system_zoom_best}{}[1][0.9]}
 	\end{frame}
-
-	\begin{frame}{Vídeo de demonstração}
-		Demonstração do sistema em funcionamento no vídeo de testes.
-	\end{frame}
-
