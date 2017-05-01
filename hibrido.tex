@@ -16,7 +16,7 @@
 \begin{frame}{Funções de ativação}
 	\begin{columns}[T]
 	\column{0.5\textwidth}
-		\textbf{Sigmoide}		
+		\textbf{Sigmoide}
 		\begin{itemize}
 			\item Historicamente utilizada para toda rede.
 			\item Saturação nas extremidades.
@@ -49,6 +49,7 @@
 	\pause
 	\vspace{-30pt}
 	\center Aprendizado profundo?
+	1.975.297 parâmetros
 \end{frame}
 
 \subsection{Redes convolucionais}
@@ -71,11 +72,14 @@
 		\end{equation*}
 
 	\end{columns}
-	
+
 \end{frame}
 
 \begin{frame}{\insertsubsection (CNN)}
 	\fig{diagram/diag-cnn}{}[1.1][1]
+
+	\vspace{-30pt}
+	\center 739.745 parâmetros
 \end{frame}
 
 \subsection{Processo de treinamento}
@@ -113,4 +117,3 @@
 		\item Esse algoritmo faz uma propagação reversa do erro na saída para encontrar as derivadas parciais simultaneamente.
 	\end{itemize}
 \end{frame}
-
