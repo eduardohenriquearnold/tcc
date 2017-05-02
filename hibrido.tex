@@ -55,10 +55,10 @@
 \subsection{Redes convolucionais}
 \begin{frame}{\insertsubsection}
 	\begin{itemize}
-	\item Redes convolucionais são uma variação das redes neurais.
+	\item Variação das redes neurais.
 	\item Os nós são ligados através de campos receptivos (grupo de pixels adjacentes).
-	\item Pesos compartilhados entre campos receptivos, redução dos parâmetros.
-	\item Permite invariância à translação.
+	\item Pesos compartilhados, redução dos parâmetros.
+	\item Invariância à translação.
 	\end{itemize}
 
 	\begin{columns}
@@ -87,7 +87,6 @@
 \begin{frame}{Função custo}
 	\begin{itemize}
 	\item Indica o desempenho do modelo conjunto de treinamento.
-	\item Para um modelo ideal teria o valor nulo.
 	\end{itemize}
 
 	\pause
@@ -102,10 +101,9 @@
 
 \begin{frame}{Otimização}
 	\begin{itemize}
-		\item Minimizar a função custo é um problema de otimização não convexa.
+		\item Otimização não convexa.
 		\item Utiliza-se o algoritmo \emph{Mini-Batch Gradient Descent}.
-		\item MB-GD é uma variação que avalia o gradiente em um conjunto de amostras ($1 < k \leq N$) a cada iteração.
-		\item É necessário calcular o gradiente da função custo.
+		\item MB-GD é uma variação que avalia o \textbf{gradiente} em um conjunto de amostras ($1 < k \leq N$) a cada iteração.
 	\end{itemize}
 
 	\pause

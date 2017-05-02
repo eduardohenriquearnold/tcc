@@ -3,7 +3,7 @@
 \subsection{}
 \begin{frame}{\insertsection}
 	\begin{itemize}
-		\item Sistema de detecção de pessoas em um ambiente indústrial.
+		\item Sistema de detecção de pessoas em um ambiente industrial.
 		\item Duas propostas de solução
 		\begin{itemize}
 			\item Métodos tradicionais de aprendizado
@@ -12,19 +12,11 @@
 
 		\item Desempenho superior das técnicas profundas em relação aos métodos tradicionais de aprendizado.
 		\item Bom desempenho mesmo com conjuntos medianos e desbalanceados.
+		\item Modelos profundos têm elevado custo computacional.
 	\end{itemize}
 \end{frame}
 
 \begin{frame}{Trabalhos futuros}
-	\textbf{Ajuste fino do classificador}\\
-	\begin{itemize}
-		\item Video de testes limitado: poucos quadros sem pessoas, mesmos moldes.
-		\item Avaliar a ocorrência de falsos positivos após instalação.
-		\item Fazer treinamento de ajuste fino na camada de classificação.
-	\end{itemize} 
-
-	\pause
-
 	\textbf{Proposta de solução integralmente profunda}\\
 	\begin{itemize}
 		\item Utizar uma rede neural convolucional.
@@ -32,4 +24,11 @@
 		\item Saída bidimensional como mapa de probabilidades.
 		\item Evita necessidade de seleção de candidatos.
 	\end{itemize}
+\end{frame}
+
+\begin{frame}{Bibliotecas utilizadas}
+	\only<1>{\fig{libs/opencv}{}[1][0.5]}
+	\only<2>{\fig{libs/scikit-learn}{}[1][0.5]}
+	\only<3>{\fig{libs/theano}{}[1][0.5]}
+	\only<4>{\fig{libs/keras}{}[1][0.5]}
 \end{frame}

@@ -1,12 +1,11 @@
 \section{Detecção utilizando métodos tradicionais}
 
-\subsection{Obtenção de candidatos}	
-	\begin{frame}{\insertsubsection}	
+\subsection{Obtenção de candidatos}
+	\begin{frame}{\insertsubsection}
 		\begin{itemize}
 		\item<1-> Utilizar informação da profundidade.
 		\item<2-> Hipótese: pessoas estão entre os objetos mais altos da cena.
 		\item<2-> Solução: obter máximos locais.
-		\item<3-> Desafio: tamanho ideal da janela?
 		\end{itemize}
 
 		\only<1>{
@@ -18,9 +17,9 @@
 		\only<2->{\fig{tradicional/local_max}{}[1][0.7]}
 	\end{frame}
 
-	\begin{frame}{\insertsubsection}	
+	\begin{frame}{\insertsubsection}
 		\begin{itemize}
-		\item Estima-se tamanho do quadrado baseado na altura do ponto de máximo. 
+		\item Estima-se quadrado sob o ponto de máximo.
 		\item Utiliza-se \emph{mean shift} para centralizar o quadrado sob o candidato.
 		\item O candidato é considerado como o recorte do quadrado sob a imagem original.
 		\end{itemize}
@@ -32,7 +31,7 @@
 		\begin{columns}
 		\column{0.5\textwidth}
 		\begin{enumerate}
-			\item Dividir o candidato em 7x7 blocos iguais. 
+			\item Dividir o candidato em 7x7 blocos iguais.
 			\item Obter média dos pixels de cada bloco $\rightarrow$ Matriz de médias 7x7.
 			\item Subtrair dessa matriz a média do bloco central.
 			\item Gerar histograma da matriz resultante, $x \in \mathbb{R}^d$, com $d=32$ intervalos.
@@ -47,7 +46,7 @@
 		\column{0.5\textwidth}
 		\begin{enumerate}
 			\item Dividir o candidato em $n$ coroas circulares com espaçamento uniforme.
-			\item Obter vetor de médias dos pixels de cada coroa $\rightarrow$ $m \in \mathbb{R}^n$. 
+			\item Obter vetor de médias dos pixels de cada coroa $\rightarrow$ $m \in \mathbb{R}^n$.
 			\item Subtrair desse vetor a média da coroa interna, $m_0$.
 			\item Diferenciar o vetor resultante, resultando em $x \in \mathbb{R}^d$  com $d=n-1$.
 		\end{enumerate}
