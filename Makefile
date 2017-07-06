@@ -91,7 +91,7 @@ obj/$(PROJECT).pdf: obj/$(PROJECT).aux $(if $(BIB_FILES), obj/$(PROJECT).bbl)
 ########My dropbox customization
 
 db:
-	./db.sh upload * "Eduardo Arnold/$(git symbolic-ref --short HEAD)/"
+	./db.sh upload * "Eduardo Arnold/$(shell git symbolic-ref --short HEAD)/"
 
 dbpull:
 	../dropbox/dropbox_uploader.sh -f ../dropbox/conf download "Eduardo Arnold/TCC/" .
