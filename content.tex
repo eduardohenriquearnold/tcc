@@ -1,3 +1,4 @@
+
 \begin{resumo}
 Esse trabalho descreve o desenvolvimento de um sistema de segurança industrial que requer detecção automática de pessoas. Duas soluções baseadas em imagens de profundidade de visão superior são apresentadas. A primeira é fundamentada em técnicas tradicionais de aprendizado utilizando extração de características e um classificador Support Vector Machine. A segunda utiliza métodos de aprendizado profundo para classificação. A análise de desempenho dos detectores demonstrou que as técnicas profundas têm desempenho superior às tradicionais para esta tarefa entretanto podem oferecer maior custo computacional e necessitar maior conjunto de treinamento.
 \end{resumo}
@@ -32,7 +33,7 @@ This paper describes the development of an industrial safety system that require
   \label{fig:system-diagram}
   \end{figure*}
 
-\section{Seleção de candidatos}
+\section{Seleção de Candidatos}
 \label{sec:candidates}
 
     Em um método tradicional de detecção de objetos \cite{traditional-objdetect} o primeiro passo é localizar os candidatos, que são em seguida validados através do processo conjunto de extração de características e classificação. No caso de uma imagem colorida, uma possibilidade para obter candidatos seria utilizar uma janela de tamanho variável que varre a imagem, gerando um candidato a cada deslocamento.
@@ -40,16 +41,16 @@ This paper describes the development of an industrial safety system that require
     Entretanto, ao se utilizar imagens de profundidade com visão superior, \cite{rauter} sugere um algoritmo mais eficiente que assume que as pessoas estão entre os objetos mais altos da cena. Apesar dessa hipótese nem sempre ser garantida, ela reduz significantemente o número de candidatos se comparado com o método das janelas deslocadas, e portanto será utilizada nesse trabalho e descrita a seguir.
 
     Primeiramente, realiza-se a detecção de máximos locais. Divide-se a imagem em blocos de tamanho especificado e cada bloco retorna o pixel com maior intensidade, representando o ponto mais alto naquele bloco. Em seguida, para cada máximo local uma janela quadrada representando o candidato precisa ser obtida. Seu tamanho é calculado como
-    \begin{equation}
-      s_w = \frac{f}{d} \cdot s_r
-    \end{equation}
+    %\begin{equation}
+      $s_w = \frac{f}{d} \cdot s_r$,
+    %\end{equation}
     onde $f$ é a distância focal da câmera, $d$ a distância entre a câmera e o objeto e $s_r$ o tamanho médio da cabeça. A janela de tamanho $s_w$ pixeis é centralizada em torno do respectivo pixel de máximo local.
 
     O último passo é a centralização da janela sob o candidato utilizando um algoritmo iterativo de \textit{mean shift}. De forma simplificada, esse algoritmo desloca a janela para o centroide dos pixeis dentro dela, de forma que pixeis de maior intensidade tenderão a ficar centralizados sob o candidato.
 
-    A saída desse passo é uma lista de janelas representando os candidatos à pessoas na imagem. Um aspecto relevante a se considerar é o parâmetro de tamanho dos blocos para efetuar a busca de máximos locais. Quando se utiliza blocos muito grandes a probabilidade de ter um objeto muito alto, como uma máquina, no mesmo bloco que uma pessoa é alta, portanto aumenta-se as chances de falha de detecção. Por outro lado, quando se utiliza um bloco muito pequeno, é garantido que todas as pessoas serão consideradas candidatas, porém ao mesmo tempo eleva-se muito o número de candidatos, o que ocasiona um problema de complexidade e de performance temporal, dado que esses candidatos precisam ainda passar por validação.
+    A saída desse passo é uma lista de janelas representando os candidatos à pessoas na imagem. Um aspecto relevante a se considerar é o parâmetro de tamanho dos blocos para efetuar a busca de máximos locais. Quando se utiliza blocos muito grandes a probabilidade de ter um objeto muito alto, como uma máquina, no mesmo bloco que uma pessoa é alta, portanto aumenta-se as chances de falha de detecção. Por outro lado, quando se utiliza um bloco muito pequeno, é garantido que todas as pessoas serão consideradas candidatas, porém ao mesmo tempo eleva-se muito o número de candidatos, o que causa um problema de complexidade e desempenho temporal.
 
-\section{Detector clássico baseado em extração de características manual}
+\section{Detecção Baseada em Descritores}
 \label{sec:classical}
 
     Após a detecção de candidatos, uma fase de validação é necessária para descartar candidatos que não são pessoas. Uma solução clássica utilizando visão computacional \cite{rauter} utiliza características extraídas por um descritor, desenvolvido manualmente, para alimentar um classificador SVM binário, que retorna uma classe: ``pessoa'' ou ``não-pessoa''. Um descritor de blocos regulares proposto em \cite{rauter} é utilizado. Para aumentar a invariância à rotação, também propomos um descritor de anéis concêntricos (veja Figura \ref{fig:descriptors}). Ambos são descritos a diante, seguidos por mais detalhes do processo de classificação e treinamento.
@@ -73,7 +74,7 @@ This paper describes the development of an industrial safety system that require
       Depois de selecionados os hiper-parâmetros, o treinamento final é realizado com todo o conjunto de treinamento. O classificador SVM foi implementado utilizando a biblioteca Scikit-Learn \cite{scikit-learn}.
 
 
-\section{Detector utilizando classificadores profundos}
+\section{Detecção Utilizando Aprendizado Profundo}
 \label{sec:deep}
 
     Redes neurais artificiais podem ser utilizadas para uma classificação robusta em diferentes níveis de complexidade, que varia com a estrutura e profundidade da rede. Nós utilizamos e avaliamos duas estruturas de redes profundas: perceptron multi-camadas, ou \textit{multilayer perceptron} (MLP), e redes neurais convolucionais, ou \textit{convolutional neural networks} (CNN). Para ambos os detectores, o candidato é redimensionado para uma janela de 60x60 pixeis e introduzido diretamente ao classificador, sem nenhum processo de extração de características inicial. Podemos considerar que o modelo desenvolve uma representação da amostra a partir das primeiras camadas da rede, sendo que a última camada é responsável pelo processo de classificação e resulta uma única saída interpretada como a probabilidade de o candidato ser uma pessoa. O diagrama dessa abordagem é o mesmo apresentado na Figura \ref{fig:system-diagram} removendo-se o bloco de extração de características e com uma saída probabilística contínua.
@@ -105,12 +106,14 @@ This paper describes the development of an industrial safety system that require
     \subsection{Implementação}
         O processo de treinamento consiste na minimização de uma função objetivo, nesse caso, a função de entropia cruzada binária \cite{DLbook}, também conhecida como \textit{logloss}. Seu uso é justificado pela natureza probabilística da camada de saída. O método de otimização é uma variação do \textit{Batch Stochastic Gradient Descent} (B-SGD) chamada Adam \cite{kingma2014adam}, que utiliza uma taxa de aprendizado adaptativa baseada em considerações de momento (do gradiente) para cada parâmetro de otimização.
 
+        Duas formas de regularização foram testadas. Primeiramente utilizou-se L2 com fator 0.01, cujo impacto é diminuir progressivamente o módulo dos pesos do modelo. Observou-se, entretanto, que o desempenho obtido no conjunto de teste foi inferior ao modelo sem regularização. Outra alternativa de regularização testada foi dropout com taxa de 0.5 na camada anterior à classificação. Os resultados se mostraram muito similares ao modelo sem regularização. Optou-se, portanto, por não utilizar regularização, salientando que não foi observado overfitting.
+
         As tarefas que envolvem visão computacional, extração de candidato e redimensionamento foram realizadas utilizando a biblioteca OpenCV. Ambas as estruturas de classificação profunda foram implementadas utilizando Keras \cite{keras} sob Theano \cite{theano}, que permite utilizar recursos da GPU para efetuar um treinamento rápido, aproximadamente uma época (um passo da iteração, no qual todas as amostras de treinamento são utilizadas uma vez) por minuto.
 
 \section{Resultados}
 \label{sec:results}
 
-    A avaliação utiliza as curvas \textit{Receiver Operating Characteristic} (ROC) \cite{evaluationMetrics} para comparar os resultados entre os detectores e seus parâmetros. Essas curvas são geradas através da saída probabilística dos classificadores utilizados. No caso do SVM, que sob formulação original é um classificador não probabilístico, utilizamos uma formulação de regressão logística \cite{svmProbabilisticOutput} para obter uma saída probabilística. A grande vantagem na natureza probabilística do classificador é a possibilidade de ajustar o compromisso entre as taxas de verdadeiro positivo e falso positivo após treinamento. Isso é feito através da escolha do limiar de probabilidade acima do qual a amostra é considerada positiva (pessoa).
+    A avaliação utiliza as curvas \textit{Receiver Operating Characteristic} (ROC) \cite{evaluationMetrics} para comparar os resultados entre os detectores e seus parâmetros. Essas curvas são geradas através da saída probabilística dos classificadores utilizados. A grande vantagem na natureza probabilística do classificador é a possibilidade de ajustar o compromisso entre as taxas de verdadeiro positivo e falso positivo após treinamento. Isso é feito através da escolha do limiar de probabilidade acima do qual a amostra é considerada positiva (pessoa).
 
 \subsection{Conjunto de dados}
     O conjunto de dados consiste em quatro sequências de vídeo coletadas na fábrica durante um experimento para testar a posição da câmera StereoLabs ZED, fixada na ponte rolante a uma altura de 6m. Todas as sequências foram gravadas pela manhã, com iluminação constante e padrão da fábrica. Cada uma mostra trabalhadores distintos desempenhando suas funções, com ocasional deslocamento da ponte pela fábrica, de maneira que os objetos e máquinas nas cenas se repetem, mas não as pessoas. Selecionam-se duas dessas sequências de vídeo para servirem de base exclusivamente para o conjunto de treinamento e as restantes para o de teste.
@@ -121,10 +124,8 @@ This paper describes the development of an industrial safety system that require
 
     Uma característica desses conjuntos é a distribuição acentuadamente desbalanceada das classes: no conjunto estendido, por exemplo, mais de 88\% das amostras pertencem à classe negativa. Isso se demonstrou um problema especialmente ao treinar os classificadores profundos visto que a otimização não convergia. Para atacar esse problema utilizou-se ponderação da função custo de forma a penalizar intensamente erros na classe de menor frequência. Todavia, esse método não se mostrou efetivo. Outra tentativa foi a de um balanceamento artifical dos dados. Embora existam maneiras mais sofisticadas para esse fim, tal como gerar novas amostras aplicando transformações de rotação, translação e introdução de ruído a amostras já existentes, optamos por simplesmente replicar as amostras positivas até sua frequência se equiparar às negativas. Mesmo simplista, essa abordagem se mostrou eficiente, permitindo a convergência da otimização ao mesmo tempo em que não se observou overfitting.
 
-\subsection{Detecção a partir de candidatos previamente extraídos}
-    Para avaliar os detectores propostos nas Seções \ref{sec:classical} e \ref{sec:deep}, primeiramente consideramos que os candidatos já foram extraídos das sequência de vídeo reservadas à teste, formando um conjunto de teste com 2738 amostras negativas e 236 positivas. Avalia-se, dessa forma, o descritor (para a abordagem tradicional) e o classificador conjuntamente. A Figura \ref{fig:result-classifiers} mostra o desempenho dos classificadores sob o mesmo conjunto de teste e a métrica \textit{Area Under Curve} (AUC) \cite{evaluationMetrics}. Pode-se observar claramente que os classificadores profundos superam as técnicas tradicionais baseadas na extração de características criadas manualmente. Apesar das estruturas MLP e CNN terem desempenho similares, uma delas pode ser escolhida dependendo da região de operação que se deseja utilizar (maior taxa de verdadeiros-positivos versus menor taxa de falsos-positivos).
 
-    \begin{figure*}[!t]
+    \begin{figure*}
     \centering
     \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_all.pdf}}%
     \label{fig:result-classifiers-all}
@@ -136,12 +137,12 @@ This paper describes the development of an industrial safety system that require
     \end{figure*}
 
 
-\subsection{Detecção a partir de quadros completos}
-    Em uma segunda etapa consideramos o desempenho global do sistema, incluindo o processo de extração de candidatos. É importante notar que o desempenho observado na Figura \ref{fig:result-classifiers} é um limite superior para o desempenho global, visto que falhas na detecção provenientes da extração de candidatos serão consideradas. Nessa fase o conjunto de teste é composto por quadros inteiros das sequências reservadas para teste, contendo 2336 amostras positivas (frames contendo pessoas) e 64 amostras negativas. A probabilidade de um quadro conter pelo menos uma pessoa é estimada como $1 - \prod_i^n (1-p_i)$ onde $p_i$ é a saída do classificador para o candidato $i$.
+\subsection{Detecção a partir de candidatos previamente extraídos}
+    Para avaliar os detectores propostos nas Seções \ref{sec:classical} e \ref{sec:deep}, primeiramente consideramos que os candidatos já foram extraídos das sequência de vídeo reservadas à teste, formando um conjunto de teste com 2738 amostras negativas e 236 positivas. Avalia-se, dessa forma, o descritor (para a abordagem tradicional) e o classificador conjuntamente. A Figura \ref{fig:result-classifiers} mostra o desempenho dos classificadores sob o mesmo conjunto de teste e a métrica \textit{Area Under Curve} (AUC) \cite{evaluationMetrics}. Pode-se observar claramente que os classificadores profundos superam as técnicas tradicionais baseadas na extração de características criadas manualmente. Apesar das estruturas MLP e CNN terem desempenho similares, uma delas pode ser escolhida dependendo da região de operação que se deseja utilizar (maior taxa de verdadeiros-positivos versus menor taxa de falsos-positivos).
 
-    A Figura \ref{fig:result-system} apresenta o desempenho global do sistema utilizando essa formulação com as combinações de classificadores MLP, CNN e diferentes escalas de janelas do processo de extração de candidatos. Os resultados mostram que um para detector grosso (janela grande), o desempenho dos classificadores MLP e CNN são similares, porque os candidatos que são extraídos têm saídas similares. Entretanto, ao utilizar um detector fino (janela menor), muito mais candidatos são detectados, e portanto existe um número maior de amostras para explorar o desempenho desses classificadores, o que permite verificar que o modelo CNN tem desempenho superior ao do MLP.
 
-    \begin{figure*}[!t]
+    \begin{figure*}
+    \vspace{-3ex}
     \centering
     \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_system.pdf}}%
     \label{fig:result-system-all}
@@ -152,9 +153,16 @@ This paper describes the development of an industrial safety system that require
     \label{fig:result-system}
     \end{figure*}
 
+
+\subsection{Detecção a partir de quadros completos}
+    Em uma segunda etapa consideramos o desempenho global do sistema, incluindo o processo de extração de candidatos. É importante notar que o desempenho observado na Figura \ref{fig:result-classifiers} é um limite superior para o desempenho global, visto que falhas na detecção provenientes da extração de candidatos serão consideradas. Nessa fase o conjunto de teste é composto por quadros inteiros das sequências reservadas para teste, contendo 2336 amostras positivas (frames contendo pessoas) e 64 amostras negativas. A probabilidade de um quadro conter pelo menos uma pessoa é estimada como $1 - \prod_i^n (1-p_i)$ onde $p_i$ é a saída do classificador para o candidato $i$.
+
+    A Figura \ref{fig:result-system} apresenta o desempenho global do sistema utilizando essa formulação com as combinações de classificadores MLP, CNN e diferentes escalas de janelas do processo de extração de candidatos. Os resultados mostram que um para detector grosso (janela grande), o desempenho dos classificadores MLP e CNN são similares, porque os candidatos que são extraídos têm saídas similares. Entretanto, ao utilizar um detector fino (janela menor), muito mais candidatos são detectados, e portanto existe um número maior de amostras para explorar o desempenho desses classificadores, o que permite verificar que o modelo CNN tem desempenho superior ao do MLP.
+
+
 \section{Conclusão}
 \label{sec:conclusion}
 
-    Esse trabalho investiga duas soluções para o problema de detecção de pessoas, uma baseada nas técnicas tradicionais de visão computacional e extração de características manual e outra em métodos de aprendizado profundo. Os resultados apresentados na Seção \ref{sec:results} mostram que o último detector tem desempenho superior ao primeiro, apesar de exigir um conjunto de treinamento maior e oferecer maior custo computacional, portanto requerendo mais poder de processamento. Embora as técnicas de aprendizado profundo sejam consideradas especialmente úteis para grandes datasets nós conseguimos obter um bom resultado mesmo utilizando um conjunto de treinamento de tamanho moderado e desbalanceado.
+    Esse trabalho investiga duas soluções para o problema de detecção de pessoas, uma baseada nas técnicas tradicionais de visão computacional e extração de características manual e outra utilizando métodos de aprendizado profundo. Os resultados apresentados  mostram que o último detector tem desempenho superior ao primeiro, apesar de exigir um conjunto de treinamento maior e oferecer maior custo computacional, portanto requerendo mais poder de processamento. Embora as técnicas de aprendizado profundo sejam consideradas especialmente úteis para grandes conjuntos de dados, nós conseguimos obter um bom resultado mesmo utilizando um conjunto de treinamento de tamanho moderado e desbalanceado.
 
-    Uma possível direção de trabalho futuro é a investigação de um modelo convolucional mais genérico. Ao invés de receber apenas a janela do candidato, essa estrutura teria acesso à imagem de profundidade completa como entrada e a saída seria a probabilidade de existir uma pessoa na cena. Assim como percebemos uma melhoria no processo de classificação permitindo ao modelo escolher a melhor representação para os dados, suspeitamos que permitir o acesso ao todo quadro, em contraposição à pequenas janelas possivelmente contendo humanos, terá um efeito positivo para o desempenho global do sistema.
+    Uma possível direção de trabalho futuro é a investigação de um modelo convolucional que não exija uma detecção prévia de candidatos, tendo como entrada o quadro completo e automaticamente identificando regiões de interesse.
