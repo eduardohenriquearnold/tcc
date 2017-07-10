@@ -118,7 +118,7 @@ This paper describes the development of an industrial safety system that require
 \subsection{Conjunto de dados}
     O conjunto de dados consiste em quatro sequências de vídeo coletadas na fábrica durante um experimento para testar a posição da câmera StereoLabs ZED, fixada na ponte rolante a uma altura de 6m. Todas as sequências foram gravadas pela manhã, com iluminação constante e padrão da fábrica. Cada uma mostra trabalhadores distintos desempenhando suas funções, com ocasional deslocamento da ponte pela fábrica, de maneira que os objetos e máquinas nas cenas se repetem, mas não as pessoas. Selecionam-se duas dessas sequências de vídeo para servirem de base exclusivamente para o conjunto de treinamento e as restantes para o de teste.
 
-    Para formar o conjuntos de treinamento selecionam-se as respectivas sequências de vídeo e, para cada quadro, executa-se o algoritmo de seleção de candidatos, manualmente identificando os candidatos como positivos (pessoas) ou não.  Cada amostra é o recorte da janela do candidato sob a imagem de profundidade.
+    Para formar o conjunto de treinamento selecionam-se as respectivas sequências de vídeo e, para cada quadro, executa-se o algoritmo de seleção de candidatos, manualmente identificando os candidatos como positivos (pessoas) ou não.  Cada amostra é o recorte da janela do candidato sob a imagem de profundidade.
 
     O conjunto de treinamento utilizado para o SVM é composto por 9894 amostras negativas e 1222 positivas. Para o caso de modelos de aprendizado profundo, que possuem muito mais parâmetros, estendemos o conjunto de treinamento, utilizando mais quadros das sequências reservadas para treinamento, obtendo 14966 amostras negativas e 1932 positivas.
 
