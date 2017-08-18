@@ -1,8 +1,6 @@
 \begin{abstract}
 This paper describes the development of an industrial safety system that requires automatic human detection. Two solutions based on top-view depth images are presented. The first one is based on traditional learning techniques using feature extraction and a Support Vector Machine classifier. The second solution uses deep learning methods for classification. The performance analysis of both solutions revealed that the deep learning methods outperform traditional learning techniques on this task, at the cost of requiring a larger training set and increased computational cost.
-\begin{keywords}
-  Human detection, depth images, deep learning, convolutional neural networks, machine learning, computer vision.
-\end{keywords}
+\keywords{Human Detection \and Depth Images \and Deep learning \and Convolutional Neural Networks}
 \end{abstract}
 
 \section{Introduction}
@@ -69,21 +67,22 @@ This paper describes the development of an industrial safety system that require
 
     Neural networks can be used to perform robust classification with complexity varying according to the network structure and depth. A regular artificial neural network is composed by units organized in layers with every unit in a single layer connected to every unit on the following layer. Each unit calculates its output by summing its inputs, weighted by the connections parameters, and then applying an activation function $\phi(x)$. The output is forward propagated through the network from the input layers, through the hidden layers until the output layer.
 
-    In images there are strong local correlation of pixels, so it is not necessary that every unit in each layer is connected to every unit in the following layer, but just to a few local neighbors. This local connectivity is achieved through the convolution of a given layer with a bank of filters. In this sense, convolutional neural networks give a better model for images by reducing the number of parameters thus helping generalization. Furthermore this formulation reduces the classifier impact on translation transformations.
+    In images there are strong local correlation of pixels, so it is not necessary that every unit in each layer is connected to every unit in the following layer, but just to a few local neighbors. This local connectivity is achieved through the convolution of a given layer with a bank of filters. In this sense, convolutional neural networks give a better model for images by reducing the number of parameters thus helping generalization.
 
-    We propose a convolutional network based classifier that receives the candidate image without any feature-extraction process. The model itself will encode a feature set as the convolutional layers are applied, with the final layer doing the classification process and outputting a single probability of that candidate being a human. This system diagram would be the same as presented in Figure \ref{fig:system-diagram} without the feature extraction block and with a real valued output probability.
+    We propose a convolutional network based classifier that receives the candidate image without any feature-extraction process. The model itself will encode a feature map as the convolutional layers are applied, with the final layer doing the classification process and outputting a single probability of that candidate being a human. This system diagram would be the same as presented in Figure \ref{fig:system-diagram} without the feature extraction block and with a real valued output probability.
 
     \subsection{Network architecture}
-
         The first layer used is a batch normalization layer \cite{DBLP:journals/corr/IoffeS15} that normalizes the input batch to zero mean and unit variance, then scales and shift it using additional parameters learned during training. Although this technique is rather explored to avoid the covariance shift in internal layers, it has been proved an eficient method to speed up network convergence. Since candidates can have arbitrary size, the first step is to resize them to a fixed 60 x 60 window. This guarantees a fixed size input to the network.
 
         Following the Visual Geometry Group approach on the ImageNet challenge \cite{Simonyan14c}, an architecture of stacked small filters convolutional and max pooling layers is used. This choice is particularly interesting because it can cover the same receptive field in the input image as a single conv layer with a bigger filter, but with less parameters. Additionally, it has been proved to increase classification performance when compared to the latter method. The convolution operation is done with 3 x 3 filters and uses input padding to keep the output dimensions constant. Dimensionality reduction is achieved across the network by 2 x 2 max pooling layers after each convolutional layer.
 
-        After the convolutional stage, we obtain a feature map which is then flattened and introduced to a dense layer with a single output unit. All the network uses the RELU \cite{nair2010relu} activation function, to avoid the vanishing gradient problem common in deep nets, except for the output unit, which uses the sigmoid function since it should be interpreted as a probability.
+        After the convolutional stage, we obtain a feature map which is then flattened and introduced to a dense layer with a single output unit. All the network uses the RELU \cite{nair2010relu} activation function to avoid the vanishing gradient problem common in deep nets. An exception is made for the output unit, which uses the sigmoid function since it should be interpreted as a probability.
 
     \subsection{Hyperparameter search}
+        A natural question that arises when designing the architecture is the number of convolutional layers it should have. Having a small amount of convolutional layers will result in a high dimensional feature map, thus shifting most of the network parameters to the classification dense layer. On the other hand, an excessive deep network may be too slow for real time operation. Since the input image size is 60 x 60 and a 2 x 2 max pooling size is applied after each convolutional layer the maximum number of these layers can be 5, when the feature map size reaches 1 x 1 size.
 
-        A natural question that arises when designing the architecture is the number of convolutional layers it should have. Having a small amount of convolutional layers will result in a high dimensional feature map, thus shifting most of the network parameters to the classification dense layer. On the other hand, an excessive deep network may be too slow for real time operation. To choose this hyperparameter we ran a few training experiments with 20 epochs, 32 filters per conv layer and evaluated the Matthews correlation coefficient \cite{evaluationMetrics} on the validation set. Although the different network configurations presented similar result metrics, the 2 and 5 layer configurations showed the best results. We have decided for the latter given it has a more compact feature representation: its last conv layer has 16 dimensions, versus the 3600 dimensions of 2 conv layer network.
+
+        \iffalse To choose this hyperparameter we ran a few training experiments with 20 epochs, 32 filters per conv layer and evaluated the Matthews correlation coefficient \cite{evaluationMetrics} on the validation set. Although the different network configurations presented similar result metrics, the 2 and 5 layer configurations showed the best results. We have decided for the latter given it has a more compact feature representation: its last conv layer has 16 dimensions, versus the 3600 dimensions of 2 conv layer network. \fi
 
         The number of filters per convolutional layer is another hyperparameter that must be choosen to adjust the model capacity.  Having established the number of convolutional layers, we ran a following series of training experiments using
 
@@ -104,13 +103,11 @@ This paper describes the development of an industrial safety system that require
 
     \begin{figure*}[!t]
     \centering
-    \end{figure*}
     \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_all.pdf}}%
     \label{fig:result-classifiers-all}
+    \hfil
     \subfloat[10 \% interest zone]{\includegraphics[width=0.45\linewidth]{results/ROC_all_zoom.pdf}}%
-    \subfloat[10 \% zona interesse]{\includegraphics[width=0.45\linewidth]{results/ROC_all_zoom.pdf}}%
     \caption{Classifiers performance.}
-    \caption{Desempenho dos classificadores.}
     \label{fig:result-classifiers}
     \end{figure*}
     In a second phase we consider the overall system performance, including the candidate extraction step. It is important to note that the performance observed in Figure \ref{fig:result-classifiers} is an upper bound of the overall performance, since now there will be miss-detections from the candidate extraction step. Another consideration is that in this phase the test set is composed of entire frames, so the probability of the frame contain at least one head could be calculated using
@@ -123,7 +120,6 @@ This paper describes the development of an industrial safety system that require
     Para avaliar os detectores propostos nas Seções \ref{sec:classical} e \ref{sec:deep}, primeiramente consideramos que os candidatos já foram extraídos das sequência de vídeo reservadas à teste, formando um conjunto de teste com 2738 amostras negativas e 236 positivas. Avalia-se, dessa forma, o descritor (para a abordagem tradicional) e o classificador conjuntamente. A Figura \ref{fig:result-classifiers} mostra o desempenho dos classificadores sob o mesmo conjunto de teste e a métrica \textit{Area Under Curve} (AUC) \cite{evaluationMetrics}. Pode-se observar claramente que os classificadores profundos superam as técnicas tradicionais baseadas na extração de características criadas manualmente. Apesar das estruturas MLP e CNN terem desempenho similares, uma delas pode ser escolhida dependendo da região de operação que se deseja utilizar (maior taxa de verdadeiros-positivos versus menor taxa de falsos-positivos).
     \begin{figure*}[!t]
     \vspace{-3ex}
-    \end{figure*}
     \centering
     \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_system.pdf}}%
     \subfloat[10 \% interest zone, best results]{\includegraphics[width=0.45\linewidth]{results/ROC_system_zoom_best.pdf}}%
@@ -132,9 +128,9 @@ This paper describes the development of an industrial safety system that require
     \label{fig:result-system-all-zoom}
     \caption{Desempenho global do sistema.}
     \label{fig:result-system}
-\section{Conclusion}
+    \end{figure*}
 
-\section{Conclusão}
+\section{Conclusion}
     This paper investigates two solutions for the human detection problem, one based on traditional computer vision methods and another on deep learning techniques. The results presented in Section \ref{sec:results} show that the last method outperforms traditional hand-engineered feature extraction and classification, although they require a larger training set and have higher complexity, thus requiring more processing power. While deep learning techniques are widely regarded as useful for big datasets, we were still able to achieve good performance, even under a moderate-sized unbalanced dataset.
 
     One possible direction of future work is investigating a more general CNN structure. Instead of receiving just the candidate window, it would receive the whole depth frame as input and output the probability that frame contains a human. As we saw an improvement of the classification by letting the model choose the best representation of the data, we suspect that allowing the model to access the whole frame as opposed to only small windows possibly containing humans will improve the overall system performance.
