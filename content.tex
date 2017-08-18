@@ -57,9 +57,9 @@ This paper describes the development of an industrial safety system that require
        First the candidate window is divided in 18 annulus, or rings, with equal distance between the inner and outer radius and whose center coincides with the window center. Then for each ring the mean of the pixels that belong to it is calculated, resulting in a 18 dimensional vector of mean pixel intensity. Next, the mean value of the inner ring (lower radius equals zero) is subtracted from this vector. Following, we perform a discrete differentiation of this vector (subtraction between adjacent dimensions) to enunciate the differences in rings mean values, resulting in a 15-dimensional feature vector.
 
     \subsection{SVM classifier}
-      We use a binary SVM classifier with Radial Basis Function (RBF) kernel \cite{rbfkernel} to validate the candidates. Recall that the kernel parameter $\sigma$ along with the SVM hyper-parameter $C$ control the trade-off between training performance and generalization on unseen data. Higher $C$ values penalize training set errors, while lower values offer a more general performance on the test set, conversely, the $\sigma$ parameter penalizes in the inverse manner.
+      We use a binary SVM classifier with Radial Basis Function (RBF) kernel \cite{rbfkernel} to validate the candidates. Recall that the kernel parameter $\sigma$ along with the SVM hyperparameter $C$ control the trade-off between training performance and generalization on unseen data. Higher $C$ values penalize training set errors, while lower values offer a more general performance on the test set, conversely, the $\sigma$ parameter penalizes in the inverse manner.
 
-      To choose the appropriate values of the hyper-parameters $C$ and $\sigma$ we use a 5 fold cross-validation process, scoring the \textit{precision} metric \cite{evaluationMetrics}. After the hyper-parameters have been chosen the final training process is carried out with the entire training dataset using the Scikit-learn \cite{scikit-learn} toolkit.
+      To choose the appropriate values of the hyperparameters $C$ and $\sigma$ we use a 5 fold cross-validation process, scoring the \textit{precision} metric \cite{evaluationMetrics}. After the hyperparameters have been chosen the final training process is carried out with the entire training dataset using the Scikit-learn \cite{scikit-learn} toolkit.
 
 
 \section{Deep learning based solution}
@@ -79,12 +79,14 @@ This paper describes the development of an industrial safety system that require
         After the convolutional stage, we obtain a feature map which is then flattened and introduced to a dense layer with a single output unit. All the network uses the RELU \cite{nair2010relu} activation function to avoid the vanishing gradient problem common in deep nets. An exception is made for the output unit, which uses the sigmoid function since it should be interpreted as a probability.
 
     \subsection{Hyperparameter search}
-        A natural question that arises when designing the architecture is the number of convolutional layers it should have. Having a small amount of convolutional layers will result in a high dimensional feature map, thus shifting most of the network parameters to the classification dense layer. On the other hand, an excessive deep network may be too slow for real time operation. Since the input image size is 60 x 60 and a 2 x 2 max pooling size is applied after each convolutional layer the maximum number of these layers can be 5, when the feature map size reaches 1 x 1 size.
+        A natural question that arises when designing the architecture is the number of convolutional layers it should have. Having a small amount of convolutional layers will result in a high dimensional feature map, thus shifting most of the network parameters to the classification dense layer. On the other hand, an excessive deep network may be too slow for real time operation. Since the feature map size will decrease half after each layer the number of convolutional layers can range up to 5.
+
+        To choose this hyperparameter we ran training experiments with networks ranging from 1 to 5 conv layers for 50 epochs. We also adjusted the number of filters of each network so that the amount of parameters would be mostly the same at around 1800, so a fair comparison could be made. We evaluate the Matthews correlation coefficient \cite{evaluationMetrics} on the validation set. The results shown that after 3 convolutional layers the performance is mostly the same.
 
 
         \iffalse To choose this hyperparameter we ran a few training experiments with 20 epochs, 32 filters per conv layer and evaluated the Matthews correlation coefficient \cite{evaluationMetrics} on the validation set. Although the different network configurations presented similar result metrics, the 2 and 5 layer configurations showed the best results. We have decided for the latter given it has a more compact feature representation: its last conv layer has 16 dimensions, versus the 3600 dimensions of 2 conv layer network. \fi
 
-        The number of filters per convolutional layer is another hyperparameter that must be choosen to adjust the model capacity.  Having established the number of convolutional layers, we ran a following series of training experiments using
+        The number of filters per convolutional layer is another hyperparameter that must be choosen to adjust the model capacity. Having established the number of convolutional layers, we ran a following series of training experiments using
 
     \subsection{Implementation}
         The training process consists of minimizing an objective function, in this case, the binary cross-entropy function \cite{DLbook}, also known as log-loss. Its use is justified by the probabilistic nature of the output layer. The optimization method used is a variation of Batch Stochastic Gradient Descent (B-SGD) called Adam \cite{kingma2014adam}, which uses an adaptive learning rate based on momentum considerations (gradient based) for each parameter.
@@ -93,6 +95,12 @@ This paper describes the development of an industrial safety system that require
 
         The computer vision task, candidate extraction, resizing, was done in C++ with the OpenCV library. The deep classifier was implemented using Keras \cite{keras} on top of Theano \cite{theano}, allowing GPU acceleration and enabling a fast training process (an epoch per minute).
 
+\section{Dataset}
+The dataset was generated through video sequences recorded with the StereoLabs ZED depth camera during a one time visit to the factory. All these videos were recorded with the camera fixed on the crane at a height of 6m during the morning with constant and standard indoor illumination. Each video shows distinct workers on their tasks with the crane occasionally moving along the plant, and although some machines and objects are seen repeatedly, no single individual appear on distinct videos. Two video samples are selected exclusively for training and the two remaining for the test set.
+
+The training set was generated by selecting the reserved video samples and applying the candidate detection algorithm, manually labelling each candidate as a person or not. Each sample in this set is the corresponding candidate slice of the depth image. This allowed us to get 14966 negative and 1932 positive samples in this set. It is important to note the highly biased nature of the traing set: more than 88\% of the samples belong to the negative class.
+
+There are two types of test sets: the candidate and whole frames test set. The first one is used to evaluate the classifiers individually, while the latter can be used to assess the whole system performance. To generate the candidate test set the same process used for training set generation is repeated, but using the reserved test video sequences, obtaining 2738 negative and 235 positive samples. The whole-frames test set is generated by selecting a number of frames from the reserved videos and labelling them as positive (at least one person appears) or not. This results in a set composed by 2334 positive and 66 negative frames.
 
 \section{Results}
 \label{sec:results}
@@ -121,13 +129,12 @@ This paper describes the development of an industrial safety system that require
     \begin{figure*}[!t]
     \vspace{-3ex}
     \centering
-    \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_system.pdf}}%
+    \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_system.pdf}}
+    \label{fig:result-system-all-zoom}
     \subfloat[10 \% interest zone, best results]{\includegraphics[width=0.45\linewidth]{results/ROC_system_zoom_best.pdf}}%
+    \label{fig:result-system}
     \hfil
     \caption{Overall system performance.}
-    \label{fig:result-system-all-zoom}
-    \caption{Desempenho global do sistema.}
-    \label{fig:result-system}
     \end{figure*}
 
 \section{Conclusion}
