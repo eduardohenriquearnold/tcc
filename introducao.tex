@@ -29,29 +29,9 @@
 		\end{itemize}
 	\end{frame}
 
-\subsection{Aprendizado tradicional vs profundo}
-%https://www.quora.com/What-is-the-difference-between-deep-learning-and-shallow-learning#
-%http://sebastianraschka.com/faq/docs/difference-deep-and-normal-learning.html
-
-	\begin{frame}{Métodos tradicionais de aprendizado}
-		\begin{itemize}
-			\item Requerem pré-processamento das amostras: descrição.
-			\item Descritor requer conhecimento do problema, tem maior ênfase.
-			\item Modelos comuns: SVM, redes neurais, \emph{random forests}.
-		\end{itemize}
-	\end{frame}
-
-	\begin{frame}{Métodos de aprendizado profundo}
-		\begin{itemize}
-			\item Aprendizado de representação.
-			\item Modelo com muitos parâmetros e diversas camadas.
-			\item Requer um grande número de amostras para o treinamento.
-			\item Modelos comuns: Redes neurais profundas, convolucionais, recursivas (LSTM).
-		\end{itemize}
-	\end{frame}
 
 \subsection{Métodos de detecção de objetos}
-	\begin{frame}{Utilizando métodos tradicionais}
+	\begin{frame}{Utilizando descritores}
 	\begin{enumerate}
 	\item Identificar candidatos.
 	\item Utilizar um extrator de características para descrição do objeto.
@@ -61,7 +41,7 @@
 	\fig{diagram/system}{}[1.1][1]
 	\end{frame}
 
-	\begin{frame}{Utilizando técnicas profundas}
+	\begin{frame}{Utilizando aprendizado de representação}
 	\begin{enumerate}
 	\item Identificar candidatos na imagem.
 	\item Introduzir a amostra em um classificador profundo, obtendo a classe correspondente.
@@ -73,7 +53,7 @@
 	\begin{frame}{Panorama do trabalho}
 		\begin{itemize}
 			\item Detecção utilizando métodos tradicionais de aprendizado.
-			\item Classificação utilizando aprendizado profundo.
+			\item Classificação utilizando aprendizado de representação.
 			\item Resultados
 		\end{itemize}
 	\end{frame}
