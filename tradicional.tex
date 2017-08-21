@@ -1,85 +1,58 @@
 \section{Detecção utilizando métodos tradicionais}
 
-\subsection{Obtenção de candidatos}
-	\begin{frame}{\insertsubsection}
-		\begin{itemize}
-		\item<1-> Utilizar informação da profundidade.
-		\item<2-> Hipótese: pessoas estão entre os objetos mais altos da cena.
-		\item<2-> Solução: obter máximos locais.
-		\end{itemize}
+\begin{frame}{Obtenção de candidatos}
+	\begin{itemize}
+	\item<1-> Utilizar informação da profundidade.
+	\item<2-> Hipótese: pessoas estão entre os objetos mais altos da cena.
+	\item<2-> Solução: obter máximos locais.
+	\item<2-> Centralização com \textit{mean shift}.
+	\end{itemize}
 
-		\only<1>{
-		\begin{columns}[T]
-		\column{0.5\textwidth} \fig{tradicional/color}{Imagem de cor.}[1][0.7]
-		\column{0.5\textwidth} \fig{tradicional/depth}{Imagem de profundidade.}[1][0.7]
-		\end{columns}
-		}
-		\only<2->{\fig{tradicional/local_max}{}[1][0.7]}
-	\end{frame}
+	\only<1>{
+	\begin{columns}[T]
+	\column{0.5\textwidth} \fig{tradicional/color}{Imagem de cor.}[1][0.7]
+	\column{0.5\textwidth} \fig{tradicional/depth}{Imagem de profundidade.}[1][0.7]
+	\end{columns}
+	}
+	\only<2->{\fig{tradicional/candidates_depth}{}[1][0.7]}
+\end{frame}
 
-	\begin{frame}{\insertsubsection}
-		\begin{itemize}
-		\item Estima-se quadrado sob o ponto de máximo.
-		\item Utiliza-se \emph{mean shift} para centralizar o quadrado sob o candidato.
-		\item O candidato é considerado como o recorte do quadrado sob a imagem original.
-		\end{itemize}
-		\fig{tradicional/candidates_depth}{Candidatos obtidos.}[1][0.5]
-	\end{frame}
+\begin{frame}{Descritores de características}
+	\begin{columns}[T]
+	\column{0.5\textwidth}
+	\center Grades simples
 
-\subsection{Descritores de características}
-	\begin{frame}{Grades simples}
-		\begin{columns}
-		\column{0.5\textwidth}
-		\begin{enumerate}
-			\item Dividir o candidato em 7x7 blocos iguais.
-			\item Obter média dos pixels de cada bloco $\rightarrow$ Matriz de médias 7x7.
-			\item Subtrair dessa matriz a média do bloco central.
-			\item Gerar histograma da matriz resultante, $x \in \mathbb{R}^d$, com $d=32$ intervalos.
-		\end{enumerate}
-		\column{0.5\textwidth}
-		\fig{tradicional/descGradesSimples}{}
-		\end{columns}
-	\end{frame}
+	\fig{tradicional/descGradesSimples}{}
 
-	\begin{frame}{Anéis concêntricos}
-		\begin{columns}
-		\column{0.5\textwidth}
-		\begin{enumerate}
-			\item Dividir o candidato em $n$ coroas circulares com espaçamento uniforme.
-			\item Obter vetor de médias dos pixels de cada coroa $\rightarrow$ $m \in \mathbb{R}^n$.
-			\item Subtrair desse vetor a média da coroa interna, $m_0$.
-			\item Diferenciar o vetor resultante, resultando em $x \in \mathbb{R}^d$  com $d=n-1$.
-		\end{enumerate}
-		\column{0.5\textwidth}
-		\fig{tradicional/descAneis}{}
-		\end{columns}
-	\end{frame}
+	\column{0.5\textwidth}
+	\center Aneis circulares
 
-\subsection{Classificação}
-	\begin{frame}{\textit{Support Vector Machine} binário}
-		Seja o dataset o conjunto $(x_i, y_i)$ para $i=1 \dots N$ com $x_i \in \mathbb{R}^d$ e $y_i \in \{-1, 1\}$. Sejam os parâmetros do modelo $w \in \mathbb{R}^d$ e $b \in \mathbb{R}$.
+	\fig{tradicional/descAneis}{}
+	\end{columns}
+\end{frame}
 
-		A função decisão é dada por
-		\begin{equation*}
-		f(x)=w^T x+ b.
-		\end{equation*}
 
-		\fig{svm/svm-margin}{}[1][0.6]
-	\end{frame}
+\begin{frame}{Classificador \textit{Support Vector Machine} binário}
+	\begin{columns}[T]
+	\column{0.4\textwidth}
+	A função decisão é dada por
+	\begin{equation*}
+	f(x)=w^T x+ b.
+	\end{equation*}
 
-	\begin{frame}{Treinamento}
-		O treinamento consiste na otimização (convexa) da função custo
-		\begin{equation*}
-			\label{eq:svm-cost}
-			\min_{w,b} P(w,b) = \textcolor{blue}{\frac{1}{2}\|w\|^2} + C\textcolor{red}{\sum_i H_1(y_i f(x_i))},
-		\end{equation*}
+	\fig{svm/svm-margin}{}[1][0.6]
+	\column{0.6\textwidth}
+	Otimização da função custo
+	\begin{equation*}
+		\label{eq:svm-cost}
+		\min_{w,b} P(w,b) = \textcolor{blue}{\frac{1}{2}\|w\|^2} + C\textcolor{red}{\sum_i H_1(y_i f(x_i))},
+	\end{equation*}
 
-		\begin{itemize}
-			\item<1-> Maximização da margem \emph{versus} erros de treinamento.
-			\item<2-> Transformação de espaço: Kernel RBF, parâmetro $\sigma$.
-			\item<3-> Escolha hiper-parâmetros: Validação Cruzada (5 conjuntos).
-		\end{itemize}
+	\begin{itemize}
+		\item Maximização da margem \emph{versus} erros de treinamento.
+		\item Transformação de espaço: Kernel RBF, parâmetro $\sigma$.
+		\item Escolha hiper-parâmetros: Validação Cruzada (5 conjuntos).
+	\end{itemize}
+	\end{columns}
+\end{frame}
 
-		\only<1>{\fig{svm/svm-margin-ex}{}[1][0.5]}
-		\onslide<2>{\fig{svm/svm-kernel}{}[1][0.5]}
-	\end{frame}

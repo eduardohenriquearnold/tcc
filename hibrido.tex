@@ -1,117 +1,28 @@
-\section{Classificação utilizando aprendizado profundo}
+\section{Classificação utilizando aprendizado de representação}
 
-\subsection{Redes neurais}
-
-\begin{frame}{Rede neural artificial}
-	Também chamada de Rede perceptron multicamadas (MLP).
-
-	\fig{deep-p/deep-params}{}[1][0.4]
-
-	A ativação (saída) da unidade $j$ na camada $l$ é dada por
-	\begin{equation}
-	a^l_j = \textcolor{red}{\phi} \left( \sum_k w_{jk}^l a_k^{l-1} + b_j^l \right).
-	\end{equation}
-\end{frame}
-
-\begin{frame}{Funções de ativação}
-	\begin{columns}[T]
-	\column{0.5\textwidth}
-		\textbf{Sigmoide}
-		\begin{itemize}
-			\item Historicamente utilizada para toda rede.
-			\item Saturação nas extremidades.
-			\item Saída no intervalo $[0,1]$, interpretação probabilística.
-		\end{itemize}
-
-		\begin{equation*}
-		\sigma(z) = \frac{1}{1+e^{-z}}.
-		\end{equation*}
-
-		\fig{deep/sigmoid}{Plot sigmoide}[0.7][0.7]
-	\column{0.5\textwidth}
-		\textbf{Rectified Linear Unit (RELU)}
-		\begin{itemize}
-			\item Derivada constante.
-			\item Usada nas camadas intermediárias.
-			\item Permite treinamento em redes profundas.
-		\end{itemize}
-
-		\begin{equation*}
-			\text{RELU}(z) = \max\{0,z\}.
-		\end{equation*}
-
-		\fig{deep/relu}{Plot RELU}[0.7][0.7]
-	\end{columns}
-\end{frame}
-
-\begin{frame}{Rede neural artificial (MLP)}
+\begin{frame}{Rede neural densamente ligada (MLP)}
 	\fig{diagram/diag-mlp}{}
-	\pause
 	\vspace{-30pt}
-	\center Aprendizado profundo?
-	1.975.297 parâmetros
+	\center 1.975.297 parâmetros
 \end{frame}
 
-\subsection{Redes convolucionais}
-\begin{frame}{\insertsubsection}
-	\begin{itemize}
-	\item Variação das redes neurais.
-	\item Os nós são ligados através de campos receptivos (grupo de pixels adjacentes).
-	\item Pesos compartilhados, redução dos parâmetros.
-	\item Invariância à translação.
-	\end{itemize}
-
-	\begin{columns}
-		\column{0.5\textwidth}
-		\fig{deep/convnet-receptivefield}{}[0.8][0.4]
-
-		\column{0.5\textwidth}
-		Pode-se observar essa operação como uma convolução:
-		\begin{equation*}
-		a^1 = \phi(w \ast a^0 + b).
-		\end{equation*}
-
-	\end{columns}
-
-\end{frame}
-
-\begin{frame}{\insertsubsection (CNN)}
+\begin{frame}{Rede neural convolucional (CNN)}
 	\fig{diagram/diag-cnn}{}[1.1][1]
 
 	\vspace{-30pt}
 	\center 739.745 parâmetros
 \end{frame}
 
-\subsection{Processo de treinamento}
 
-\begin{frame}{Função custo}
+\begin{frame}{Treinamento}
 	\begin{itemize}
-	\item Indica o desempenho do modelo conjunto de treinamento.
-	\end{itemize}
-
-	\pause
-
-	Utiliza-se a função entropia cruzada binária (\textit{binary cross entropy})
+	\item Otimização (não convexa) da função entropia cruzada binária (\textit{binary cross entropy})
 	\begin{equation*}
 	C(\theta) = -\frac{1}{N} \sum_i^N \left[y_i \ln f(x_i,\theta) + (1-y_i) \ln (1-f(x_i,\theta))\right]
 	\end{equation*}
 
-	\fig{deep/cross-entropy-loss}{Função custo entropia cruzada para amostras negativas (esquerda) e positivas (direita).}[1][0.5]
-\end{frame}
-
-\begin{frame}{Otimização}
-	\begin{itemize}
-		\item Otimização não convexa.
-		\item Utiliza-se o algoritmo \emph{Mini-Batch Gradient Descent}.
-		\item MB-GD é uma variação que avalia o \textbf{gradiente} em um conjunto de amostras ($1 < k \leq N$) a cada iteração.
-	\end{itemize}
-
-	\pause
-
-	\textbf{Propagação reversa de erros - Backpropagation} \\
-	\begin{itemize}
-		\item O cálculo do gradiente requer as derivadas parciais de cada parâmetro.
-		\item Numa rede profunda o cálculo simbólico se torna inviável.
-		\item Esse algoritmo faz uma propagação reversa do erro na saída para encontrar as derivadas parciais simultaneamente.
+	\item Utiliza-se o algoritmo de otimização para mini-batch Adam.
+	\item Dificuldades de convergência por enfrentar conjunto fortemente desbalanceado.
+	\item Não utilizou-se regularização.
 	\end{itemize}
 \end{frame}
