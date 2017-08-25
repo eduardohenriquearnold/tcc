@@ -1,33 +1,42 @@
 \section{Detecção utilizando métodos tradicionais}
 
+\begin{frame}{Trabalho de referência}
+	Michael Rauter. 2013. Reliable Human Detection and Tracking in Top-View Depth Images. In \textit{Proceedings of the 2013 IEEE Conference on Computer Vision and Pattern Recognition Workshops} (CVPRW '13).
+
+	\begin{itemize}
+		\item Detecção de candidatos baseados em imagem de profundidade.
+		\item Descritores de características baseado em blocos simples.
+		\item Classificador SVM.
+		\item Ambiente controlado.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Imagens de profundidade}
+\begin{columns}[T]
+\column{0.5\textwidth} \fig{tradicional/color}{Imagem de cor.}[1][0.7]
+\column{0.5\textwidth} \fig{tradicional/depth}{Imagem de profundidade.}[1][0.7]
+\end{columns}
+\end{frame}
+
 \begin{frame}{Obtenção de candidatos}
 	\begin{itemize}
-	\item<1-> Utilizar informação da profundidade.
-	\item<2-> Hipótese: pessoas estão entre os objetos mais altos da cena.
-	\item<2-> Solução: obter máximos locais.
-	\item<2-> Centralização com \textit{mean shift}.
+	\item Hipótese: pessoas estão entre os objetos mais altos da cena.
+	\item Solução: obter máximos locais.
+	\item Centralização com \textit{mean shift}.
 	\end{itemize}
 
-	\only<1>{
-	\begin{columns}[T]
-	\column{0.5\textwidth} \fig{tradicional/color}{Imagem de cor.}[1][0.7]
-	\column{0.5\textwidth} \fig{tradicional/depth}{Imagem de profundidade.}[1][0.7]
-	\end{columns}
-	}
-	\only<2->{\fig{tradicional/candidates_depth}{}[1][0.7]}
+	\fig{tradicional/candidates_depth}{}[1][0.7]
 \end{frame}
 
 \begin{frame}{Descritores de características}
 	\begin{columns}[T]
 	\column{0.5\textwidth}
-	\center Grades simples
-
-	\fig{tradicional/descGradesSimples}{}
+		\center Grades simples
+		\fig{tradicional/descGradesSimples}{}
 
 	\column{0.5\textwidth}
-	\center Aneis circulares
-
-	\fig{tradicional/descAneis}{}
+		\center Aneis circulares
+		\fig{tradicional/descAneis}{}
 	\end{columns}
 \end{frame}
 
@@ -55,4 +64,3 @@
 	\end{itemize}
 	\end{columns}
 \end{frame}
-
