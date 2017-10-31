@@ -54,7 +54,7 @@ This paper describes the development of an industrial safety system that require
       This descriptor divides the candidate window into 7x7 blocks, as illustrated in Figure \ref{fig:descriptors}. The mean value of pixels belonging to each block is calculated, generating a 7x7 matrix of mean pixel intensities. Next, the mean value of the central block is subtracted from the matrix. Finally, the resulting matrix histogram is calculated with 32 bins. The histogram vector, with 32 dimensions, is considered the feature vector, which sums up to 49 (number of blocks).
 
     \subsection{Concentric rings feature extractor}
-       First the candidate window is divided in 18 annulus, or rings, with equal distance between the inner and outer radius and whose center coincides with the window center. Then for each ring the mean of the pixels that belong to it is calculated, resulting in a 18 dimensional vector of mean pixel intensity. Next, the mean value of the inner ring (lower radius equals zero) is subtracted from this vector. Following, we perform a discrete differentiation of this vector (subtraction between adjacent dimensions) to enunciate the differences in rings mean values, resulting in a 15-dimensional feature vector.
+       First the candidate window is divided in 18 annulus, or rings, with equal distance between the inner and outer radius and whose center coincides with the window center. Then for each ring the mean of the pixels that belong to it is calculated, resulting in a 18 dimensional vector of mean pixel intensity. Next, the mean value of the inner ring (lower radius equals zero) is subtracted from this vector. Following, we perform a discrete differentiation of this vector (subtraction between adjacent dimensions) to enunciate the differences in rings mean values, resulting in a 17-dimensional feature vector.
 
     \subsection{SVM classifier}
       We use a binary SVM classifier with Radial Basis Function (RBF) kernel \cite{rbfkernel} to validate the candidates. Recall that the kernel parameter $\sigma$ along with the SVM hyperparameter $C$ control the trade-off between training performance and generalization on unseen data. Higher $C$ values penalize training set errors, while lower values offer a more general performance on the test set, conversely, the $\sigma$ parameter penalizes in the inverse manner.
@@ -83,28 +83,58 @@ This paper describes the development of an industrial safety system that require
 
         To choose this hyperparameter we ran training experiments with networks ranging from 1 to 5 conv layers for 50 epochs. We also adjusted the number of filters of each network so that the amount of parameters would be mostly the same, at around 1800, so a fair comparison could be made. The initial parameters of the network have a big impact on the final performance, as the initialization of some parameters may lead to local minima. To reduce the impact of the initial values of parameters, we ran 40 training trials for for each choice of the number of layers, evaluating the Matthews correlation coefficient \cite{evaluationMetrics} on the validation set (30\% split on training set). The best run of each choice of layer count was selected. The results presented in Table \ref{table:evalNumberConvLayers} show that the performance improves as more convolutional layers are added. Although the increase in performance is not drastical we decided to use a 5 convolutional layer network, especially considering that the time penalty for using such an architecture is not too high. Note that although
 
-	\begin{table}
-	 \begin{center}
-	  \label{table:evalNumberConvLayers}
-	  \caption{Evaluation of networks with different number of convolutional layers. Columns indicate the total amount of parameters of the network, the dimension of the feature map (flattened output of last convolutional layer), Matthews score on validation set and evaluation time (on validation set with 929 samples).}
-	  \begin{tabular}{ | l | c | l | c | c |}
-	    \hline
-	    \#conv layer & \#params & Feature map dim & Score & Eval time (ms)   \\ \hline
-	    1            & 1825    &  1800           & 0.865 &  596             \\ 
-	    2            & 1745    &  1350           & 0.884 &  968             \\ 
-	    3            & 1645    &  392            & 0.883 &  1050            \\ 
-	    4            & 1909    &  72             & 0.887 &  1080            \\ 
-	    5            & 1874    &  7              & 0.891 &  1260            \\ \hline
-		  \end{tabular}
-		\end{center}
-	 \end{table}
+      	\begin{table}
+      	 \begin{center}
+      	  \label{table:evalNumberConvLayers}
+      	  \caption{Evaluation of networks with different number of convolutional layers. Columns indicate the total amount of parameters of the network, the dimension of the feature map (flattened output of last convolutional layer), Matthews score on validation set and evaluation time (on validation set with 929 samples), respetively.}
+      	  \begin{tabular}{ | l | c | l | c | c |}
+      	    \hline
+      	    \#Conv layer & \#Params & Feature map dim & Score & Eval time (ms)   \\ \hline
+      	    1            & 1825    &  1800           & 0.865 &  596             \\
+      	    2            & 1745    &  1350           & 0.884 &  968             \\
+      	    3            & 1645    &  392            & 0.883 &  1050            \\
+      	    4            & 1909    &  72             & 0.887 &  1080            \\
+      	    5            & 1874    &  7              & 0.891 &  1260            \\ \hline
+      		  \end{tabular}
+      		\end{center}
+      	 \end{table}
 
-        The number of filters per convolutional layer is another hyperparameter that must be choosen carefuly to adjust the model capacity. By increasing the number of filters the network will be able to handle more complex image structures, but may overfit if there is not enough data. There is also an increase in the computation time when adding more filters. So, clearly the number of filters per layer must be chosen carefully.  Having established the number of convolutional layers, we ran a following series of training experiments.
+        The number of filters per convolutional layer is another hyperparameter that must be choosen carefuly to adjust the model capacity. By increasing the number of filters the network will be able to handle more complex image structures, but may overfit if there is not enough data. There is also an increase in the computation time when adding more filters. So, clearly the number of filters per layer must be chosen carefully. Having established the number of convolutional layers, we ran a following series of training experiments using 50 epochs for training, 30\% validation split, and getting the best result for 20 training trials to reduce the effect of weights initialization and local minima. The results are reported on Table \ref{table:evalNumberFilters}.
+
+        \begin{table}
+      	 \begin{center}
+      	  \label{table:evalNumberFilters}
+      	  \caption{Evaluation of 5-layer networks with varying number of convolutional filter. Columns indicate number of convolutional filters per layer, total amount of parameters of the network, Matthews score on validation set and evaluation time (on validation set with 929 samples), respectively.}
+      	  \begin{tabular}{ | l | c | c | c |}
+      	    \hline
+      	    \#Filters  & \#Params  &  Score   & Eval time (ms)   \\ \hline
+      	    4,4,8,8,16 &   2257    &  0.8584  &    824           \\
+      	    8,8,8,8,8  &   2429    &  0.8614  &    1110           \\ \hline
+      		  \end{tabular}
+      		\end{center}
+      	 \end{table}
+
+        The results suggest that having more filters per layer provide a better result without significantly enlarging the evaluation time. So we defined our architecture to be a 5-layer convolutional network with 8 filters per convolutional layer, yielding a 2429 parameters model.
+
+
+    \subsection{Training}
+        The training process consists of minimizing an objective function, in this case, the binary cross-entropy function \cite{DLbook}, also known as log-loss. Its use is justified by the probabilistic nature of the output layer. The optimization method used is a variation of Batch Stochastic Gradient Descent (B-SGD) called Adagrad \cite{duchi2011adaptive}, which uses an adaptive learning rate for each parameter based on the frequency it is updated.
+
+        The ideal number of epochs used for training was found through a validation curve, generated using a 70\% split of the trainng set, evaluated using the Matthews metric, observed in Figure \ref{fig:validation_curve}. It is possible to see a saturation of the validation performance between 20 and 30 epochs and a slow tendency to overfit after 40 epochs. The ideal number of epochs was then chosen to be 30. Note that the training will use the whole training set, not the 70\% split used in this evaluation.
+
+        \begin{figure*}[!t]
+        \centering
+        \includegraphics[width=0.5\linewidth]{results/validation_curve.pdf}
+        \caption{Validation curve. 70\% split on training set.}
+        \label{fig:validation_curve}
+        \end{figure*}
+
+        We experimented two regularization techniques. Primarily we used L2 regularization on the convolutional kernels in two scales, with $\lambda = 0.01$ and $\lambda = 0.1$. In the first case the model performance was similar to the model obtained without regularization. In the second case, the model was prevented to learn the data underlying structure due to the strong regularization applied, causing underfitting. Another technique used was adding a Dropout layer after every convolutional layer. The drop rate used was 20\% and the results consistently shown that regularization degraded the model performance. In conclusion, since the results using regularization techniques were not satisfactory when compared to the standard approach, and considering the validation curve on Figure \ref{fig:validation_curve}, which indicates that no overfit occurs before 30 epochs, we decided to train the model without regularization techniques.
+
+        Data augmentation was performed by using random rotation and shifts in the original training candidates. We observe that the dataset is extremely unbalanced, as described in Section \ref{sec:dataset}
 
     \subsection{Implementation}
-        The training process consists of minimizing an objective function, in this case, the binary cross-entropy function \cite{DLbook}, also known as log-loss. Its use is justified by the probabilistic nature of the output layer. The optimization method used is a variation of Batch Stochastic Gradient Descent (B-SGD) called Adam \cite{kingma2014adam}, which uses an adaptive learning rate based on momentum considerations (gradient based) for each parameter.
-
-        The computer vision task, candidate extraction, resizing, was done in C++ with the OpenCV library. The deep classifier was implemented using Keras \cite{keras} on top of Theano \cite{theano}, allowing GPU acceleration and enabling a fast training process (an epoch per minute).
+        The computer vision task, candidate extraction, resizing, was done in C++ with the OpenCV library. The deep classifier was implemented using Keras \cite{keras} with the TensorFlow \cite{tensorflow2015-whitepaper} backend, allowing GPU acceleration and enabling a fast training process (an epoch per minute).
 
 \section{Dataset}
 \label{sec:dataset}
@@ -150,6 +180,8 @@ For privacy reasons the company who owns the factory did not allow the video seq
     \hfil
     \caption{Overall system performance.}
     \end{figure*}
+
+    \subsection{Time performance}
 
 \section{Conclusion}
 \label{sec:conclusion}
