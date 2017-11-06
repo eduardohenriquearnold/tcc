@@ -150,28 +150,28 @@ For privacy reasons the company who owns the factory did not allow the video seq
 \section{Results}
 \label{sec:results}
 
-    The evaluation uses Receiver Operating Characteristic (ROC) curves \cite{evaluationMetrics} to compare between solutions and parameters. These curves are generated from the probabilistic output of the classifiers used. In the case of SVM which under original formulations is a non-probabilistic classifier, we use a logistic regression formulation \cite{svmProbabilisticOutput} to enable a probabilistic output. The advantage of using such a probabilistic output classifier is the possibility of adjusting the true-positive vs false-positive trade-off even after training, by choosing the probability threshold above which the sample is considered to be positive.
+    The evaluation uses Receiver Operating Characteristic (ROC) curves \cite{evaluationMetrics} to compare between descriptors and classifiers. These curves are generated from the probabilistic output of the classifiers used. In the case of SVM which under original formulations is a non-probabilistic classifier, we use a logistic regression formulation \cite{svmProbabilisticOutput} to enable a probabilistic output. The advantage of using such a probabilistic output classifier is the possibility of adjusting the true-positive vs false-positive trade-off even after training, by choosing the probability threshold above which the sample is considered to be positive.
 
-    To evaluate the solutions proposed on Sections \ref{sec:classical} and \ref{sec:deep}, with their variations, we firstly consider the candidates already extracted from a video sequence, which will be called the test set, thus evaluating only the descriptor and classifier. Figure \ref{fig:result-classifiers} shows the performance of the classifiers under the test set and a Area Under Curve (AUC) score \cite{evaluationMetrics} (measured up to 10\% of false-positive rate). We can clearly see that deep based classifiers outperform the traditional hand-engineered feature extraction based approach. Although both MLP and CNN perform similarly, one of them can be chosen depending upon the desired region of operation (higher true-positive rate or lower false-positive rate).
+    To evaluate the solutions proposed on Sections \ref{sec:classical} and \ref{sec:deep}, with their variations, we firstly consider the candidate test set, thus evaluating only the descriptor and classifier. Figure \ref{fig:result-classifiers} shows the performance of the classifiers under the test set and a Area Under Curve (AUC) score \cite{evaluationMetrics}. We note that the concentric rings descriptor generalized better when compared to the traditional block grid descriptor. Even then, the deep based classifier outperforms the traditional hand-engineered feature extraction based approach by a large margin.
 
 
     \begin{figure*}[!t]
     \centering
-    \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_all.pdf}}%
+    \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_classifiers.pdf}}%
     \label{fig:result-classifiers-all}
     \hfil
-    \subfloat[10 \% interest zone]{\includegraphics[width=0.45\linewidth]{results/ROC_all_zoom.pdf}}%
-    \caption{Classifiers performance.}
+    \subfloat[Zoom in 10\% FPR]{\includegraphics[width=0.45\linewidth]{results/ROC_classifiers_zoom.pdf}}%
+    \caption{Classifiers performance. The AUC score for each classifier was, respectively, 0.9810, 0.7019 and 0.8745.}
     \label{fig:result-classifiers}
     \end{figure*}
-    In a second phase we consider the overall system performance, including the candidate extraction step. It is important to note that the performance observed in Figure \ref{fig:result-classifiers} is an upper bound of the overall performance, since now there will be miss-detections from the candidate extraction step. Another consideration is that in this phase the test set is composed of entire frames, so the probability of the frame contain at least one head could be calculated using
+
+
+    In a second phase we consider the overall system performance, including the candidate extraction step. It is important to note that the performance observed in Figure \ref{fig:result-classifiers} is an upper bound of the overall performance, since now there will be miss-detections from the candidate extraction step. Another consideration is that in this phase the we use the whole frame test set, so the probability of the frame contain at least one head could be calculated using
     \begin{equation}
     P[y=1] = 1 - \prod_i^n (1-p_i)
     \end{equation}
-    where $y$ is a random variable valued 1 if there are humans in the scene or 0 otherwise, $n$ is the number of candidates and $p_i$ is the classifier output of candidate $i$. Figure \ref{fig:result-system} shows the overall system performance using this formulation with the combinations of MLP and CNN classifiers with coarse and fine scales of candidate extraction windows.
+    where $y$ is a random variable valued 1 if there are humans in the scene or 0 otherwise, $n$ is the number of candidates and $p_i$ is the classifier output of candidate $i$. Since the CNN classifier offered the best performance we will use this as the final classifier. Figure \ref{fig:result-system} shows the overall system performance using this formulation of the proposed CNN classifier with coarse and fine scales of candidate extraction windows.
 
-    The results show that on a coarse scale detector, the MLP and CNN classifiers have similar performance, because the candidates that get extracted have similar outputs. However, on a fine scale detector, many more candidates are detected so there are more samples to explore the performances of the two classifiers, showing how the CNN model outperforms MLP.
-    Para avaliar os detectores propostos nas Seções \ref{sec:classical} e \ref{sec:deep}, primeiramente consideramos que os candidatos já foram extraídos das sequência de vídeo reservadas à teste, formando um conjunto de teste com 2738 amostras negativas e 236 positivas. Avalia-se, dessa forma, o descritor (para a abordagem tradicional) e o classificador conjuntamente. A Figura \ref{fig:result-classifiers} mostra o desempenho dos classificadores sob o mesmo conjunto de teste e a métrica \textit{Area Under Curve} (AUC) \cite{evaluationMetrics}. Pode-se observar claramente que os classificadores profundos superam as técnicas tradicionais baseadas na extração de características criadas manualmente. Apesar das estruturas MLP e CNN terem desempenho similares, uma delas pode ser escolhida dependendo da região de operação que se deseja utilizar (maior taxa de verdadeiros-positivos versus menor taxa de falsos-positivos).
     \begin{figure*}[!t]
     \vspace{-3ex}
     \centering
@@ -183,7 +183,6 @@ For privacy reasons the company who owns the factory did not allow the video seq
     \caption{Overall system performance.}
     \end{figure*}
 
-    \subsection{Time performance}
 
 \section{Conclusion}
 \label{sec:conclusion}
