@@ -122,12 +122,12 @@ This paper describes the development of an industrial safety system that require
 
         The ideal number of epochs used for training was found through a validation curve, generated using a 70\% split of the trainng set, evaluated using the Matthews metric, observed in Figure \ref{fig:validation_curve}. It is possible to see a saturation of the validation performance between 20 and 30 epochs and a slow tendency to overfit after 40 epochs. The ideal number of epochs was then chosen to be 30. Note that the training will use the whole training set, not the 70\% split used in this evaluation.
 
-        \begin{figure*}[!t]
+        \begin{figure}
         \centering
-        \includegraphics[width=0.5\linewidth]{results/validation_curve.pdf}
-        \caption{Validation curve. 70\% split on training set.}
+        \includegraphics[width=\linewidth]{results/validation_curve.pdf}
+        \caption{Validation curve up to 150 epochs. 70\% split on training set.}
         \label{fig:validation_curve}
-        \end{figure*}
+        \end{figure}
 
         We experimented two regularization techniques. Primarily we used L2 regularization on the convolutional kernels in two scales, with $\lambda = 0.01$ and $\lambda = 0.1$. In the first case the model performance was similar to the model obtained without regularization. In the second case, the model was prevented to learn the data underlying structure due to the strong regularization applied, causing underfitting. Another technique used was adding a Dropout layer after every convolutional layer. The drop rate used was 20\% and the results consistently shown that regularization degraded the model performance. In conclusion, since the results using regularization techniques were not satisfactory when compared to the standard approach, and considering the validation curve on Figure \ref{fig:validation_curve}, which indicates that no overfit occurs before 30 epochs, we decided to train the model without regularization techniques.
 
