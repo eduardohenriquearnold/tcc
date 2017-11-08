@@ -179,7 +179,7 @@ This dataset poses a few challenges, such as seen in Figure \ref{fig:dataset} (c
     \label{fig:result-classifiers-all}
     \hfil
     \subfloat[Zoom in 10\% FPR]{\includegraphics[width=0.45\linewidth]{results/ROC_classifiers_zoom.pdf}}%
-    \caption{Classifiers performance. The AUC score for each classifier was, respectively, 0.9810, 0.7019 and 0.8745.}
+    \caption{Classifiers performance. The AUC score for each classifier was, respectively, 0.9785, 0.7019 and 0.8745.}
     \label{fig:result-classifiers}
     \end{figure*}
 
@@ -190,16 +190,15 @@ This dataset poses a few challenges, such as seen in Figure \ref{fig:dataset} (c
     \end{equation}
     where $y$ is a random variable valued 1 if there are humans in the scene or 0 otherwise, $n$ is the number of candidates and $p_i$ is the classifier output of candidate $i$. Since the CNN classifier offered the best performance we will use this as the final classifier. Figure \ref{fig:result-system} shows the overall system performance using this formulation of the proposed CNN classifier with coarse and fine scales of candidate extraction windows.
 
-    \begin{figure*}[!t]
-    \vspace{-3ex}
+    It is possible to note that the finer scale detector gives an overall better performance considering that it is less likely to actually miss a person in the candidate detection step. At the same time, since many more candidates are considered, the chance of having false positives in the classifier also increase, as perceived in the left portion of the ROC curve in Figure \ref{fig:result-system}.
+
+    \begin{figure}
     \centering
-    \subfloat[]{\includegraphics[width=0.45\linewidth]{results/ROC_system.pdf}}
-    \label{fig:result-system-all-zoom}
-    \subfloat[10 \% interest zone, best results]{\includegraphics[width=0.45\linewidth]{results/ROC_system_zoom_best.pdf}}%
+    \includegraphics[width=\linewidth]{results/ROC_system.pdf}
+    \caption{ROC showing overall system performance using coarse and fine scales of candidate detection and the same CNN classifier. AUC is 0.7477 and 0.9161, respectively.}
     \label{fig:result-system}
-    \hfil
-    \caption{Overall system performance.}
-    \end{figure*}
+    \end{figure}
+
 
 
 \section{Conclusion}
