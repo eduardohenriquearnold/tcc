@@ -10,7 +10,7 @@ This paper describes the development of an industrial safety system that require
 
   Another challenge is that workers clothes are not regular in color, and they do not always wear helmets, in which case only color images could not give enough information for detection. To overcome this, \cite{rauter} uses a stereo camera that delivers depth image frames of objects, providing more reliable shape information and higher invariance to luminosity. The image is then used to locate human candidates, followed by a hand-engineered feature extraction and then classification using a Support Vector Machine (SVM). However, it assumes a clean standard ambient, where there are only people and in some cases luggage moving around, and thus may not provide a good solution to a complex and crowded industrial environment, with many machines and equipment among workers.
 
-  Recently the increase of computational power, especially in the form of GPUs, the availability of large image datasets and improvements upon existing training methods \cite{nair2010relu} enabled the fast development and usage of deep learning methods in most diverse domains. Moreover, novel dense network structures \cite{NIPS2013_5207} achieved great results for object detection, following previous state-of-the-art results \cite{hintonCONVNET} for image classification. The main advantage of deep learning methods is that they shift the focus from feature-engineering to a data-driven approach. In this sense the network structure itself will learn how to best represent the input data, as long as it has enough samples to learn from. Although some object classification with deep-based classifiers, such as \cite{thornberg2015combining}, use depth images they do not assume a overhead position of the camera. To the best of our knowledge, a deep classifier solution for top-view human detection using depth frames has not been proposed so far.
+  Recently the increase of computational power, especially in the form of GPUs, the availability of large image datasets and improvements upon existing training methods \cite{nair2010relu} enabled the fast development and usage of deep learning methods in most diverse domains. Moreover, novel dense network structures \cite{NIPS2013_5207} achieved great results for object detection, matching previous state-of-the-art results \cite{hintonCONVNET} for image classification. The main advantage of deep learning methods is that they shift the focus from feature-engineering to a data-driven approach. In this sense the network structure itself learns how to best represent the input data, as long as it has enough samples to learn from. Although some object classification with deep-based classifiers, such as \cite{thornberg2015combining}, use depth images, they do not assume a overhead position of the camera. To the best of our knowledge, a deep classifier solution for top-view human detection using depth frames has not been proposed so far.
 
   This paper presents a novel top-view human detection system based on deep classifiers. We also perform a comparison between the proposed method and a traditional approach to the human detection system, illustrated in Figure \ref{fig:system-diagram}. Both use computer vision techniques to detect candidates in the image, described in Section \ref{sec:candidates}. The traditional solution, based in \cite{rauter}, is presented in Section \ref{sec:classical}, while our solution, using deep classifiers, is described in Section \ref{sec:deep}. Quantitative evaluation of both methods and their variations is shown in Section \ref{sec:results}. Finally, conclusions and future work are presented in Section \ref{sec:conclusion}.
 
@@ -21,7 +21,7 @@ This paper describes the development of an industrial safety system that require
   \label{fig:system-diagram}
   \end{figure*}
 
-\section{Candidates detection}
+\section{Extraction of candidates}
 \label{sec:candidates}
 
     In a traditional object detection approach \cite{traditional-objdetect} the first step is to localize candidates, which are then validated using a feature-extractor followed by a classifier. In the case of a color image, a sliding window method with varying size could be used to obtain such candidates.
@@ -34,23 +34,23 @@ This paper describes the development of an industrial safety system that require
     \end{equation}
     where $f$ is the camera focal distance, $d$ the distance between the camera and the object and $s_r$ the mean head size. The window of size $s_w$ pixels is centered around the respective local maximum pixel.
 
-    The final step is to centralize the window over the candidate using an iterative \textit{mean shift} algorithm. Simply put, this algorithm displaces the window to the centroid of the pixels inside it, so high valued pixels will tend to be in the center of the candidate.
+    The final step is to centralize the window over the candidate using an iterative \textit{mean shift} \cite{meanshift} algorithm. Simply put, this algorithm displaces the window to the centroid of the pixels inside it, so high valued pixels will tend to be in the center of the candidate.
 
     The output of this step is a list of squared windows representing candidates in the image. A relevant aspect to consider is the size of the blocks for the local maxima search. When using large blocks the probability of having a tall object, such as a machine, in the same block of a person is high, so the system would fail to detect a person. In contrast, if the block is too small, it is guaranteed that all humans will be detected, but this comes at the expense of complexity and time performance, since all candidates will need further analysis.
 
 \section{Classical computer vision solution}
 \label{sec:classical}
 
-    Following the candidates detection a validation phase should take place to discard non-human detections. A classical computer vision approach \cite{rauter} uses hand-engineered features extracted from the candidates to feed a binary SVM classifier, which output a class: ``human'' or ``not human''. A regular block grid proposed in \cite{rauter} is used. In order to increase rotation invariance, we also propose a concentric rings descriptor (see Figure \ref{fig:descriptors}). Both are described next, followed by a more detailed description of the classification and training process.
+    Following the extraction of candidates, a validation phase should take place to discard non-human candidates. A classical computer vision approach \cite{rauter} uses hand-engineered features extracted from the candidates to feed a binary SVM classifier, which outputs a class: ``human'' or ``not human''. A regular block-grid proposed in \cite{rauter} is used. In order to increase rotation invariance, we also propose a concentric rings descriptor (see Figure \ref{fig:descriptors}). Both are described next, followed by a more detailed description of the classification and training processes.
 
     \begin{figure}
     \centering
     \includegraphics[width=0.9\linewidth]{tradicional/descritores}
-    \caption{Regular block grid (left) and concentric rings descriptors (right).}
+    \caption{Regular block-grid (left) and concentric rings descriptors (right).}
     \label{fig:descriptors}
     \end{figure}
 
-    \subsection{Regular block grid feature extractor}
+    \subsection{Regular block-grid feature extractor}
       This descriptor divides the candidate window into 7x7 blocks, as illustrated in Figure \ref{fig:descriptors}. The mean value of pixels belonging to each block is calculated, generating a 7x7 matrix of mean pixel intensities. Next, the mean value of the central block is subtracted from the matrix. Finally, the resulting matrix histogram is calculated with 32 bins. The histogram vector, with 32 dimensions, is considered the feature vector, which sums up to 49 (number of blocks).
 
     \subsection{Concentric rings feature extractor}
@@ -59,7 +59,7 @@ This paper describes the development of an industrial safety system that require
     \subsection{SVM classifier}
       We use a binary SVM classifier with Radial Basis Function (RBF) kernel \cite{rbfkernel} to validate the candidates. Recall that the kernel parameter $\sigma$ along with the SVM hyperparameter $C$ control the trade-off between training performance and generalization on unseen data. Higher $C$ values penalize training set errors, while lower values offer a more general performance on the test set, conversely, the $\sigma$ parameter penalizes in the inverse manner.
 
-      To choose the appropriate values of the hyperparameters $C$ and $\sigma$ we use a 5 fold cross-validation process, scoring the \textit{recall} metric \cite{evaluationMetrics}. After the hyperparameters have been chosen the final training process is carried out with the entire training dataset using the Scikit-learn \cite{scikit-learn} toolkit. The training time takes 1 minute and 36 seconds for the regular block grid descriptor and 25s for the ring grid descriptor on an Intel i7 CPU.
+      To choose the appropriate values of the hyperparameters $C$ and $\sigma$, we use a 5-fold cross-validation process, using the \textit{recall} metric \cite{evaluationMetrics}. After the hyperparameters have been chosen, the final training process is carried out with the entire training dataset using the Scikit-learn \cite{scikit-learn} toolkit. The training time took about 1 minute and 36 seconds for the regular block-grid descriptor and 25s for the ring grid descriptor on an Intel i7 CPU.
 
 
 \section{Deep learning based solution}
